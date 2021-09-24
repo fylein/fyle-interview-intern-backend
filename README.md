@@ -4,7 +4,7 @@
 
 This challenge is meant for candidates who wish to intern at Fyle and work with our core engineering teams.
 
-* You should be available to start by Sept 27, 2021
+* You should be available to start by 17 October, 2021
 * You should be able to commit to at least 3 months (we strongly prefer 6 months)
 
 ## Why intern at Fyle?
