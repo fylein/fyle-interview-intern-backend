@@ -40,6 +40,9 @@ If that goes well, we'll make an offer.
 ---
 
 ## Installation
+1. Fork this repository to your github account
+2. Clone the forked repository and proceed with steps mentioned below
+
 ### Install requirements
 ```
 virtualenv env --python=python3.8
