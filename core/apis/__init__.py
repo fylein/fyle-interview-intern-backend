@@ -1,3 +1,4 @@
-# from core import app
-# from .responses import APIResponse
-# app.response_class = APIResponse
+from .student import student_assignments_resources
+from .teacher import teacher_assignments_resources
+
+
