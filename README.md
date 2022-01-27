@@ -2,17 +2,15 @@
 
 ## Who is this for?
 
-This challenge is meant for candidates who wish to intern at Fyle and work with our engineering teams.
+This challenge is meant for candidates who wish to work / intern at Fyle and work with our engineering teams.
 
-* You should be available to start by 29 October, 2021
-* You should be able to commit to at least 3 months (we would prefer 6 months)
+If it is for internship, you should be able to commit to at least 3 months.
 
-## Why intern at Fyle?
+## Why work at Fyle?
 
-Fyle is a fast-growing Expense Management SaaS product. We are ~40 strong engineering team at the moment. About 60% of our engineers started off as interns. Interns at Fyle do extremely challenging and impactful work.
+Fyle is a fast-growing Expense Management SaaS product. We are ~40 strong engineering team at the moment. 
 
-
-People love working at Fyle. Check out our Glassdoor reviews [here](https://www.glassdoor.co.in/Reviews/Fyle-Reviews-E1723235.htm). You can read stories from our teammates [here](https://stories.fylehq.com).
+We are an extremely transparent organization. Check out our [careers page](https://careers.fylehq.com) that will give you a glimpse of what it is like to work at Fyle. Also, check out our Glassdoor reviews [here](https://www.glassdoor.co.in/Reviews/Fyle-Reviews-E1723235.htm). You can read stories from our teammates [here](https://stories.fylehq.com).
 
 
 ## Challenge outline
