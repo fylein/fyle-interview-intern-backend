@@ -21,7 +21,8 @@ Described [here](./Application.md)
 ### Your tasks 
 1. Add missing APIs mentioned [here](./Application.md#Missing-APIs) and get the automated tests to pass 
 2. Add a test for grading API
-3. Get the test coverage to 94% or above
+3. All tests should pass
+4. Get the test coverage to 94% or above
 
 ## Submission
 

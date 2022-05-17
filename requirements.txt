@@ -20,7 +20,6 @@ marshmallow-enum==1.5.1
 marshmallow-sqlalchemy==0.26.1
 packaging==21.0
 pluggy==1.0.0
-psycopg2-binary==2.8.6
 py==1.10.0
 pyparsing==2.4.7
 pytest==6.2.5
