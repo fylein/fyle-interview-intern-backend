@@ -6,13 +6,11 @@ from core.models.teachers import Teacher
 from core.models.students import Student
 from sqlalchemy.types import Enum as BaseEnum
 
-
 class GradeEnum(str, enum.Enum):
     A = 'A'
     B = 'B'
     C = 'C'
     D = 'D'
-
 
 class AssignmentStateEnum(str, enum.Enum):
     DRAFT = 'DRAFT'
@@ -65,6 +63,7 @@ class Assignment(db.Model):
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(assignment.student_id == principal.student_id, 'This assignment belongs to some other student')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
+        assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT,  'only a draft assignment can be submitted')
 
         assignment.teacher_id = teacher_id
         assignment.state = AssignmentStateEnum.SUBMITTED
@@ -75,3 +74,24 @@ class Assignment(db.Model):
     @classmethod
     def get_assignments_by_student(cls, student_id):
         return cls.filter(cls.student_id == student_id).all()
+
+
+    @classmethod
+    def get_assignments_by_teacher(cls, teacher_id):
+        return cls.filter(cls.teacher_id == teacher_id).all()
+
+    @classmethod
+    def grade_student(cls, _id, grade, principal: Principal):
+        assignment = Assignment.get_by_id(_id)
+        gradeSet = set(item.value for item in GradeEnum)
+        assertions.assert_found(assignment, 'No assignment with this id was found')
+        assertions.assert_valid(assignment.teacher_id == principal.teacher_id, 'This assignment was not submitted(at least to this teacher)')
+        assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be graded')
+        assertions.assert_validate(grade in gradeSet, 'Invalid Grade')
+        assertions.assert_integrity(assignment.state!=AssignmentStateEnum.GRADED, "Already Graded")
+
+        assignment.grade = grade
+        assignment.state = AssignmentStateEnum.GRADED
+        db.session.flush()
+
+        return assignment
