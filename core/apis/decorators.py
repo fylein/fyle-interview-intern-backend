@@ -30,7 +30,6 @@ def auth_principal(func):
             student_id=p_dict.get('student_id'),
             teacher_id=p_dict.get('teacher_id')
         )
-
         if request.path.startswith('/student'):
             assertions.assert_true(p.student_id is not None, 'requester should be a student')
         elif request.path.startswith('/teacher'):

@@ -25,6 +25,21 @@ def test_get_assignments_teacher_2(client, h_teacher_2):
         assert assignment['teacher_id'] == 2
         assert assignment['state'] == 'SUBMITTED'
 
+def test_grade_assignment(client, h_teacher_1):
+    """
+    failure case: assignment 1 was submitted to teacher 1 and not teacher 2
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 1,
+            "grade": "A"
+        }
+    )
+    assert response.status_code == 200
+    data = response.json
+    assert data['data']['state'] == 'GRADED'
 
 def test_grade_assignment_cross(client, h_teacher_2):
     """
@@ -38,7 +53,6 @@ def test_grade_assignment_cross(client, h_teacher_2):
             "grade": "A"
         }
     )
-
     assert response.status_code == 400
     data = response.json
 
@@ -100,3 +114,18 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+def test_teacher_post_assignment(client,h_teacher_1):
+    content = 'ABCD TESTPOST'
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_teacher_1,
+        json={
+            'content': content
+        })
+
+    assert response.status_code == 403
+    data = response.json
+    
+    assert data['message'] == 'requester should be a student'
