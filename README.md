@@ -30,11 +30,7 @@ Once you are done with your task, please use [this form](https://forms.gle/fZex7
 
 ## What happens next?
 
-You will hear back within 48 hours from us via email. We may request for some changes based on reviewing your code.
-
-Subsequently, we will schedule a phone interview with a Fyle Engineer.
-
-If that goes well, we'll make an offer. 
+You will hear back within 48 hours from us via email. 
 
 ---
 
