@@ -1,5 +1,6 @@
 ## Application 
-### There are 4 resources:
+
+There are 4 resources:
 - Users
 - Students
 - Teachers
@@ -7,14 +8,22 @@
 
 4 Users (2 students and 2 teachers) have already been created for you in the db fixture
 
-## User Actions:
 - A student can create and edit a draft assignment
 - A student can list all his created assignments
 - A student can submit a draft assignment to a teacher
 - A teacher can list all assignments submitted to him
 - A teacher can grade an assignment submitted to him
 
+## Challenge
+
+Your tasks
+- Add missing APIs mentioned here and get the automated tests to pass
+- Add a test for grading API
+- All tests should pass
+- Get the test coverage to 94% or above
+
 ## Available APIs
+
 ### Auth
 - header: "X-Principal"
 - value: {"user_id":1, "student_id":1}
@@ -22,7 +31,8 @@
 For APIs to work you need a principal header to establish identity and context
 
 ### GET /student/assignments
-#### List all assignments created by a student
+
+List all assignments created by a student
 ```
 headers:
 X-Principal: {"user_id":1, "student_id":1}
@@ -55,7 +65,8 @@ response:
 ```
 
 ### POST /student/assignments
-#### Create an assignment
+
+Create an assignment
 ```
 headers:
 X-Principal: {"user_id":2, "student_id":2}
@@ -81,7 +92,8 @@ response:
 ```
 
 ### POST /student/assignments
-#### Edit an assignment
+
+Edit an assignment
 ```
 headers:
 X-Principal: {"user_id":2, "student_id":2}
@@ -108,7 +120,8 @@ response:
 ```
 
 ### POST /student/assignments/submit
-#### Submit an assignment
+
+Submit an assignment
 ```
 headers:
 X-Principal: {"user_id":1, "student_id":1}
@@ -135,14 +148,12 @@ response:
 ```
 
 ## Missing APIs
-### Auth
-- header: "X-Principal"
-- value: {"user_id":3, "teacher_id":1}
 
-For APIs to work you need a principal header to establish identity and context
+You'll need to implement these APIs
 
 ### GET /teacher/assignments
-#### List all assignments submitted to this teacher
+
+List all assignments submitted to this teacher
 ```
 headers:
 X-Principal: {"user_id":3, "teacher_id":1}
@@ -165,7 +176,8 @@ response:
 ```
 
 ### POST /teacher/assignments/grade
-#### Grade an assignment
+
+Grade an assignment
 ```
 headers:
 X-Principal: {"user_id":3, "teacher_id":1}
