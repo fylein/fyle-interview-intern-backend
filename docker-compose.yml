@@ -8,3 +8,5 @@ services:
       - .:/app
     environment:
       FLASK_DEBUG: True
+      FLASK_APP: core/server.py
+      
