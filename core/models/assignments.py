@@ -84,9 +84,9 @@ class Assignment(db.Model):
     @classmethod
     def grade_the_submitted_assignments(cls, assignment_id, grade, principal: Principal):
         assignment = Assignment.get_by_id(assignment_id)
-        assertions.assert_found(assignment, f'No assignment with this id={assignment_id} was found')
-        assertions.assert_valid(assignment.state==AssignmentStateEnum.SUBMITTED, 'Only submitted assignment is accepted')
-        assertions.assert_valid(assignment.teacher_id==principal.teacher_id, f'Teacher with teacher_id={principal.teacher_id} can\'nt grade this assignment')
+        assertions.assert_found(assignment, f'No assignment with id={assignment_id} was found')
+        assertions.assert_valid(assignment.state == AssignmentStateEnum.SUBMITTED, 'Only submitted assignment can be awarded with grades')
+        assertions.assert_valid(assignment.teacher_id == principal.teacher_id, f'Teacher with teacher_id={principal.teacher_id} can\'nt grade this assignment')
 
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
