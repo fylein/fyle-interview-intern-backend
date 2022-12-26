@@ -43,6 +43,7 @@ def test_grade_assignment_cross(client, h_teacher_2):
     data = response.json
 
     assert data['error'] == 'FyleError'
+    assert data["message"] == "assignment submitted to different teacher"
 
 
 def test_grade_assignment_bad_grade(client, h_teacher_1):
@@ -100,3 +101,57 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+def test_gradeing_a_to_submitted_assignment(client, h_teacher_2):
+    """
+    passing case: teacher should be be able to grade this test, as it's submitted 
+    """
+    response = client.post(
+        "/teacher/assignments/grade",
+        headers = h_teacher_2,
+        json = {
+            "id": 3,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json
+    assert data["data"]["grade"] == "A"
+
+
+def test_grading_b_to_submitted_assignment(client, h_teacher_1):
+    """
+    passing case
+    """
+    response = client.post(
+        "/teacher/assignments/grade",
+        headers = h_teacher_1,
+        json = {
+            "id": 1,
+            "grade": "B"
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json["data"]
+    assert data["grade"] == "B"
+
+
+def test_grading_c_to_submitted_assignment(client, h_teacher_2):
+    """
+    passing case
+    """
+    response = client.post(
+        "/teacher/assignments/grade",
+        headers = h_teacher_2,
+        json = {
+            "id": 4,
+            "grade": "C"
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json["data"]
+    assert data["grade"] == "C"
