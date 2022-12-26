@@ -24,11 +24,9 @@ def list_all_assignment_for_teacher(p):
 def grade_assignmnet(p, payload):
     """Grade assignmnent of student"""
 
-    print(f"\npayload : {payload['id']}, {payload['grade']}\n")
     assignment = Assignment.grade_assignment(payload["id"], payload["grade"], p)
 
     assignment_dump = AssignmentSchema().dump(assignment)
-    print(f"\n assignment dump {assignment_dump}\n")
 
     return APIResponse.respond(assignment_dump)
 
