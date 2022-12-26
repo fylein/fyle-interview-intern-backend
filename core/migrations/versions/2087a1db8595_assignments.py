@@ -70,18 +70,26 @@ def upgrade():
     assignment_4 = Assignment(student_id=student_2.id, content='THESIS T2')
 
     assignment_5 = Assignment(student_id=student_1.id, content='SOLUTION T1')
+    assignment_6 = Assignment(student_id=student_1.id, content="NEW ASSIGNMENT")
 
     db.session.add(assignment_1)
     db.session.add(assignment_2)
     db.session.add(assignment_3)
     db.session.add(assignment_4)
     db.session.add(assignment_5)
+    db.session.add(assignment_6)
 
     db.session.flush()
 
     Assignment.submit(
         _id=assignment_1.id,
         teacher_id=teacher_1.id,
+        principal=Principal(user_id=student_1.user_id, student_id=student_1.id)
+    )
+
+    Assignment.submit(
+        _id=assignment_2.id,
+        teacher_id=teacher_2.id,
         principal=Principal(user_id=student_1.user_id, student_id=student_1.id)
     )
 
