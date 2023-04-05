@@ -25,8 +25,6 @@ def grade_assignment(p, incoming_payload):
     
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
 
-    print(incoming_payload, ">>>>>>>>>>>>")
-
     graded_assignment = Assignment.gradeAssigment(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,
