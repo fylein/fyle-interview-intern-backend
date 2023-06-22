@@ -47,7 +47,7 @@ def test_grade_assignment_cross(client, h_teacher_2):
 
 def test_grade_assignment_bad_grade(client, h_teacher_1):
     """
-    failure case: API should not allow only grades available in enum
+    failure case: API should allow only grades available in enum
     """
     response = client.post(
         '/teacher/assignments/grade',
