@@ -24,6 +24,21 @@ def test_get_assignments_student_2(client, h_student_2):
         assert assignment['student_id'] == 2
 
 
+def test_post_assignment_null_content(client, h_student_1):
+    """
+    failure case: assignment 1 was submitted to teacher 1 and not teacher 2
+    """
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'content': None
+        })
+
+    assert response.status_code == 400
+
+
 def test_post_assignment_student_1(client, h_student_1):
     content = 'ABCD TESTPOST'
 
@@ -31,7 +46,7 @@ def test_post_assignment_student_1(client, h_student_1):
         '/student/assignments',
         headers=h_student_1,
         json={
-            'content': content
+            'content': None
         })
 
     assert response.status_code == 200
