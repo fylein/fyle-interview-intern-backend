@@ -11,7 +11,7 @@ class AssignmentSchema(SQLAlchemyAutoSchema):
         unknown = EXCLUDE
 
     id = auto_field(required=False, allow_none=True)
-    content = auto_field(required=True)
+    content = auto_field()
     created_at = auto_field(dump_only=True)
     updated_at = auto_field(dump_only=True)
     teacher_id = auto_field(dump_only=True)
@@ -31,6 +31,19 @@ class AssignmentSubmitSchema(Schema):
 
     id = fields.Integer(required=True, allow_none=False)
     teacher_id = fields.Integer(required=True, allow_none=False)
+
+    @post_load
+    def initiate_class(self, data_dict, many, partial):
+        # pylint: disable=unused-argument,no-self-use
+        return GeneralObject(**data_dict)
+
+
+class AssignmentGradeSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    id = fields.Integer(required=True, allow_none=False)
+    grade = EnumField(GradeEnum, required=True, allow_none=False)
 
     @post_load
     def initiate_class(self, data_dict, many, partial):

@@ -2,12 +2,16 @@
 
 There are 4 resources:
 - Users
+- Principal
 - Students
 - Teachers
 - Assignments
 
-4 Users (2 students and 2 teachers) have already been created for you in the db fixture
+5 Users (1 Principal, 2 students and 2 teachers) have already been created for you in the db fixture
 
+- A principal can view all the teachers
+- A principal can view all the assignments submitted and/or graded by teachers.
+- A principal can re-grade the assignments already graded by the teacher.
 - A student can create and edit a draft assignment
 - A student can list all his created assignments
 - A student can submit a draft assignment to a teacher
@@ -18,9 +22,13 @@ There are 4 resources:
 
 Your tasks
 - Add missing APIs mentioned here and get the automated tests to pass
-- Add a test for grading API
+- Add tests for grading API
 - All tests should pass
 - Get the test coverage to 94% or above
+- There are certain SQL tests present inside `tests/SQL/`. You have to write SQL in following files:
+    - count_grade_A_assignments_by_teacher_with_max_grading.sql
+    - number_of_assignments_per_state.sql
+- Optionally, Dockerize your application by creating a Dockerfile and a docker-compose.yml file, providing clear documentation on building and running the application with Docker, to stand out in your submission
 
 Once you are done with your task, please use [this form](https://forms.gle/nWVJe1kLPgNmpVoM8) to complete your submission.
 
@@ -150,12 +158,8 @@ response:
         "updated_at": "2021-09-17T03:17:20.147349"
     }
 }
+
 ```
-
-## Missing APIs
-
-You'll need to implement these APIs
-
 ### GET /teacher/assignments
 
 List all assignments submitted to this teacher
@@ -186,6 +190,83 @@ Grade an assignment
 ```
 headers:
 X-Principal: {"user_id":3, "teacher_id":1}
+
+payload:
+{
+    "id":  1,
+    "grade": "A"
+}
+
+response:
+{
+    "data": {
+        "content": "ESSAY T1",
+        "created_at": "2021-09-17T03:14:01.580126",
+        "grade": "A",
+        "id": 1,
+        "state": "GRADED",
+        "student_id": 1,
+        "teacher_id": 1,
+        "updated_at": "2021-09-17T03:20:42.896947"
+    }
+}
+```
+
+## Missing APIs
+
+You'll need to implement these APIs
+
+### GET /principal/assignments
+
+List all assignments submitted to this teacher
+```
+headers:
+X-Principal: {"user_id":5, "principal_id":1}
+
+response:
+{
+    "data": [
+        {
+            "content": "ESSAY T1",
+            "created_at": "2021-09-17T03:14:01.580126",
+            "grade": null,
+            "id": 1,
+            "state": "SUBMITTED",
+            "student_id": 1,
+            "teacher_id": 1,
+            "updated_at": "2021-09-17T03:14:01.584644"
+        }
+    ]
+}
+```
+
+### GET /principal/teachers
+
+Get all the teachers
+```
+headers:
+X-Principal: {"user_id":5, "principal_id":1}
+
+
+response:
+{
+    "data": [
+        {
+            "created_at": "2024-01-08T07:58:53.131970",
+            "id": 1,
+            "updated_at": "2024-01-08T07:58:53.131972",
+            "user_id": 3
+        }
+    ]
+}
+```
+
+### POST /principal/assignments/grade
+
+Grade or re-grade an assignment
+```
+headers:
+X-Principal: {"user_id":5, "principal_id":1}
 
 payload:
 {
