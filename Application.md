@@ -1,6 +1,6 @@
 ## Application 
 
-There are 4 resources:
+There are 5 resources:
 - Users
 - Principal
 - Students
@@ -218,7 +218,7 @@ You'll need to implement these APIs
 
 ### GET /principal/assignments
 
-List all assignments submitted to this teacher
+List all submitted and graded assignments
 ```
 headers:
 X-Principal: {"user_id":5, "principal_id":1}
@@ -242,7 +242,7 @@ response:
 
 ### GET /principal/teachers
 
-Get all the teachers
+List all the teachers
 ```
 headers:
 X-Principal: {"user_id":5, "principal_id":1}
