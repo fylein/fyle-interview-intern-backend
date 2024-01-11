@@ -20,6 +20,8 @@ There are 5 resources:
 
 ## Challenge
 
+Please fork the repository into your account and continue the development in a new branch.
+
 Your tasks
 - Add missing APIs mentioned here and get the automated tests to pass
 - Add tests for grading API
