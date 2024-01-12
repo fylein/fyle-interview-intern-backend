@@ -22,11 +22,11 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
-    if(incoming_payload["content"] is None):
+    try:
+        assignment = AssignmentSchema().load(incoming_payload)
+    except:
         raise FyleError(status_code=400,message="Content cannot be null")
-    assignment = AssignmentSchema().load(incoming_payload)
     assignment.student_id = p.student_id
-
     upserted_assignment = Assignment.upsert(assignment)
     db.session.commit()
     upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)

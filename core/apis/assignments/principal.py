@@ -17,13 +17,6 @@ def list_graded_submitted_assignments(p):
     graded_submitted_assignments_dump = AssignmentSchema().dump(graded_submitted_assignments, many=True)
     return APIResponse.respond(data=graded_submitted_assignments_dump)
 
-@principal_assignments_resources.route('/teachers',methods=['GET'],strict_slashes=False)
-@decorators.authenticate_principal
-def list_teachers(p):
-    """Returns the list of teachers"""
-    teachers_list=Teacher.get_all_teachers(p.principal_id)
-    teacher_list_dump=TeacherSchema().dump(teachers_list,many=True)
-    return APIResponse.respond(data=teacher_list_dump)
 
 @principal_assignments_resources.route('/assignments/grade',methods=['POST'],strict_slashes=False)
 @decorators.accept_payload
