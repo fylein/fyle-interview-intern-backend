@@ -6,6 +6,7 @@ from core.models.assignments import Assignment
 from core.models.teachers import Teacher
 from .schema import AssignmentSchema, AssignmentGradeSchema
 from core.apis.teachers.schema import TeacherSchema
+from core.libs.exceptions import FyleError
 principal_assignments_resources = Blueprint('principal_assignments_resources', __name__)
 
 @principal_assignments_resources.route('/assignments',methods=['GET'],strict_slashes=False)
@@ -30,6 +31,9 @@ def list_teachers(p):
 def grade_or_regrade_assignment(p,incoming_payload):
     """Grades or regrades the assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
+    get_assignment=Assignment.get_by_id(incoming_payload["id"])
+    if(get_assignment.state=="DRAFT"):
+        raise FyleError(status_code=400, message="Draft assignment cannot be graded by principal")
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,
