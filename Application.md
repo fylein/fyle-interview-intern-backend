@@ -25,6 +25,7 @@ Please fork the repository into your account and continue the development in you
 Your tasks
 - Add missing APIs mentioned here and get the automated tests to pass
 - Add tests for grading API
+- Please be aware that intentional bugs have been incorporated into the application, leading to test failures. Kindly address and rectify these issues as part of the assignment.
 - All tests should pass
 - Get the test coverage to 94% or above
 - There are certain SQL tests present inside `tests/SQL/`. You have to write SQL in following files:
