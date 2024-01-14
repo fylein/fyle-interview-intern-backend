@@ -13,10 +13,13 @@ export FLASK_APP=core/server.py
 # flask db migrate -m "Initial migration." -d core/migrations/
 # flask db upgrade -d core/migrations/
 
-
-# Reset DB
+FILE="core/store.sqlite3"
 export FLASK_APP=core/server.py
-rm core/store.sqlite3
+
+# Check if the file exists
+if [ -f "$FILE" ]; then
+    rm "$FILE"
+fi
 flask db upgrade -d core/migrations/
 
 # Run server
