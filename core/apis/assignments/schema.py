@@ -12,7 +12,7 @@ class AssignmentSchema(SQLAlchemyAutoSchema):
 
     id = auto_field(required=False, allow_none=True)
     content = auto_field()
-    created_at = auto_field(dump_only=True)
+    created_at = auto_field(required=True)
     updated_at = auto_field(dump_only=True)
     teacher_id = auto_field(dump_only=True)
     student_id = auto_field(dump_only=True)
