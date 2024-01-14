@@ -22,14 +22,15 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
-    assignment = AssignmentSchema().load(incoming_payload)
-    assignment.student_id = p.student_id
-
-    upserted_assignment = Assignment.upsert(assignment)
-    db.session.commit()
-    upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
-    return APIResponse.respond(data=upserted_assignment_dump)
-
+    try:
+        assignment=AssignmentSchema().load(incoming_payload)
+    except:
+        assignment.student_id=p.student_id
+        upserted_assignment=Assignment.upsert(assignment)
+        db.session.commit()
+        upserted_assignment_dump=AssignmentSchema().dump(upserted_assignment)
+    return
+    APIResponse.respond(data=upserted_assignment_dump)
 
 @student_assignments_resources.route('/assignments/submit', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
