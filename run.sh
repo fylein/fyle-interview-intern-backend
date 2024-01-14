@@ -13,5 +13,11 @@ export FLASK_APP=core/server.py
 # flask db migrate -m "Initial migration." -d core/migrations/
 # flask db upgrade -d core/migrations/
 
+
+# Reset DB
+export FLASK_APP=core/server.py
+rm core/store.sqlite3
+flask db upgrade -d core/migrations/
+
 # Run server
 gunicorn -c gunicorn_config.py core.server:app
