@@ -54,3 +54,19 @@ pytest -vvv -s tests/
 # pytest --cov
 # open htmlcov/index.html
 ```
+
+# Building and Running with Docker:
+
+## Build the Docker image:
+
+```
+docker build -t <your-app-name> .
+```
+
+## Run the Docker container:
+
+```
+docker run -p 7755:7755 <your-app-name>
+```
+
+Now, your Flask application should be accessible at http://localhost:7755.

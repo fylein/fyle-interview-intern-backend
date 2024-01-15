@@ -40,6 +40,8 @@ def submit_assignment(p, incoming_payload):
     """Submit an assignment"""
     submit_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
 
+    """ MODIFIED TO PASS TEST CASES"""
+
     assignment = Assignment.get_by_id(submit_assignment_payload.id)
 
     if assignment.state == AssignmentStateEnum.DRAFT and assignment.content != None:
@@ -54,3 +56,5 @@ def submit_assignment(p, incoming_payload):
         return APIResponse.respond(data=submitted_assignment_dump)
 
     return jsonify({'error': 'FyleError', 'message': 'only a draft assignment can be submitted'}), 400
+
+    """"""
