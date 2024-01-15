@@ -13,6 +13,9 @@ student_assignments_resources = Blueprint('student_assignments_resources', __nam
 def list_assignments(p):
     """Returns list of assignments"""
     students_assignments = Assignment.get_assignments_by_student(p.student_id)
+    
+    print("students_assignments", students_assignments)
+    
     students_assignments_dump = AssignmentSchema().dump(students_assignments, many=True)
     return APIResponse.respond(data=students_assignments_dump)
 

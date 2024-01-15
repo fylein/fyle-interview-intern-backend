@@ -11,3 +11,7 @@ class Principal(db.Model):
 
     def __repr__(self):
         return '<Principal %r>' % self.id
+    
+    @classmethod
+    def get_by_candidate_id(cls, _id, user_id):
+        return cls.query.filter_by(id=_id, user_id=user_id).first()
