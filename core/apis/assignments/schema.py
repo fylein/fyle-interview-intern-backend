@@ -11,7 +11,7 @@ class AssignmentSchema(SQLAlchemyAutoSchema):
         unknown = EXCLUDE
 
     id = auto_field(required=False, allow_none=True)
-    content = auto_field()
+    content = auto_field(allow_none=False)
     created_at = auto_field(dump_only=True)
     updated_at = auto_field(dump_only=True)
     teacher_id = auto_field(dump_only=True)
