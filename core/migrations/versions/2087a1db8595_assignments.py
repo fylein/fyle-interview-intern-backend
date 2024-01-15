@@ -12,7 +12,7 @@ from core.apis.decorators import AuthPrincipal
 from core.models.users import User
 from core.models.students import Student
 from core.models.teachers import Teacher
-from core.models.assignments import Assignment
+from core.models.assignments import Assignment , AssignmentStateEnum ,GradeEnum
 
 # revision identifiers, used by Alembic.
 revision = '2087a1db8595'
@@ -68,7 +68,8 @@ def upgrade():
     assignment_2 = Assignment(student_id=student_1.id, content='THESIS T1')
     assignment_3 = Assignment(student_id=student_2.id, content='ESSAY T2')
     assignment_4 = Assignment(student_id=student_2.id, content='THESIS T2')
-
+    # assignment_4.state= AssignmentStateEnum.GRADED
+    # assignment_4.grade= GradeEnum.C
     assignment_5 = Assignment(student_id=student_1.id, content='SOLUTION T1')
 
     db.session.add(assignment_1)
