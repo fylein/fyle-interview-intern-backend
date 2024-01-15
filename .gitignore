@@ -116,6 +116,9 @@ venv.bak/
 .spyderproject
 .spyproject
 
+# miniconda
+miniconda.sh
+
 # Rope project settings
 .ropeproject
 

@@ -22,14 +22,20 @@ class AssignmentStateEnum(str, enum.Enum):
 
 class Assignment(db.Model):
     __tablename__ = 'assignments'
-    id = db.Column(db.Integer, db.Sequence('assignments_id_seq'), primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey(Student.id), nullable=False)
-    teacher_id = db.Column(db.Integer, db.ForeignKey(Teacher.id), nullable=True)
+    id = db.Column(db.Integer, db.Sequence(
+        'assignments_id_seq'), primary_key=True)
+    student_id = db.Column(
+        db.Integer, db.ForeignKey(Student.id), nullable=False)
+    teacher_id = db.Column(
+        db.Integer, db.ForeignKey(Teacher.id), nullable=True)
     content = db.Column(db.Text)
     grade = db.Column(BaseEnum(GradeEnum))
-    state = db.Column(BaseEnum(AssignmentStateEnum), default=AssignmentStateEnum.DRAFT, nullable=False)
-    created_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False)
-    updated_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False, onupdate=helpers.get_utc_now)
+    state = db.Column(BaseEnum(AssignmentStateEnum),
+                      default=AssignmentStateEnum.DRAFT, nullable=False)
+    created_at = db.Column(db.TIMESTAMP(timezone=True),
+                           default=helpers.get_utc_now, nullable=False)
+    updated_at = db.Column(db.TIMESTAMP(
+        timezone=True), default=helpers.get_utc_now, nullable=False, onupdate=helpers.get_utc_now)
 
     def __repr__(self):
         return '<Assignment %r>' % self.id
@@ -47,7 +53,8 @@ class Assignment(db.Model):
     def upsert(cls, assignment_new: 'Assignment'):
         if assignment_new.id is not None:
             assignment = Assignment.get_by_id(assignment_new.id)
-            assertions.assert_found(assignment, 'No assignment with this id was found')
+            assertions.assert_found(
+                assignment, 'No assignment with this id was found')
             assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT,
                                     'only assignment in draft state can be edited')
 
@@ -62,21 +69,29 @@ class Assignment(db.Model):
     @classmethod
     def submit(cls, _id, teacher_id, auth_principal: AuthPrincipal):
         assignment = Assignment.get_by_id(_id)
-        assertions.assert_found(assignment, 'No assignment with this id was found')
-        assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
-        assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
+        assertions.assert_found(
+            assignment, 'No assignment with this id was found')
+        assertions.assert_valid(assignment.student_id == auth_principal.student_id,
+                                'This assignment belongs to some other student')
+        assertions.assert_valid(assignment.content is not None,
+                                'assignment with empty content cannot be submitted')
+
+        # UPDATING ASSIGNMENT STATE to SUBMITTED from DRAFT
+        assignment.state = AssignmentStateEnum.SUBMITTED
+        #####
 
         assignment.teacher_id = teacher_id
         db.session.flush()
 
         return assignment
 
-
     @classmethod
     def mark_grade(cls, _id, grade, auth_principal: AuthPrincipal):
         assignment = Assignment.get_by_id(_id)
-        assertions.assert_found(assignment, 'No assignment with this id was found')
-        assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
+        assertions.assert_found(
+            assignment, 'No assignment with this id was found')
+        assertions.assert_valid(
+            grade is not None, 'assignment with empty grade cannot be graded')
 
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
@@ -91,3 +106,11 @@ class Assignment(db.Model):
     @classmethod
     def get_assignments_by_teacher(cls, teacher_id):
         return cls.filter(cls.teacher_id == teacher_id).all()
+
+    # ADDING TO GET ASSIGNMENT WHICH ARE SUBMITTED OR GRADED
+    @classmethod
+    def get_assignments_submitted_or_graded(cls):
+        return cls.filter(
+            db.or_(cls.state == AssignmentStateEnum.SUBMITTED,
+                   cls.state == AssignmentStateEnum.GRADED)
+        ).all()

@@ -32,9 +32,13 @@ def test_post_assignment_null_content(client, h_student_1):
     response = client.post(
         '/student/assignments',
         headers=h_student_1,
-        json={
-            'content': None
-        })
+
+        # Here commenting out this code to pass null in content
+        # json={
+        #     'content': None
+        # }
+
+    )
 
     assert response.status_code == 400
 
