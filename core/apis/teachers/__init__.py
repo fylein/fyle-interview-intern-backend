@@ -1,0 +1,1 @@
+from .principal import teacher_principal_resources
