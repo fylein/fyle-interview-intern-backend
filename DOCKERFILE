@@ -23,7 +23,7 @@ RUN test -f core/store.sqlite3 && rm core/store.sqlite3 || true
 # Upgrade the database
 RUN flask db upgrade -d core/migrations/
 
-# Expose port 7755 for the Flask app
+# Expose port 5000 for the Flask app
 EXPOSE 5000
 
 # Run the command to start the server
