@@ -57,14 +57,17 @@ def grade_assignment(p, incoming_payload):
 
     assignment = Assignment.get_by_id(grade_assignment_payload.id)
 
-    if assignment.state != AssignmentStateEnum.DRAFT:
-        graded_assignment = Assignment.mark_grade(
-            _id=grade_assignment_payload.id,
-            grade=grade_assignment_payload.grade,
-            auth_principal=p
-        )
-        db.session.commit()
-        graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
-        return APIResponse.respond(data=graded_assignment_dump)
+    if assignment == None:
+        return jsonify({'error': 'FyleError'}), 404
 
-    return jsonify({'error': 'FyleError'}), 400
+    if assignment.state == AssignmentStateEnum.DRAFT:
+        return jsonify({'error': 'FyleError'}), 400
+
+    graded_assignment = Assignment.mark_grade(
+        _id=grade_assignment_payload.id,
+        grade=grade_assignment_payload.grade,
+        auth_principal=p
+    )
+    db.session.commit()
+    graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
+    return APIResponse.respond(data=graded_assignment_dump)
