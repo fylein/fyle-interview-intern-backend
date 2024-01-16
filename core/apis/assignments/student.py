@@ -4,6 +4,7 @@ from core.apis import decorators
 from core.apis.responses import APIResponse
 from core.models.assignments import Assignment, AssignmentStateEnum
 
+
 from .schema import AssignmentSchema, AssignmentSubmitSchema
 student_assignments_resources = Blueprint(
     'student_assignments_resources', __name__)
@@ -55,6 +56,7 @@ def submit_assignment(p, incoming_payload):
         submitted_assignment_dump = AssignmentSchema().dump(submitted_assignment)
         return APIResponse.respond(data=submitted_assignment_dump)
 
+    # raise FyleError(400, 'only a draft assignment can be submitted')
     return jsonify({'error': 'FyleError', 'message': 'only a draft assignment can be submitted'}), 400
 
     """"""

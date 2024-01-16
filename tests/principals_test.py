@@ -1,4 +1,5 @@
 from core.models.assignments import AssignmentStateEnum, GradeEnum
+from core.models.assignments import Assignment, AssignmentStateEnum
 
 
 def test_get_assignments(client, h_principal):
@@ -11,7 +12,8 @@ def test_get_assignments(client, h_principal):
 
     data = response.json['data']
     for assignment in data:
-        assert assignment['state'] in [AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED]
+        assert assignment['state'] in [
+            AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED]
 
 
 def test_grade_assignment_draft_assignment(client, h_principal):
@@ -60,3 +62,15 @@ def test_regrade_assignment(client, h_principal):
 
     assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
     assert response.json['data']['grade'] == GradeEnum.B
+
+
+""" added to increase test coverage"""
+
+
+def test_get_assignments(client, h_principal):
+    response = client.get(
+        '/principal/teachers',
+        headers=h_principal
+    )
+
+    assert response.status_code == 200

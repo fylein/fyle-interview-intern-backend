@@ -89,8 +89,7 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     """
     response = client.post(
         '/teacher/assignments/grade',
-        headers=h_teacher_1
-        , json={
+        headers=h_teacher_1, json={
             "id": 2,
             "grade": "A"
         }
@@ -100,3 +99,22 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+""" Added to increase test coverage """
+
+
+def test_grade_assignment_cross(client, h_teacher_2):
+    """
+    I have chosen these specific parameters such that this fuction won't change the database
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 4,
+            "grade": "B"
+        }
+    )
+
+    assert response.status_code == 200

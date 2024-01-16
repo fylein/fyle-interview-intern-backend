@@ -31,7 +31,7 @@ def get_all_teachers():
 
 @principal_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
-def list_assignments(p):
+def list_assignments():
     """Returns list of assignments"""
     all_graded_submitted_assignments = Assignment.get_assignments_submitted_or_graded()
     all_graded_submitted_assignments_dump = AssignmentSchema().dump(
