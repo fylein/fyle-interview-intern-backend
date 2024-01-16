@@ -56,6 +56,40 @@ def test_post_assignment_student_1(client, h_student_1):
     assert data['state'] == 'DRAFT'
     assert data['teacher_id'] is None
 
+def test_edit_drafted_assignment_student_1(client, h_student_1):
+    content = 'ABCD TESTPOST UPDATED'
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'id': 5,
+            'content': content
+        })
+
+    assert response.status_code == 200
+
+    data = response.json['data']
+    assert data['content'] == content
+    assert data['state'] == 'DRAFT'
+    assert data['teacher_id'] is None
+    
+def test_edit_bad_assignment_student_1(client, h_student_1):
+    content = 'ABCD TESTPOST UPDATED'
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'id': 500,
+            'content': content
+        })
+    assert response.status_code == 404
+
+    data = response.json
+    assert data['error'] == 'FyleError'
+    assert data['message'] == 'No assignment with this id was found'
+    
 
 def test_submit_assignment_student_1(client, h_student_1):
     response = client.post(
@@ -73,6 +107,21 @@ def test_submit_assignment_student_1(client, h_student_1):
     assert data['state'] == 'SUBMITTED'
     assert data['teacher_id'] == 2
 
+def test_edit_submitted_assignment_student_1(client, h_student_1):
+    content = 'ABCD TESTPOST UPDATED'
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'id': 2,
+            'content': content
+        })
+    assert response.status_code == 400
+
+    data = response.json
+    assert data['error'] == 'FyleError'
+    assert data['message'] == 'only assignment in draft state can be edited'
 
 def test_assignment_resubmit_error(client, h_student_1):
     response = client.post(

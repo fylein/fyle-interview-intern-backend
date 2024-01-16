@@ -63,7 +63,6 @@ def test_grade_assignment_bad_grade(client, h_teacher_1):
 
     assert data['error'] == 'ValidationError'
 
-
 def test_grade_assignment_bad_assignment(client, h_teacher_1):
     """
     failure case: If an assignment does not exists check and throw 404
@@ -100,3 +99,19 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+    
+def test_grade_assignment(client, h_teacher_2):
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2
+        , json={
+            "id": 3,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 200
+
+    data = response.json['data']
+    assert data['grade'] == 'A'
+    assert data['state'] == 'GRADED'
