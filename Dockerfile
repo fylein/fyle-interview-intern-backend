@@ -23,4 +23,5 @@ RUN flask db upgrade -d core/migrations/
 # Expose the port the app runs on
 EXPOSE 7755
 
+# start the app
 CMD ["bash", "run.sh"]
