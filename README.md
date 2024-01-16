@@ -25,14 +25,44 @@ You will hear back within 48 hours from us via email.
 
 1. Fork this repository to your github account
 2. Clone the forked repository and proceed with steps mentioned below
+   
+## Note
+You will have to do this assignment in a unix based system. If you have windows then make sure to use the `wsl` terminal as we have to use the command `bash run.sh` in this assignment
 
-### Install requirements
+### Install requirements (Using virtualenv, Original documentation)
+
 
 ```
 virtualenv env --python=python3.8
 source env/bin/activate
 pip install -r requirements.txt
 ```
+#### In my case this code was throwing error, so I created the environment named env using conda:
+##### If You don't have conda installed in your system, then you have to execute following code to install miniconda for this assignment. If you already have conda installed in your system then you can skip this part
+```
+curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+```
+After the installation is complete, you might need to close and reopen your terminal
+
+Test the Installation:
+Verify that Miniconda is installed correctly by running:
+```
+conda --version
+```
+This should display the installed Miniconda version.
+
+Now, you have Miniconda installed on your Unix-based system, and you can use it to create and manage Python environments.
+
+
+### Now making an environment with name `env` having python=3.8 using conda (Using conda to make env)
+```
+conda create --name env python=3.8
+conda activate env
+pip install -r requirements.txt
+```
+Make sure every module is installed properly
+
 ### Reset DB
 
 ```

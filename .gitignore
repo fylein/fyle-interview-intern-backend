@@ -118,6 +118,7 @@ venv.bak/
 
 # miniconda
 miniconda.sh
+Miniconda3-latest-Linux-x86_64.sh
 
 # Rope project settings
 .ropeproject
