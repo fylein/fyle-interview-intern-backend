@@ -13,14 +13,14 @@ app.register_blueprint(teacher_assignments_resources, url_prefix='/teacher')
 app.register_blueprint(principal_assignments_resources, url_prefix='/principal')
 
 
-@app.route('/')
-def ready():
-    response = jsonify({
-        'status': 'ready',
-        'time': helpers.get_utc_now()
-    })
-
-    return response
+# @app.route('/')
+# def ready():
+#     response = jsonify({
+#         'status': 'ready',
+#         'time': helpers.get_utc_now()
+#     })
+#     print('ready')
+#     return response
 
 
 @app.errorhandler(Exception)

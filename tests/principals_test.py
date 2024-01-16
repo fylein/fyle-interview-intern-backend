@@ -12,6 +12,22 @@ def test_get_assignments(client, h_principal):
     data = response.json['data']
     for assignment in data:
         assert assignment['state'] in [AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED]
+        
+def test_get_teachers(client, h_principal):
+    response = client.get(
+        '/principal/teachers',
+        headers=h_principal
+    )
+
+    assert response.status_code == 200
+
+    data = response.json['data']
+    teacher_ids = [teacher['id'] for teacher in data]
+
+    assert len(teacher_ids) > 0  # Ensure there are teachers in the response
+
+    for teacher_id in teacher_ids:
+        assert isinstance(teacher_id, int) 
 
 
 def test_grade_assignment_draft_assignment(client, h_principal):

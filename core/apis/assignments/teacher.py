@@ -11,7 +11,6 @@ teacher_assignments_resources = Blueprint('teacher_assignments_resources', __nam
 @teacher_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
 def list_assignments(p):
-    """Returns list of assignments"""
     teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id)
     teachers_assignments_dump = AssignmentSchema().dump(teachers_assignments, many=True)
     return APIResponse.respond(data=teachers_assignments_dump)
@@ -21,10 +20,9 @@ def list_assignments(p):
 @decorators.accept_payload
 @decorators.authenticate_principal
 def grade_assignment(p, incoming_payload):
-    """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
     assignment = Assignment.get_by_id(grade_assignment_payload.id)
-    if( assignment is None):
+    if(assignment is None):
         raise FyleError(404, 'Assignment not found')
     if( p.teacher_id != assignment.teacher_id):
         raise FyleError(400, 'assignment 1 was submitted to teacher 1 and not teacher 2')
@@ -34,6 +32,6 @@ def grade_assignment(p, incoming_payload):
             grade=grade_assignment_payload.grade,
             auth_principal=p
         )
-        db.session.commit()
-        graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
-        return APIResponse.respond(data=graded_assignment_dump)
+    db.session.commit()
+    graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
+    return APIResponse.respond(data=graded_assignment_dump)
