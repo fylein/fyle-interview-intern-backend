@@ -8,5 +8,5 @@ class FyleError(Exception):
 
     def to_dict(self):
         res = dict()
-        res['message'] = self.message
+        res["message"] = self.message
         return res
