@@ -24,11 +24,11 @@ def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
 
-    assignment=Assignment.get_by_id(grade_assignment_payload['assignment_id'])
-    if (Assignment is None):
-        raise FyleError('Assignment not found', status_code=404)
+    assignment = Assignment.get_by_id(grade_assignment_payload.id)
+    if (assignment is None):
+        raise FyleError(404,'Assignment not found')
     if( p.teacher_id != assignment.teacher_id):
-        raise FyleError('assignment 1 was submitted to teacher 1 and not teacher 2',status_code=400)
+        raise FyleError(400,'assignment 1 was submitted to teacher 1 and not teacher 2')
     else:
         graded_assignment = Assignment.mark_grade(
             _id=grade_assignment_payload.id,
