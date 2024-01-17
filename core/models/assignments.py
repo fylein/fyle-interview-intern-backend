@@ -67,7 +67,8 @@ class Assignment(db.Model):
         assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
         assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT , 'only a draft assignment can be submitted')
-        
+        assertions.assert_valid(teacher_id is not None, 'teacher_id is not provided')
+
         assignment.state = AssignmentStateEnum.SUBMITTED
         assignment.teacher_id = teacher_id
         db.session.flush()
@@ -94,10 +95,12 @@ class Assignment(db.Model):
 
     @classmethod
     def get_assignments_by_student(cls, student_id):
+        assertions.assert_valid(student_id is not None, 'student_id is not provided')
         return cls.filter(cls.student_id == student_id).all()
 
     @classmethod
     def get_assignments_by_teacher(cls, teacher_id):
+        assertions.assert_valid(teacher_id is not None, 'teacher_id is not provided')
         return cls.filter(cls.teacher_id == teacher_id).all()
 
     @classmethod 

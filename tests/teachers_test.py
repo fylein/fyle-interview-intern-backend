@@ -100,3 +100,11 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+def test_teacher_header_missing(client):
+    response = client.get(
+        '/teacher/assignments',
+    )
+
+    assert response.status_code == 401
+    assert response.json['error'] == 'FyleError'
