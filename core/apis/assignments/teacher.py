@@ -3,7 +3,7 @@ from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
 from core.models.assignments import Assignment
-
+from core.libs.exceptions import FyleError
 from .schema import AssignmentSchema, AssignmentGradeSchema
 teacher_assignments_resources = Blueprint('teacher_assignments_resources', __name__)
 
@@ -24,11 +24,17 @@ def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
 
-    graded_assignment = Assignment.mark_grade(
-        _id=grade_assignment_payload.id,
-        grade=grade_assignment_payload.grade,
-        auth_principal=p
-    )
-    db.session.commit()
-    graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
-    return APIResponse.respond(data=graded_assignment_dump)
+    assignment=Assignment.get_by_id(grade_assignment_payload['assignment_id'])
+    if (Assignment is None):
+        raise FyleError('Assignment not found', status_code=404)
+    if( p.teacher_id != assignment.teacher_id):
+        raise FyleError('assignment 1 was submitted to teacher 1 and not teacher 2',status_code=400)
+    else:
+        graded_assignment = Assignment.mark_grade(
+            _id=grade_assignment_payload.id,
+            grade=grade_assignment_payload.grade,
+            auth_principal=p
+        )
+        db.session.commit()
+        graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
+        return APIResponse.respond(data=graded_assignment_dump)

@@ -26,7 +26,7 @@ def list_all_assignments(p):
 def grade_assignment(p,incoming_payload):
     """grade an assignment"""
     grade_assignment_payload=AssignmentGradeSchema().load(incoming_payload)
-    graded_assignment=Assignment.mark_grade_principal(
+    graded_assignment=Assignment.mark_grade(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,
         auth_principal=p
