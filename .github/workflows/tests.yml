@@ -1,0 +1,44 @@
+name: Pytests
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  pytests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11.0
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Run server
+        run: |
+          export FLASK_APP=core/server.py
+          rm core/store.sqlite3
+          flask db upgrade -d core/migrations/
+          coverage run -m pytest tests/
+          coverage report -m
+          coverage html -d coverage_html_unit
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage_unit
+          path: coverage_html_unit
