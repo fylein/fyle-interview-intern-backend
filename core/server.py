@@ -6,10 +6,14 @@ from core.libs import helpers
 from core.libs.exceptions import FyleError
 from werkzeug.exceptions import HTTPException
 
+from core.apis.assignments.principal import principal_assignments_resources
+
 from sqlalchemy.exc import IntegrityError
 
 app.register_blueprint(student_assignments_resources, url_prefix='/student')
 app.register_blueprint(teacher_assignments_resources, url_prefix='/teacher')
+app.register_blueprint(principal_assignments_resources,
+                       url_prefix='/principal')
 
 
 @app.route('/')
