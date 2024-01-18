@@ -81,6 +81,10 @@ def test_grade_assignment_bad_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+# test case to increase coverage
+def test_valid_draft_assignment(client, h_teacher_2):
+    response = client.post("/teacher/assignments/grade", headers=h_teacher_2, json={"id": 4, "grade": "D"})
+    assert response.status_code == 200
 
 
 def test_grade_assignment_draft_assignment(client, h_teacher_1):

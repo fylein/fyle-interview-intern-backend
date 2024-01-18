@@ -1,12 +1,10 @@
 from flask import Blueprint
-from core import db
 from core.apis import decorators
+from core import db
 from core.apis.responses import APIResponse
-from core.models.assignments import Assignment
-from core.models.teachers import Teacher
+from core.models.assignments import Assignment, Teacher
 from core.apis.teachers.schema import TeacherSchema
-
-from .schema import AssignmentSchema, AssignmentSubmitSchema
+from .schema import AssignmentSchema, AssignmentGradeSchema
 
 principal_assignments_resources = Blueprint('principal_assignments_resources', __name__)
 
@@ -14,19 +12,19 @@ principal_assignments_resources = Blueprint('principal_assignments_resources', _
 
 @principal_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
-def get_all_assignments(p):
-    """Returns list of assignments"""
-    teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id)
-    teachers_assignments_dump = AssignmentSchema().dump(teachers_assignments, many=True)
-    return APIResponse.respond(data=teachers_assignments_dump)
+def list_submitted_graded_assignments(p):
+    """Returns a list of submitted and graded assignments"""
+    assignments = Assignment.get_graded_submitted_assignments(p.principal_id)
+    assignments_data = AssignmentSchema().dump(assignments, many=True)
+    return APIResponse.respond(data=assignments_data)
 
 # GET /principal/teachers
 
 @principal_assignments_resources.route('/teachers', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
-def get_all_teachers(p):
+def list_teachers(p):
     """Returns list of teachers"""
-    teachers = Teacher.get_all_teachers()
+    teachers = Teacher.get_teachers(p.principal_id)
     teachers_dump = TeacherSchema().dump(teachers, many=True)
     return APIResponse.respond(data=teachers_dump)
 
@@ -35,10 +33,10 @@ def get_all_teachers(p):
 @principal_assignments_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
 @decorators.authenticate_principal
-def grade_assignment(p, payload):
-    """Grades an assignment"""
-    grade_assignment_payload = AssignmentSubmitSchema().load(payload)
-
+def grade_assignment(p, incoming_payload):
+    """Grade an assignment"""
+    grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
+    
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,

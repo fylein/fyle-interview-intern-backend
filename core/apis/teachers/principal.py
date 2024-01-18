@@ -1,0 +1,1 @@
+# list all teachers endpoint completed in assignments/principal.py
