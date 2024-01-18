@@ -15,6 +15,11 @@ We are an extremely transparent organization. Check out our [careers page](https
 
 This challenge involves writing a backend service for a classroom. The challenge is described in detail [here](./Application.md)
 
+## Docker Pull Command
+```
+docker pull roboroaster/fyle-interview-challenge-dockerized
+
+```
 
 ## What happens next?
 

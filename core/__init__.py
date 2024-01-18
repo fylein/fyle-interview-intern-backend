@@ -23,4 +23,4 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor.close()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=8080)
