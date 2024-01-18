@@ -21,5 +21,3 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.close()
-if __name__ == '__main__':
-    app.run(debug=True)
