@@ -7,7 +7,16 @@ set -e
 # find . -type d \( -name env -o -name venv  \) -prune -false -o -name "*.pyc" -exec rm -rf {} \;
 
 # Run required migrations
+FILE="core/store.sqlite3"
+
 export FLASK_APP=core/server.py
+
+# Check if the file exists
+if [ -f "$FILE" ]; then
+    rm "$FILE"
+fi
+
+flask db upgrade -d core/migrations/
 
 # flask db init -d core/migrations/
 # flask db migrate -m "Initial migration." -d core/migrations/
