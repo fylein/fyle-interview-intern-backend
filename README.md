@@ -37,7 +37,7 @@ pip install -r requirements.txt
 
 ```
 export FLASK_APP=core/server.py
-rm core/store.sqlite3
+rm instance/store.sqlite3
 flask db upgrade -d core/migrations/
 ```
 ### Start Server
@@ -54,3 +54,16 @@ pytest -vvv -s tests/
 # pytest --cov
 # open htmlcov/index.html
 ```
+## Building and Running with Docker:
+### Build the Docker image:
+
+```
+docker build -t <app-name> .
+```
+
+### Run the Docker container:
+```
+docker run -p 7755:7755 <app-name>
+```
+
+Now, your Flask application should be accessible at http://localhost:7755.
