@@ -9,7 +9,7 @@ RUN virtualenv env --python=python3.8
 RUN /bin/bash -c "source env/bin/activate"
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 3000
+EXPOSE 7755
 
 ENV FLASK_APP=core/server.py
 
