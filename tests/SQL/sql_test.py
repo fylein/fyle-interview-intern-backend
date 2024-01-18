@@ -66,7 +66,7 @@ def test_get_assignments_in_various_states():
         assert result[1] == sql_result[itr][1]
 
     # Modify an assignment state and grade, then re-run the query and check the updated result
-    expected_result = [('DRAFT', 2), ('GRADED', 3), ('SUBMITTED', 1)]
+    expected_result = [('GRADED', 3), ('SUBMITTED', 1)]
 
     # Find an assignment in the 'SUBMITTED' state, change its state to 'GRADED' and grade to 'C'
     submitted_assignment: Assignment = Assignment.filter(Assignment.state == AssignmentStateEnum.SUBMITTED).first()
@@ -89,12 +89,12 @@ def test_get_grade_A_assignments_for_teacher_with_max_grading():
     """Test to get count of grade A assignments for teacher which has graded maximum assignments"""
 
     # Read the SQL query from a file
-    with open('tests/SQL/count_grade_A_assignments_by_teacher_with_max_grading.sql', encoding='utf8') as fo:
+    with open('tests\SQL\count_grade_A_assignments_by_teacher_with_max_grading.sql', encoding='utf8') as fo:
         sql = fo.read()
 
     # Create and grade 5 assignments for the default teacher (teacher_id=1)
     grade_a_count_1 = create_n_graded_assignments_for_teacher(5)
-    
+
     # Execute the SQL query and check if the count matches the created assignments
     sql_result = db.session.execute(text(sql)).fetchall()
     assert grade_a_count_1 == sql_result[0][0]

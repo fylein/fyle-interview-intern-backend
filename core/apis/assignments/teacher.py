@@ -21,14 +21,13 @@ def list_assignments(p):
 @decorators.accept_payload
 @decorators.authenticate_principal
 def grade_assignment(p, incoming_payload):
-    """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
-
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,
         auth_principal=p
     )
+
     db.session.commit()
     graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
     return APIResponse.respond(data=graded_assignment_dump)
