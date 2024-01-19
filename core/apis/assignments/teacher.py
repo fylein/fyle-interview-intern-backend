@@ -23,8 +23,10 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
+    
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
     get_assignment = Assignment.get_by_id(incoming_payload['id'])
+
     if get_assignment is None: 
         raise FyleError(404, 'Assignment does not exist')
     if get_assignment.teacher_id != p.teacher_id:

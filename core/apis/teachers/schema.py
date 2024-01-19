@@ -15,6 +15,6 @@ class TeacherSchema(SQLAlchemyAutoSchema):
     updated_at = auto_field(dump_only=True)
     user_id = auto_field(dump_only=True)
 
-    @post_load
-    def initiate_class(self, data_dict, many, partial):
-        return Teacher(**data_dict)
+    # @post_load
+    # def initiate_class(self, data_dict, many, partial):
+    #     return Teacher(**data_dict)
