@@ -2,6 +2,7 @@ from flask import Blueprint
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
+from core.libs.exceptions import FyleError
 from core.models.assignments import Assignment
 
 from .schema import AssignmentSchema, AssignmentGradeSchema
@@ -22,8 +23,15 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
+    
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
+    get_assignment = Assignment.get_by_id(incoming_payload['id'])
 
+    if get_assignment is None: 
+        raise FyleError(404, 'Assignment does not exist')
+    if get_assignment.teacher_id != p.teacher_id:
+        raise FyleError(400, 'Assignment does not belong to this teacher')
+    
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,
