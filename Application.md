@@ -24,13 +24,50 @@ Please fork the repository into your account and continue the development in you
 
 Your tasks
 - Add missing APIs mentioned here and get the automated tests to pass
+
+  1. GET /principal/assignments
+
+     This API provides assignments that are submitted.
+     Result of triggered API : https://drive.google.com/file/d/189fvawo8JwW1Spj3a5uAQU_jjb2FERyN/view?usp=sharing
+
+  2. GET /principal/teachers
+
+     This API provides list of teachers.
+     Result of triggered API : https://drive.google.com/file/d/1OoxzVvY1Xx86kYoSVpUeymotteUnM3Ex/view?usp=sharing
+
+  3. POST /principal/assignments/grade
+
+     This API provides list of teachers.
+     Result of triggered API : https://drive.google.com/file/d/1i41M4wWHBkQzj4D32OlCR0gNKJBnXEP-/view?usp=sharing
+
 - Add tests for grading API
+
+  https://drive.google.com/file/d/1r_O6aTxwt1ktGjfnxgHV6rI1q60Su-Rb/view?usp=sharing
+
 - Please be aware that intentional bugs have been incorporated into the application, leading to test failures. Kindly address and rectify these issues as part of the assignment.
+
+  1. bug : while running APIs, providing different user_id for different users were triggering the APIs.
+     for example: X-Principal - {user_id : 1, principal_id = 1} was triggering the APIs by principal.
+     fix : Added additional validations to check user authenticity in core/apis/decorators.py file
+
+  2. bug : even after submitting assignment, the state of assignmnet was not getting updated.
+     fix : Added `assignment.state = AssignmentStateEnum.SUBMITTED` in core/models/assignment.py line 72.
+
 - All tests should pass
+
+  Done
+
 - Get the test coverage to 94% or above
+
+  Added 6 more tes cases to achieve coverage above 94 %.
+  Current coverage : 97%.
+  Result : https://drive.google.com/file/d/1mSnYxQdXlUreXXifu8-7xpnCiL_1meOm/view?usp=sharing
+
 - There are certain SQL tests present inside `tests/SQL/`. You have to write SQL in following files:
-    - count_grade_A_assignments_by_teacher_with_max_grading.sql
-    - number_of_assignments_per_state.sql
+  - count_grade_A_assignments_by_teacher_with_max_grading.sql
+    done
+  - number_of_assignments_per_state.sql
+    done
 - Optionally, Dockerize your application by creating a Dockerfile and a docker-compose.yml file, providing clear documentation on building and running the application with Docker, to stand out in your submission
 
 ***Once you are done with your task, please use [this form](https://forms.gle/dJLNMyBmBCJSv6EH7) to complete your submission.***
