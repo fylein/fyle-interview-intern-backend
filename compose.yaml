@@ -1,0 +1,17 @@
+# Instructions to start the application:
+# 1. Use the Dockerfile present in current folder to create image in Docker. You can use the below command in the current folder:
+## docker build -t fyle_interview_intern_backend_main .
+### This will create Docker image with a name "fyle_interview_intern_backend_main" which should be accessible in your Docker app
+# 2. Go to Docker app and navigate to Images section. Click triangle play button besides application name. Expand "Optional Settings" and input "7755" port in "Host Port" field under Port section.
+# 3. Click run to create a new container and start the server. API will be running on http://localhost:7755/
+
+#-----------------------------------------------------------------------------------------------------------
+# Here the instructions define application as a service called "server".
+# This service is built from the Dockerfile in the current directory(which is why context is ".").
+# Additionally Fyle backend service will be running on port 7755 after launching image in Docker
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 7755:7755
