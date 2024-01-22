@@ -103,6 +103,8 @@ class Assignment(db.Model):
 
     @classmethod
     def mark_grade(cls, _id, grade, auth_principal: AuthPrincipal):
+        if not (_id and grade and auth_principal):
+            assertions.assert_valid(None, "Payload is missing")
         assignment = Assignment.get_by_id(_id)
         cls.assert_assignment_found(assignment, _id)
         assertions.assert_valid(

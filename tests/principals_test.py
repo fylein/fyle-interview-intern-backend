@@ -50,6 +50,37 @@ def test_grade_assignment(client, h_principal):
     assert response.json["data"]["grade"] == GradeEnum.C
 
 
+def test_grade_invalid_assignment_id(client, h_principal):
+    """
+    failure case: If an assignment does not exists check and throw 404
+    """
+    response = client.post(
+        "/principal/assignments/grade",
+        json={"id": 999, "grade": GradeEnum.A.value},
+        headers=h_principal,
+    )
+
+    assert response.status_code == 404
+    data = response.json
+
+    assert data["error"] == "FyleError"
+
+
+def test_grade_assignment_missing_payload(client, h_principal):
+    """
+    failure case: If payload is missing and throw 404
+    """
+    response = client.post(
+        "/principal/assignments/grade",
+        headers=h_principal,
+    )
+
+    assert response.status_code == 400
+    data = response.json
+
+    assert data["error"] == "ValidationError"
+
+
 def test_regrade_assignment(client, h_principal):
     response = client.post(
         "/principal/assignments/grade",

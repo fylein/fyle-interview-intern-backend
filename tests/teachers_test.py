@@ -101,3 +101,14 @@ def test_grade_assignment_already_graded_assignment(client, h_teacher_1):
     data = response.json
 
     assert data["error"] == "FyleError"
+
+
+def test_grade_assignment_missing_payload(client, h_teacher_1):
+    """_summary_
+    failure case: If payload is missing and throw 404
+    """
+    response = client.post("/teacher/assignments/grade", headers=h_teacher_1)
+    assert response.status_code == 400
+    data = response.json
+
+    assert data["error"] == "ValidationError"
