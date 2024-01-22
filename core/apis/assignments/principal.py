@@ -4,7 +4,7 @@ from core.models.assignments import Assignment
 from .schema import AssignmentSchema, AssignmentSubmitSchema
 from core.apis.responses import APIResponse
 
-principal_assignments_resources = Blueprint('principal_assignments_resources', __name__)
+principal_assignments_resources = Blueprint("principal_assignments_resources", __name__)
 
 
 @principal_assignments_resources.route(
