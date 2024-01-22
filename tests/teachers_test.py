@@ -92,7 +92,7 @@ def test_grade_assignment_submitted_assignment(client, h_teacher_1):
 def test_grade_assignment_already_graded_assignment(client, h_teacher_1):
     """
     failure case: only a submitted assignment can be graded
-    and already graded assigment can be regraded by principal only"""
+    and already graded assignment can be regraded by principal only"""
     response = client.post(
         "/teacher/assignments/grade", headers=h_teacher_1, json={"id": 1, "grade": "A"}
     )

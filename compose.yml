@@ -1,0 +1,6 @@
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 7755:7755
