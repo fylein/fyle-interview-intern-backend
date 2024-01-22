@@ -35,10 +35,16 @@ def authenticate_principal(func):
 
         if request.path.startswith('/student'):
             assertions.assert_true(p.student_id is not None, 'requester should be a student')
+            student = Student.get_by_id(p.student_id)
+            assertions.assert_true(p.user_id == student.user_id, 'authentication failed')
         elif request.path.startswith('/teacher'):
             assertions.assert_true(p.teacher_id is not None, 'requester should be a teacher')
+            teacher = Teacher.get_by_id(p.teacher_id)
+            assertions.assert_true(p.user_id == teacher.user_id, 'authentication failed')
         elif request.path.startswith('/principal'):
             assertions.assert_true(p.principal_id is not None, 'requester should be a principal')
+            principal = Principal.get_by_id(p.principal_id)
+            assertions.assert_true(p.user_id == principal.user_id, 'authentication failed')
         else:
             assertions.assert_found(None, 'No such api')
 
