@@ -1,0 +1,300 @@
+{
+	"info": {
+		"_postman_id": "f4794356-7c20-4053-b0ce-a8a9906a2131",
+		"name": "Fyle",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16203749"
+	},
+	"item": [
+		{
+			"name": "Assignments",
+			"item": [
+				{
+					"name": "Student",
+					"item": [
+						{
+							"name": "Create an assignment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-Principal",
+										"value": "{\"user_id\":2, \"student_id\":2}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"content\": \"some text\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{link}}/student/assignments",
+									"host": [
+										"{{link}}"
+									],
+									"path": [
+										"student",
+										"assignments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Submit an assignment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-Principal",
+										"value": "{\"user_id\":1, \"student_id\":2}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 7,\n    \"teacher_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{link}}/student/assignments/submit",
+									"host": [
+										"{{link}}"
+									],
+									"path": [
+										"student",
+										"assignments",
+										"submit"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "List all assignments created by a student",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Principal",
+										"value": "{\"user_id\":5, \"student_id\":2}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{link}}/student/assignments",
+									"host": [
+										"{{link}}"
+									],
+									"path": [
+										"student",
+										"assignments"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Principal",
+					"item": [
+						{
+							"name": "List all submitted and graded assignments",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Principal",
+										"value": "{\"user_id\":5, \"principal_id\":1}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{link}}/principal/assignments",
+									"host": [
+										"{{link}}"
+									],
+									"path": [
+										"principal",
+										"assignments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Re/Grade an assignment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-Principal",
+										"value": "{\"user_id\":5, \"principal_id\":1}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":  2,\n    \"grade\": \"A\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{link}}/principal/assignments/grade",
+									"host": [
+										"{{link}}"
+									],
+									"path": [
+										"principal",
+										"assignments",
+										"grade"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Teacher",
+					"item": [
+						{
+							"name": "List all assignments submitted to this teacher",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Principal",
+										"value": "{\"user_id\":3, \"teacher_id\":1}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{link}}//teacher/assignments",
+									"host": [
+										"{{link}}"
+									],
+									"path": [
+										"",
+										"teacher",
+										"assignments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Grade an assignment",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "X-Principal",
+										"value": "{\"user_id\":3, \"teacher_id\":1}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\":  7,\n    \"grade\": \"A\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{link}}//teacher/assignments/grade",
+									"host": [
+										"{{link}}"
+									],
+									"path": [
+										"",
+										"teacher",
+										"assignments",
+										"grade"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Teachers",
+			"item": [
+				{
+					"name": "Principal",
+					"item": [
+						{
+							"name": "List of teachers",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-Principal",
+										"value": "{\"user_id\":5, \"principal_id\":1}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{link}}/principal/teachers",
+									"host": [
+										"{{link}}"
+									],
+									"path": [
+										"principal",
+										"teachers"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "link",
+			"value": "https://silver-journey-vwgjv4j49xwhpxw6-7755.app.github.dev/",
+			"type": "string"
+		}
+	]
+}

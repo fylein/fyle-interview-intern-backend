@@ -1,0 +1,7 @@
+version: '3'
+services:
+  webapp:
+    build: .
+    ports:
+    
+      - '7755'
