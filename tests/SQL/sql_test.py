@@ -62,28 +62,18 @@ def test_get_assignments_in_various_states():
         sql = fo.read()
 
     sql_result = db.session.execute(text(sql)).fetchall()
-
-    for result in expected_result:
-        status, count_expected = result
-
-        # Check if the status is present in sql_result
-        matching_row = next((row for row in sql_result if row[0] == status), None)
-
-        # If the status is present, assert that the counts match
-        if matching_row:
-            assert count_expected == matching_row[1]
+    # Iterate over the expected results and check if each state is present in sql_result
+    for expected_state, expected_count in expected_result:
+        # Find the corresponding tuple in sql_result
+        matching_tuple = next(
+            (result for result in sql_result if result[0] == expected_state), None
+        )
+        if matching_tuple is not None:
+            actual_count = matching_tuple[1] if matching_tuple else 0
+            assert expected_count == actual_count
         else:
-            # If the status is not present, assert that the expected count is 0
-            assert (
-                count_expected == 0
-            ), f"Expected count for status {status} is {count_expected}, but it was not found in sql_result."
-
-    # Check for any extra statuses in sql_result that are not in expected_result
-    for row in sql_result:
-        status_sql, count_sql = row
-        assert any(
-            status == status_sql for status, _ in expected_result
-        ), f"Unexpected status {status_sql} found in sql_result with count {count_sql}."
+            sql_result.append((expected_state, 0))
+    assert len(expected_result) == len(sql_result)
 
     # Modify an assignment state and grade, then re-run the query and check the updated result
     expected_result = [("DRAFT", 2), ("GRADED", 3), ("SUBMITTED", 1)]
@@ -102,28 +92,17 @@ def test_get_assignments_in_various_states():
 
     # Execute the SQL query again and compare the updated result with the expected result
     sql_result = db.session.execute(text(sql)).fetchall()
-
-    for result in expected_result:
-        status, count_expected = result
-
-        # Check if the status is present in sql_result
-        matching_row = next((row for row in sql_result if row[0] == status), None)
-
-        # If the status is present, assert that the counts match
-        if matching_row:
-            assert count_expected == matching_row[1]
+    # Iterate over the expected results and check if each state is present in sql_result
+    for expected_state, expected_count in expected_result:
+        matching_tuple = next(
+            (result for result in sql_result if result[0] == expected_state), None
+        )
+        if matching_tuple is not None:
+            actual_count = matching_tuple[1] if matching_tuple else 0
+            assert expected_count == actual_count
         else:
-            # If the status is not present, assert that the expected count is 0
-            assert (
-                count_expected == 0
-            ), f"Expected count for status {status} is {count_expected}, but it was not found in sql_result."
-
-    # Check for any extra statuses in sql_result that are not in expected_result
-    for row in sql_result:
-        status_sql, count_sql = row
-        assert any(
-            status == status_sql for status, _ in expected_result
-        ), f"Unexpected status {status_sql} found in sql_result with count {count_sql}."
+            sql_result.append((expected_state, 0))
+    assert len(expected_result) == len(sql_result)
 
 
 def test_get_grade_A_assignments_for_teacher_with_max_grading():
@@ -138,14 +117,12 @@ def test_get_grade_A_assignments_for_teacher_with_max_grading():
 
     # Create and grade 5 assignments for the default teacher (teacher_id=1)
     grade_a_count_1 = create_n_graded_assignments_for_teacher(5)
-
     # Execute the SQL query and check if the count matches the created assignments
     sql_result = db.session.execute(text(sql)).fetchall()
     assert grade_a_count_1 == sql_result[0][0]
 
     # Create and grade 10 assignments for a different teacher (teacher_id=2)
     grade_a_count_2 = create_n_graded_assignments_for_teacher(10, 2)
-
     # Execute the SQL query again and check if the count matches the newly created assignments
     sql_result = db.session.execute(text(sql)).fetchall()
     assert grade_a_count_2 == sql_result[0][0]
