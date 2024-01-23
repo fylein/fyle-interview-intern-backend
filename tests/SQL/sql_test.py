@@ -1,5 +1,5 @@
 import random
-from sqlalchemy import text
+from  SQLAlchemy import text
 
 from core import db
 from core.models.assignments import Assignment, AssignmentStateEnum, GradeEnum
