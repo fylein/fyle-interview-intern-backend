@@ -54,15 +54,3 @@ def h_teacher_2():
     }
 
     return headers
-
-
-@pytest.fixture
-def h_principal():
-    headers = {
-        'X-Principal': json.dumps({
-            'principal_id': 1,
-            'user_id': 5
-        })
-    }
-
-    return headers

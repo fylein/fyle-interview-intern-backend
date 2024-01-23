@@ -8,7 +8,7 @@ Create Date: 2021-09-16 10:11:14.484440
 from alembic import op
 import sqlalchemy as sa
 from core import db
-from core.apis.decorators import AuthPrincipal
+from core.apis.decorators import Principal
 from core.models.users import User
 from core.models.students import Student
 from core.models.teachers import Teacher
@@ -82,19 +82,19 @@ def upgrade():
     Assignment.submit(
         _id=assignment_1.id,
         teacher_id=teacher_1.id,
-        auth_principal=AuthPrincipal(user_id=student_1.user_id, student_id=student_1.id)
+        principal=Principal(user_id=student_1.user_id, student_id=student_1.id)
     )
 
     Assignment.submit(
         _id=assignment_3.id,
         teacher_id=teacher_2.id,
-        auth_principal=AuthPrincipal(user_id=student_2.user_id, student_id=student_2.id)
+        principal=Principal(user_id=student_2.user_id, student_id=student_2.id)
     )
 
     Assignment.submit(
         _id=assignment_4.id,
         teacher_id=teacher_2.id,
-        auth_principal=AuthPrincipal(user_id=student_2.user_id, student_id=student_2.id)
+        principal=Principal(user_id=student_2.user_id, student_id=student_2.id)
     )
 
     db.session.commit()
