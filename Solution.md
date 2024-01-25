@@ -24,7 +24,7 @@ All the missings are added/created
 2. All tests are passed.
 3. Test coverage is 99%.
 
-**Note :** In ,core/server.py, statements at line 43 and 51 are not getting testing. Both errors 1. integrity error, 2. Internal Error. Based on the APIs and remaining additions, "I think we won't be able to integrity and internal error." If we ignore both conditions in server.py we will get 100% coverage of the tests.
+**Note :** In ,core/server.py, statements at line 43 and 51 are not getting testing. Both errors 1. integrity error, 2. Internal Error. Based on the APIs and remaining additions, "I think we won't be able to get integrity and internal error." If we ignore both conditions in server.py we will get 100% coverage of the tests.
 
 **Note :**  Use below command for pytesting and get info about which are statements are not being tests also
 ```
