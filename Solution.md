@@ -17,7 +17,7 @@ At every change in the code in following format a comment is added at the start
 
 
 ### 1. Missing APIs 
-All the missings are added/created
+All the missings APIs are added/created
 
 ### 2. Tests
 1. Additional Tests are created.
