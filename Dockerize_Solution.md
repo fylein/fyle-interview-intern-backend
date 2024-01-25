@@ -58,6 +58,20 @@ EXPOSE 7755
 Make sure you have a file named `docker-compose.yml` in the root of your project with the following content:
 
 ```yaml
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bash run.sh
+    ports:
+      - "7755:7755"
+    volumes:
+      - /home/sri/fyle-interview-intern-backend:/fyle-interview-intern-backend  # Use the absolute path
+    environment:
+      - FLASK_APP=core/server.py
 
 ```
 
