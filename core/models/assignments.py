@@ -25,7 +25,8 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, db.Sequence('assignments_id_seq'), primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey(Student.id), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey(Teacher.id), nullable=True)
-    content = db.Column(db.Text)
+    # Change 1 : Content cannot be null 
+    content = db.Column(db.Text,nullable=False)
     grade = db.Column(BaseEnum(GradeEnum))
     state = db.Column(BaseEnum(AssignmentStateEnum), default=AssignmentStateEnum.DRAFT, nullable=False)
     created_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False)
@@ -50,11 +51,12 @@ class Assignment(db.Model):
             assertions.assert_found(assignment, 'No assignment with this id was found')
             assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT,
                                     'only assignment in draft state can be edited')
-
             assignment.content = assignment_new.content
+
         else:
             assignment = assignment_new
             db.session.add(assignment_new)
+            
 
         db.session.flush()
         return assignment
@@ -65,10 +67,11 @@ class Assignment(db.Model):
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
-
+        # Change 2 : Check if the assignment is in the DRAFT state for resubmission
+        assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT, 'only a draft assignment can be submitted')
         assignment.teacher_id = teacher_id
+        assignment.state = AssignmentStateEnum.SUBMITTED
         db.session.flush()
-
         return assignment
 
 
@@ -77,9 +80,16 @@ class Assignment(db.Model):
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
-
+        # Change 9 : For teacher and principal user differentiation
+        if auth_principal.teacher_id:
+            # Change 3 : Teacher Matching
+            assertions.assert_valid(auth_principal.teacher_id == assignment.teacher_id, 'Teacher mismatch for grading')
+        else:
+            # Change 10 : Principal can't grade draft assignment
+            assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, 'Assignment in draft state cannot be graded by principal')
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
+
         db.session.flush()
 
         return assignment
@@ -91,3 +101,10 @@ class Assignment(db.Model):
     @classmethod
     def get_assignments_by_teacher(cls, teacher_id):
         return cls.filter(cls.teacher_id == teacher_id).all()
+    
+    # Change 8 : method created to return all assignments which are submitter or graded
+    @classmethod
+    def get_assigments_submitted_and_graded(cls):
+        return cls.filter((cls.state==AssignmentStateEnum.GRADED) | (cls.state==AssignmentStateEnum.SUBMITTED)).all()
+
+    

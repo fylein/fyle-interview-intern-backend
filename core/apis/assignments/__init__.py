@@ -1,2 +1,4 @@
 from .student import student_assignments_resources
 from .teacher import teacher_assignments_resources
+# Change 6: principal_assignments_resources imported
+from .principal import principal_assignments_resources
