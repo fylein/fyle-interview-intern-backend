@@ -58,37 +58,7 @@ EXPOSE 7755
 Make sure you have a file named `docker-compose.yml` in the root of your project with the following content:
 
 ```yaml
-version: '3'
 
-services:
-  postgres_db:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: credit_approval_db
-      POSTGRES_USER: sri
-      POSTGRES_PASSWORD: 123
-    ports:
-      - "5432:5432"
-    networks:
-      - my_network
-
-  django_app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./credit_approval_system
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres_db
-    networks:
-      - my_network
-
-networks:
-  my_network:
-    driver: bridge
 ```
 
 ### Step 5: Build and Run the Docker Containers
