@@ -12,11 +12,10 @@ principal_assignments_resources = Blueprint('principal_assignments_resources', _
 @principal_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
 def list_all_graded_and_submitted_assignments(p):
-    
-    submitted_graded_assignments = Assignment.get_all_submitted_and_graded_assignments()
-    print(submitted_graded_assignments)
-    data = AssignmentSchema().dump(submitted_graded_assignments, many=True)
-    return APIResponse.respond(data=data)
+        submitted_graded_assignments = Assignment.get_all_submitted_and_graded_assignments()
+        data = AssignmentSchema().dump(submitted_graded_assignments, many=True)
+        return APIResponse.respond(data=data)
+
 
 @principal_assignments_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
@@ -24,7 +23,7 @@ def list_all_graded_and_submitted_assignments(p):
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
-    graded_assignment = Assignment.mark_grade(
+    graded_assignment = Assignment.mark_by_principal(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,
         auth_principal=p
