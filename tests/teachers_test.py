@@ -29,7 +29,9 @@ def test_get_assignments_teacher_2(client, h_teacher_2):
 
 
 def test_grade_assignment_cross(client, h_teacher_2):
-  
+    """
+    failure case: assignment 1 was submitted to teacher 1 and not teacher 2
+    """
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_2,
@@ -46,7 +48,9 @@ def test_grade_assignment_cross(client, h_teacher_2):
 
 
 def test_grade_assignment_bad_grade(client, h_teacher_1):
-
+    """
+    failure case: API should allow only grades available in enum
+    """
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_1,
@@ -63,7 +67,9 @@ def test_grade_assignment_bad_grade(client, h_teacher_1):
 
 
 def test_grade_assignment_bad_assignment(client, h_teacher_1):
- 
+    """
+    failure case: If an assignment does not exists check and throw 404
+    """
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_1,
@@ -80,7 +86,9 @@ def test_grade_assignment_bad_assignment(client, h_teacher_1):
 
 
 def test_grade_assignment_draft_assignment(client, h_teacher_1):
-  
+    """
+    failure case: only a submitted assignment can be graded
+    """
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_1
@@ -112,7 +120,9 @@ def test_grade_assignment_submitted_assignment(client, h_teacher_1):
     assert data['state'] == 'GRADED'
 
 def test_grade_assignment_already_graded_assignment(client, h_teacher_1):
-   
+    """
+    failure case: only a submitted assignment can be graded
+    and already graded assigment can be regraded by principal only"""
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_1
