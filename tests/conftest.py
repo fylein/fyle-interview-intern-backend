@@ -1,4 +1,4 @@
-import pytest
+from tests import pytest
 import json
 from tests import app
 
