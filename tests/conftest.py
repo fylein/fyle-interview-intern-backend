@@ -1,4 +1,4 @@
-import pytest
+from tests import pytest
 import json
 from tests import app
 
@@ -61,6 +61,17 @@ def h_principal():
     headers = {
         'X-Principal': json.dumps({
             'principal_id': 1,
+            'user_id': 5
+        })
+    }
+
+    return headers
+
+@pytest.fixture
+def h_invalid_header():
+    headers = {
+        'X-Principal': json.dumps({
+            'student_id': 1,
             'user_id': 5
         })
     }

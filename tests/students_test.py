@@ -25,18 +25,15 @@ def test_get_assignments_student_2(client, h_student_2):
 
 
 def test_post_assignment_null_content(client, h_student_1):
-    """
-    failure case: content cannot be null
-    """
 
     response = client.post(
         '/student/assignments',
         headers=h_student_1,
         json={
             'content': None
-        })
+        }) 
 
-    assert response.status_code == 400
+    assert response.status_code == 400 # Error
 
 
 def test_post_assignment_student_1(client, h_student_1):
@@ -56,6 +53,23 @@ def test_post_assignment_student_1(client, h_student_1):
     assert data['state'] == 'DRAFT'
     assert data['teacher_id'] is None
 
+def test_edit_assignment_student_1(client, h_student_1):
+    content = 'EFGH TESTPOST'
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'content': content,
+            'id': 2
+        })
+
+    assert response.status_code == 200
+
+    data = response.json['data']
+    assert data['content'] == content
+    assert data['state'] == 'DRAFT'
+    assert data['teacher_id'] is None
 
 def test_submit_assignment_student_1(client, h_student_1):
     response = client.post(
