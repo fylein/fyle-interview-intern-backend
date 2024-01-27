@@ -1,7 +1,7 @@
 # Solution Fyle Interview Intern Backend Application 
 
 ## Introduction
-At every change in the code in following format a comment is added at the start
+At every change in the code in following format of a comment is added at the start
 ```
 # Change : .....
 ```
