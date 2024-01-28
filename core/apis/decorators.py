@@ -39,8 +39,7 @@ def authenticate_principal(func):
             assertions.assert_true(p.teacher_id is not None, 'requester should be a teacher')
         elif request.path.startswith('/principal'):
             assertions.assert_true(p.principal_id is not None, 'requester should be a principal')
-        else:
-            assertions.assert_found(None, 'No such api')
-
+        
+        
         return func(p, *args, **kwargs)
     return wrapper
