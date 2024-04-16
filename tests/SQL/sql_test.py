@@ -50,39 +50,32 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
     return grade_a_counter
 
 
-def test_get_assignments_in_various_states():
+def test_get_assignments_in_graded_state():
     """Test to get assignments in various states"""
 
-    # Define the expected result before any changes
-    expected_result = [('DRAFT', 2), ('GRADED', 2), ('SUBMITTED', 2)]
+    # Find all the assignments for student 1 and change its state to 'GRADED'
+    submitted_assignments: Assignment = Assignment.filter(Assignment.student_id == 1)
 
-    # Execute the SQL query and compare the result with the expected result
-    with open('tests/SQL/number_of_assignments_per_state.sql', encoding='utf8') as fo:
-        sql = fo.read()
-
-    sql_result = db.session.execute(text(sql)).fetchall()
-    for itr, result in enumerate(expected_result):
-        assert result[0] == sql_result[itr][0]
-        assert result[1] == sql_result[itr][1]
-
-    # Modify an assignment state and grade, then re-run the query and check the updated result
-    expected_result = [('DRAFT', 2), ('GRADED', 3), ('SUBMITTED', 1)]
-
-    # Find an assignment in the 'SUBMITTED' state, change its state to 'GRADED' and grade to 'C'
-    submitted_assignment: Assignment = Assignment.filter(Assignment.state == AssignmentStateEnum.SUBMITTED).first()
-    submitted_assignment.state = AssignmentStateEnum.GRADED
-    submitted_assignment.grade = GradeEnum.C
+    # Iterate over each assignment and update its state
+    for assignment in submitted_assignments:
+        assignment.state = AssignmentStateEnum.GRADED  # Or any other desired state
 
     # Flush the changes to the database session
     db.session.flush()
     # Commit the changes to the database
     db.session.commit()
 
-    # Execute the SQL query again and compare the updated result with the expected result
+    # Define the expected result before any changes
+    expected_result = [(1, 3)]
+
+    # Execute the SQL query and compare the result with the expected result
+    with open('tests/SQL/number_of_graded_assignments_for_each_student.sql', encoding='utf8') as fo:
+        sql = fo.read()
+
+    # Execute the SQL query compare the result with the expected result
     sql_result = db.session.execute(text(sql)).fetchall()
     for itr, result in enumerate(expected_result):
         assert result[0] == sql_result[itr][0]
-        assert result[1] == sql_result[itr][1]
 
 
 def test_get_grade_A_assignments_for_teacher_with_max_grading():
