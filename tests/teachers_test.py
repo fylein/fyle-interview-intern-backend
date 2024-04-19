@@ -116,3 +116,20 @@ def test_mark_grade_in_assignment(client, h_teacher_1):
     assert data['id'] == 1
     assert data['teacher_id'] == 1
     assert data['grade'] == "A"
+
+def test_grade_submitted_assignment(client, h_teacher_1):
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 1,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json
+    print("--->", data)
+
+    assert data['data']['grade'] == 'A'
+    assert data['data']['state'] == 'GRADED'

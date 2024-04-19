@@ -48,9 +48,5 @@ bash run.sh
 ### Run Tests
 
 ```
-pytest -vvv -s tests/
-
-# for test coverage report
-# pytest --cov
-# open htmlcov/index.html
+bash test.sh
 ```
