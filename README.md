@@ -50,3 +50,8 @@ bash run.sh
 ```
 bash test.sh
 ```
+
+### Dockerized Image
+```
+docker run -p 7755:7755 fyle-interview-intern-backend_app
+```
