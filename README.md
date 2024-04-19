@@ -33,18 +33,33 @@ virtualenv env --python=python3.8
 source env/bin/activate
 pip install -r requirements.txt
 ```
-### Reset DB
+### Reset DB On Linux
 
 ```
 export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
 ```
+
+### Reset DB On CMD
+```
+set FLASK_APP=core\server.py
+del core\store.sqlite3
+flask db upgrade -d core\migrations\
+```
+### Reset DB On PowerShell
+```
+$env:FLASK_APP = "core\server.py"
+Remove-Item core\store.sqlite3
+flask db upgrade -d core\migrations\
+```
+
 ### Start Server
 
 ```
 bash run.sh
 ```
+
 ### Run Tests
 
 ```
