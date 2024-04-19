@@ -86,3 +86,17 @@ def test_assignment_resubmit_error(client, h_student_1):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+
+def test_edit_submitted_assignment_error(client,h_student_1):
+    """Test Failiure Reason: Cannot edit submitted assignments"""
+    response = client.post(
+        '/student/assignments',
+        headers = h_student_1,
+        json={
+            'id' : 2,
+            'content' : "All is Well"
+        })
+    error_response = response.json
+    assert response.status_code == 400
+    

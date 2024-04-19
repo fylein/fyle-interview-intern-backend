@@ -1,0 +1,8 @@
+version: '3'
+services:
+  fylein-app:
+    build: .
+    ports:
+      - "4040:7755"
+    volumes:
+      - .:/app
