@@ -53,17 +53,6 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
 def test_get_assignments_in_graded_state_for_each_student():
     """Test to get graded assignments for each student"""
 
-    # Find all the assignments for student 1 and change its state to 'GRADED'
-    submitted_assignments: Assignment = Assignment.filter(Assignment.student_id == 1)
-
-    # Iterate over each assignment and update its state
-    for assignment in submitted_assignments:
-        assignment.state = AssignmentStateEnum.GRADED  # Or any other desired state
-
-    # Flush the changes to the database session
-    db.session.flush()
-    # Commit the changes to the database
-    db.session.commit()
 
     # Define the expected result before any changes
     expected_result = [(1, 3)]
