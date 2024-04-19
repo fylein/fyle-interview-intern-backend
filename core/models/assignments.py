@@ -84,6 +84,7 @@ class Assignment(db.Model):
         assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, 'Draft assignment cannot be graded')
         if not auth_principal.principal_id:
             assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id, 'This assignment belongs to some other teacher')
+            assertions.assert_valid(assignment.state != AssignmentStateEnum.GRADED, 'Assignment is already graded')
 
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
