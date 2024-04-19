@@ -1,16 +1,28 @@
 from flask import jsonify
 from marshmallow.exceptions import ValidationError
 from core import app
-from core.apis.assignments import student_assignments_resources, teacher_assignments_resources
+from core.apis.assignments import student_assignments_resources, teacher_assignments_resources, principal_resources
 from core.libs import helpers
 from core.libs.exceptions import FyleError
 from werkzeug.exceptions import HTTPException
 
 from sqlalchemy.exc import IntegrityError
 
+
+""" 
+desc:
+just so that you can keep your related rsrcs grouped at one place, you're using blueprints in flask.
+
+params:
+> blueprint is the blueprint to register.
+> url_prefix is a prefix thats prefixes the url for accessing rest of the rsrcs.
+
+note:
+you got to register all of them blueprints before you start running your app. its just the part of "APP SETUP PHASE".
+"""
 app.register_blueprint(student_assignments_resources, url_prefix='/student')
 app.register_blueprint(teacher_assignments_resources, url_prefix='/teacher')
-
+app.register_blueprint(principal_resources, url_prefix='/principal')
 
 @app.route('/')
 def ready():
