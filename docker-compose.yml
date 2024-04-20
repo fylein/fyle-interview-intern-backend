@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:7755"  # Map port 5000 of the host to port 7755 of the container
+    volumes:
+      - .:/app
