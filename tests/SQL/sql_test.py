@@ -87,7 +87,7 @@ def test_get_grade_A_assignments_for_teacher_with_max_grading():
 
     # Create and grade 5 assignments for the default teacher (teacher_id=1)
     grade_a_count_1 = create_n_graded_assignments_for_teacher(5)
-    
+
     # Execute the SQL query and check if the count matches the created assignments
     sql_result = db.session.execute(text(sql)).fetchall()
     assert grade_a_count_1 == sql_result[0][0]

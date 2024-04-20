@@ -3,6 +3,7 @@ from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
 from core.models.assignments import Assignment
+from core.libs import assertions
 
 from .schema import AssignmentSchema, AssignmentGradeSchema
 teacher_assignments_resources = Blueprint('teacher_assignments_resources', __name__)
@@ -23,6 +24,8 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
+    if not incoming_payload:
+        assertions.assert_valid(None, "Payload is missing")
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
 
     graded_assignment = Assignment.mark_grade(
