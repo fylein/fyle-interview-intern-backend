@@ -28,6 +28,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Install your project's dependencies
 
+      - name: Set Flask app and run migrations
+        run: |
+            export FLASK_APP=core/server.py
+            rm core/store.sqlite3
+            flask db upgrade -d core/migrations/
+  
+      - name: Run custom bash script
+        run: bash run.sh
+
       - name: Run pytest with coverage
         run: |
-          pytest --cov  # Replace 'your_package_name' with the actual package name
+          pytest --cov
