@@ -2,8 +2,8 @@
 You will have to do this assignment in a unix based system. If you have windows then make sure to use the `wsl` terminal as we have to use the command `bash run.sh` in this assignment
 
 
-## Test coverage upto 97%
-![image](https://github.com/Rajarshi12321/fyle-interview-intern-backend/assets/94736350/4b2c4e23-ce48-4cae-be03-2af755fdb141)
+## Test coverage upto 98%
+![image](https://github.com/Rajarshi12321/fyle-interview-intern-backend/assets/94736350/693656d9-ed25-4a85-92ec-83b52b0d66c7)
 
 
 ### Install requirements (Using virtualenv, Original documentation)
