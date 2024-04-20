@@ -2,7 +2,6 @@
 
 # to stop on first error
 set -e
-
 # Delete older .pyc files
 # find . -type d \( -name env -o -name venv  \) -prune -false -o -name "*.pyc" -exec rm -rf {} \;
 
