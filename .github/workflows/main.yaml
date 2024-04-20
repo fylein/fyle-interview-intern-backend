@@ -34,7 +34,7 @@ jobs:
             flask db upgrade -d core/migrations/
   
       - name: Run custom bash script
-        run: docker-compose up --build &
+        run: bash run.sh &
 
       - name: Run pytest with coverage
         run: |
