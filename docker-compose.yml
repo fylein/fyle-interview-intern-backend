@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7755:7755"  # Expose the port on which the Flask app will run
+    environment:
+      - FLASK_APP=core/server.py
+    command: bash run.sh
+    volumes:
+      - .:/app  # Mount the current directory into the container
+
