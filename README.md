@@ -1,56 +1,64 @@
-# Fyle Backend Challenge
+# Fyle Backend Challenge completed ✅
 
-## Who is this for?
+### Development env: 
+> Ubuntu 22.04 LTS
+> 
+>  python3.8.19
 
-This challenge is meant for candidates who wish to intern at Fyle and work with our engineering team. You should be able to commit to at least 6 months of dedicated time for internship.
-
-## Why work at Fyle?
-
-Fyle is a fast-growing Expense Management SaaS product. We are ~40 strong engineering team at the moment. 
-
-We are an extremely transparent organization. Check out our [careers page](https://careers.fylehq.com) that will give you a glimpse of what it is like to work at Fyle. Also, check out our Glassdoor reviews [here](https://www.glassdoor.co.in/Reviews/Fyle-Reviews-E1723235.htm). You can read stories from our teammates [here](https://stories.fylehq.com).
-
-
-## Challenge outline
-
-This challenge involves writing a backend service for a classroom. The challenge is described in detail [here](./Application.md)
-
-
-## What happens next?
-
-You will hear back within 48 hours from us via email. 
-
-
-## Installation
-
-1. Fork this repository to your github account
-2. Clone the forked repository and proceed with steps mentioned below
-
-### Install requirements
-
+### Clone this repo and setup the fylenv using this cmd.
 ```
-virtualenv env --python=python3.8
-source env/bin/activate
+git clone https://github.com/birdiegyal/fyle-interview-intern-backend.git
+
+cd fyle-interview-intern-backend
+
+virtualenv fylenv --python=python3.8
+. fylenv/bin/activate
+
 pip install -r requirements.txt
 ```
-### Reset DB
 
+### Run tests using this cmd.
 ```
 export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
+pytest -vvv -s tests/
 ```
+
 ### Start Server
 
 ```
+# first reset DB
+export FLASK_APP=core/server.py
+rm core/store.sqlite3
+flask db upgrade -d core/migrations/
+# then lets go
 bash run.sh
 ```
-### Run Tests
 
+### view the test coverage in the browser using this cmd.
 ```
-pytest -vvv -s tests/
+# first reset DB
+export FLASK_APP=core/server.py
+rm core/store.sqlite3
+flask db upgrade -d core/migrations/
+# lets go
+pytest --cov --cov-report html\
+open htmlcov/index.html
+```
 
-# for test coverage report
-# pytest --cov
-# open htmlcov/index.html
+### Build the docker container first using this cmd.
+this cmd is meant to be used when you made some changes or building first time.
+```
+docker compose up --build -d
+```
+
+### Run docker container using this cmd.
+```
+docker compose up
+```
+
+### Shut docker container up using this cmd.
+```
+docker compose down
 ```
