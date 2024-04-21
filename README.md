@@ -19,9 +19,11 @@ pip install -r requirements.txt
 
 ### Run tests using this cmd.
 ```
+# reset DB
 export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
+# lets see
 pytest -vvv -s tests/
 ```
 
