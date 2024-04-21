@@ -1,1 +1,1 @@
-GET / principal/teachers
+# GET / principal/teachers

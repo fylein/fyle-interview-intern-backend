@@ -6,9 +6,13 @@ from sqlalchemy.engine import Engine
 from sqlite3 import Connection as SQLite3Connection
 
 app = Flask(__name__)
+# we're going to use default driver | DBAPI and  db_location -> ./store.sqlite3
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./store.sqlite3'
+# stop logging sql cmd into stdout.
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# connecting the sqlalchemy with the flask app.
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 app.test_client()

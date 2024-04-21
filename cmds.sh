@@ -18,6 +18,8 @@ student_id=$2
 # running the func to generate the header for the subsequent reqs.
 header=$(build_header "$user_id" "$student_id")
 
-# GET /student/assignments
-echo "$base_url/student/assignments"
+# # GET /student/assignments
 curl -X GET -H "$header" "$base_url/student/assignments"
+
+# GET /principal/teachers
+# curl -H "$header" "$base_url/principal/teachers"

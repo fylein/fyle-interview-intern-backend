@@ -45,11 +45,16 @@ class Assignment(db.Model):
 
     @classmethod
     def upsert(cls, assignment_new: 'Assignment'):
+
+        # if we get id from the req, that means we're editing
         if assignment_new.id is not None:
             assignment = Assignment.get_by_id(assignment_new.id)
-            assertions.assert_found(assignment, 'No assignment with this id was found')
-            assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT,
-                                    'only assignment in draft state can be edited')
+            assertions.assert_found(
+                assignment, "No assignment with this id was found")
+            assertions.assert_valid(
+                assignment.state == AssignmentStateEnum.DRAFT,
+                "only assignment in draft state can be edited",
+            )
 
             assignment.content = assignment_new.content
         else:
@@ -64,9 +69,12 @@ class Assignment(db.Model):
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
-        assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
+        assertions.assert_valid(assignment.content != None, 'assignment with empty content cannot be submitted')
+        # submit only if the assignment.state == 'DRAFT'
+        assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT,"only a draft assignment can be submitted")
 
         assignment.teacher_id = teacher_id
+        assignment.state = AssignmentStateEnum.SUBMITTED
         db.session.flush()
 
         return assignment
@@ -77,7 +85,12 @@ class Assignment(db.Model):
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
-
+        
+        # so before grading an assignment we got to check if the assignment is given to this teacher.
+        # here its still ambigous that we should use teacher_id or id from grade_assignment_payload.
+        assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id,f"Assignment with id: {assignment.id} is not submitted to Teacher with teacher_id: {auth_principal.teacher_id}")
+        # teacher cant regrade a assignment.
+        assertions.assert_valid(assignment.state != AssignmentStateEnum.GRADED, f"Teacher cant regrade an assignment.")
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
         db.session.flush()
@@ -89,5 +102,34 @@ class Assignment(db.Model):
         return cls.filter(cls.student_id == student_id).all()
 
     @classmethod
-    def get_assignments_by_teacher(cls):
-        return cls.query.all()
+    def get_assignments_by_teacher(cls, teacher_id):
+        return cls.filter(cls.teacher_id == teacher_id, cls.state in [AssignmentStateEnum.GRADED, AssignmentStateEnum.SUBMITTED])
+    
+    @classmethod
+    def get_submitted_or_graded_assignments(cls):
+        return cls.filter(cls.state in [AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED]).all()
+    
+    @classmethod
+    def regrade(cls, _id, grade):
+        assignment = Assignment.get_by_id(_id)
+        assertions.assert_found(assignment, f"No assignment with id: {_id} found.")
+        assertions.assert_valid(
+            grade is not None, 'assignment with empty grade cannot be graded')
+        # principal can grade submitted assignments | regrade graded assignments only.
+        assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, f"Principal cannot grade assignment in {assignment.state} state.")
+
+        assignment.grade = grade
+
+        # dont ve to change the state if already graded.
+        if(assignment.state == AssignmentStateEnum.SUBMITTED):
+            assignment.state = AssignmentStateEnum.GRADED
+        
+        db.session.flush()
+
+        return assignment
+
+
+# we're going to use session to interact with the dbapi.
+"""  
+db.session will do all the construction thing using the SQLAlchemy core apis.
+"""
