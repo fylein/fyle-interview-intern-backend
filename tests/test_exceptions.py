@@ -1,3 +1,4 @@
+"""Feat: Added tests for validating exceptions.py"""
 from core.libs.exceptions import FyleError
 
 

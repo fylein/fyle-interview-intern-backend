@@ -28,7 +28,8 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, db.Sequence('assignments_id_seq'), primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey(Student.id), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey(Teacher.id), nullable=True)
-    content = db.Column(db.Text)
+    """Fix: Content can not be null"""
+    content = db.Column(db.Text,nullable=False)
     grade = db.Column(BaseEnum(GradeEnum))
     state = db.Column(BaseEnum(AssignmentStateEnum), default=AssignmentStateEnum.DRAFT, nullable=False)
     created_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False)
@@ -70,6 +71,7 @@ class Assignment(db.Model):
         assertions.assert_valid(assignment.student_id == auth_principal.student_id,
                                 'This assignment belongs to some other student')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
+        """Fix: Only assignment in DRAFT state can be submitted"""
         if assignment.state == AssignmentStateEnum.SUBMITTED:
             assertions.assert_valid(False, 'only a draft assignment can be submitted')
         else:
@@ -85,17 +87,18 @@ class Assignment(db.Model):
         assertions.assert_valid(grade is not None and grade in GradeEnum,
                                 'Assignment with empty grade cannot be graded')
         print("debug: ", assignment.state != AssignmentStateEnum.DRAFT)
-        # Check if the assignment is in the DRAFT state
+        """Feat: Check if the assignment is in the DRAFT state"""
         assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, 'Cannot grade an assignment in DRAFT '
                                                                                'state')
 
-        # Additional assertions for authentication and assignment state
+        """Fix: Additional assertions for authentication and assignment state """
         if not auth_principal.principal_id:
+            """Id mismatch"""
             assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id,
                                     'Assignment belongs to another teacher')
+            """If assignment is already graded"""
             assertions.assert_valid(assignment.state != AssignmentStateEnum.GRADED, 'Assignment is already graded')
 
-        # Update assignment grade and state
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
         db.session.flush()
@@ -106,13 +109,13 @@ class Assignment(db.Model):
     def get_assignments_by_student(cls, student_id):
         return cls.filter(cls.student_id == student_id).all()
 
+    """Fix: Retrieve list of assignments on the basis of teacher ID"""
     @classmethod
     def get_assignments_by_teacher(cls, teacher_id):
         return cls.query.filter(cls.teacher_id == teacher_id).all()
 
+    """Feat: Retrieve list of submitted and graded assignments"""
     @classmethod
     def list_all_graded_submitted_assignments(cls):
-        # List all submitted and graded assignments
-        # principal_id is stored in the X-Principal header
         return cls.query.filter(
             or_(cls.state == AssignmentStateEnum.SUBMITTED, cls.state == AssignmentStateEnum.GRADED)).all()

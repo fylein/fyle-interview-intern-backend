@@ -62,7 +62,7 @@ def test_regrade_assignment(client, h_principal):
     assert response.json['data']['grade'] == GradeEnum.B
 
 
-''''Test Coverage for Listing all the teachers'''
+"""Feat: Test to retrieve the list of teachers"""
 
 
 def test_get_teachers(client, h_principal):
@@ -72,6 +72,19 @@ def test_get_teachers(client, h_principal):
     )
 
     assert response.status_code == 200
+
+
+""" Feat : Test case for requester type"""
+
+
+def test_requester_type(client, h_student_1):
+    response = client.get(
+        '/principal/teachers',
+        headers=h_student_1,
+    )
+    assert response.status_code == 403
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'requester should be a principal'
 
 
 def test_grade_assignment_invalid_grade(client, h_principal):

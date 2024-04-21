@@ -13,7 +13,7 @@ class Teacher(db.Model):
     def __repr__(self):
         return '<Teacher %r>' % self.id
 
-
+    """Feat: Retrieve the list of teachers"""
     @classmethod
     def get_all(cls):
         return cls.query.all()

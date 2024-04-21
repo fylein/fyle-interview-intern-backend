@@ -88,7 +88,7 @@ def test_assignment_resubmit_error(client, h_student_1):
     assert error_response["message"] == 'only a draft assignment can be submitted'
 
 
-''''Test Coverage'''
+"""Feat: Test for editing drafted assignment"""
 
 
 def test_edit_draft_assignment(client, h_student_1):

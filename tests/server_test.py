@@ -1,3 +1,6 @@
+"""Feat: Test when hitting base url"""
+
+
 def test_base_endpoint(client):
     response = client.get("/")
     assert response.status_code == 200
@@ -5,8 +8,9 @@ def test_base_endpoint(client):
     assert status == "ready"
 
 
+"""Feat: Test in case of hitting invalid endpoint"""
+
+
 def test_invalid_endpoint(client, h_principal):
-    # In case of hitting invalid endpoint
     response = client.get("/invalid", headers=h_principal)
     assert response.status_code == 404
-

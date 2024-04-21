@@ -10,6 +10,9 @@ from .schema import AssignmentSchema, AssignmentGradeSchema
 
 principal_assignments_resources = Blueprint('principal_assignments_resources', __name__)
 
+"""Feat: defining route and endpoint that retrieves and returns a list of submitted and graded assignments for a 
+principal"""
+
 
 @principal_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
@@ -18,6 +21,9 @@ def list_submitted_graded_assignments(p):
     assignments = Assignment.list_all_graded_submitted_assignments()
     assignments_data = AssignmentSchema().dump(assignments, many=True)
     return APIResponse.respond(data=assignments_data)
+
+
+"""Feat: defining route and endpoint to Grade or re-grade an assignment"""
 
 
 @principal_assignments_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False)

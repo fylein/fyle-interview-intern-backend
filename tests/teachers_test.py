@@ -101,7 +101,7 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     assert data['error'] == 'FyleError'
 
 
-""" Added to increase test coverage """
+"""Feat: Added tests to increase test coverage """
 
 
 def test_grade_for_coverage(client, h_teacher_2):
@@ -136,4 +136,3 @@ def test_regrade_assignment_error(client, h_teacher_1):
     )
 
     assert response.status_code == 400
-

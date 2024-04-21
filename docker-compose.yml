@@ -1,3 +1,5 @@
+# Feat: Docker Compose configuration for running the application.
+
 version: '3'
 
 services:

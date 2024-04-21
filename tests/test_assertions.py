@@ -1,5 +1,4 @@
-# tests/core/test_assertions.py
-
+"""Feat: Tests to increase test coverage for assertions.py"""
 from core.libs import assertions
 from core.libs.exceptions import FyleError
 
@@ -7,7 +6,6 @@ from core.libs.exceptions import FyleError
 def test_assert_auth():
     # Test when condition is True
     assertions.assert_auth(True)  # Should not raise an error
-
     # Test when condition is False
     try:
         assertions.assert_auth(False)
@@ -19,7 +17,6 @@ def test_assert_auth():
 def test_assert_true():
     # Test when condition is True
     assertions.assert_true(True)  # Should not raise an error
-
     # Test when condition is False
     try:
         assertions.assert_true(False)
@@ -31,7 +28,6 @@ def test_assert_true():
 def test_assert_valid():
     # Test when condition is True
     assertions.assert_valid(True)  # Should not raise an error
-
     # Test when condition is False
     try:
         assertions.assert_valid(False)
@@ -44,7 +40,6 @@ def test_assert_found():
     # Test when object is found
     obj = "test"
     assertions.assert_found(obj)  # Should not raise an error
-
     # Test when object is not found
     try:
         assertions.assert_found(None)

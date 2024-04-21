@@ -1,4 +1,4 @@
--- This query calculates the number of grade A assignments given by the teacher who has graded the most assignments.
+-- Feat: This query calculates the number of grade A assignments given by the teacher who has graded the most assignments.
 SELECT COUNT(*) AS grade_a  -- Count the number of grade A assignments
 FROM assignments AS a  -- Alias for the assignments table
 JOIN teachers AS t ON a.teacher_id = t.id  -- Join assignments with teachers based on teacher_id

@@ -1,7 +1,9 @@
 from flask import jsonify
 from marshmallow.exceptions import ValidationError
 from core import app
-from core.apis.assignments import student_assignments_resources, teacher_assignments_resources,principal_assignments_resources
+"""Feat: Necessary imports"""
+from core.apis.assignments import student_assignments_resources, teacher_assignments_resources, \
+    principal_assignments_resources
 from core.apis.teachers import principal_teachers_resources
 from core.libs import helpers
 from core.libs.exceptions import FyleError
@@ -11,9 +13,12 @@ from sqlalchemy.exc import IntegrityError
 
 app.register_blueprint(student_assignments_resources, url_prefix='/student')
 app.register_blueprint(teacher_assignments_resources, url_prefix='/teacher')
-# Register the principal assignments blueprint for managing principal-related assignment operations
+"""Feat: Register the principal_assignments and principal_teachers blueprint for managing principal-teachers related
+assignment operations"""
 app.register_blueprint(principal_assignments_resources, url_prefix='/principal')
-app.register_blueprint(principal_teachers_resources,url_prefix='/principal')
+app.register_blueprint(principal_teachers_resources, url_prefix='/principal')
+
+
 @app.route('/')
 def ready():
     response = jsonify({
