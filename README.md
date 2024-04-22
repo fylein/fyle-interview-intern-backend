@@ -45,19 +45,19 @@ export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
 # lets go
-pytest --cov --cov-report html\
+pytest --cov --cov-report html
 open htmlcov/index.html
 ```
 
 ### Build the docker container first using this cmd.
-this cmd is meant to be used when you made some changes or building first time.
+this cmd is meant to be used when you made some changes or building first time. open your docker desktop first to start the docker engine and then enter the following cmd
 ```
 docker compose up --build -d
 ```
 
 ### Run docker container using this cmd.
 ```
-docker compose up
+docker compose up -d
 ```
 
 ### Shut docker container up using this cmd.
