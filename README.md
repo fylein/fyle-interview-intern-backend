@@ -54,3 +54,38 @@ pytest -vvv -s tests/
 # pytest --cov
 # open htmlcov/index.html
 ```
+
+## Building and running the application with Docker
+To build and run the Flask application using Docker, follow these steps:
+
+Clone this repository to your local machine.
+### Navigate to the project directory:
+`cd fyle-interview-intern-backend`
+
+
+### Build the Docker image:
+`docker build -t flask-app .`
+
+### Run the Docker container:
+`docker run -p 7755:7755 flask-app`
+
+This will start the Flask application, and it will be accessible at http://localhost:7755.
+
+
+## Building and Running with Docker Compose
+To build and run the Flask application using Docker Compose, follow these steps:
+
+Clone this repository to your local machine.
+### Navigate to the project directory:
+`cd fyle-interview-intern-backend`
+
+### Run the Docker Compose command: 
+`docker-compose up` 
+
+This will build the Docker image and start the Flask application, accessible at `http://localhost:7755`.
+
+### To stop the Docker Compose services, press Ctrl + C, and then run:
+`docker-compose down` 
+
+This will stop and remove the containers, networks, and volumes created by docker-compose up.
+
