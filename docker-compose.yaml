@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  fyle:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fyle
+    image: fyle_app
+    ports:
+      - "7755:7755"
+    command: ["./run.sh"]

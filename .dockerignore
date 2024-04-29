@@ -1,0 +1,24 @@
+# Python compiled files
+*.pyc
+*.pyo
+__pycache__/
+
+# SQLite database file
+*.sqlite3
+
+# Virtual environment
+venv/
+env/
+
+# IDE files
+.vscode/
+.idea/
+
+# Git files
+.git/
+.gitignore
+
+# Other files
+*.log
+*.swp
+*.swo
