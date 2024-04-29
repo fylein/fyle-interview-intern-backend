@@ -1,3 +1,7 @@
+from core import db
+from core.models.assignments import Assignment, AssignmentStateEnum
+
+
 def test_get_assignments_student_1(client, h_student_1):
     response = client.get(
         '/student/assignments',
@@ -55,9 +59,41 @@ def test_post_assignment_student_1(client, h_student_1):
     assert data['content'] == content
     assert data['state'] == 'DRAFT'
     assert data['teacher_id'] is None
+    assignment_id = data['id']
+    assignment = Assignment.get_by_id(assignment_id)
+    db.session.delete(assignment)
+
+
+def test_update_assignment_student_1(client, h_student_1):
+    assignment = Assignment.get_by_id(2)
+    assignment.state = AssignmentStateEnum.DRAFT
+    assignment.teacher_id = None
+    db.session.flush()
+    db.session.commit()
+    content = 'ABCD TESTPOST'
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'id': 2,
+            'content': content
+        })
+
+    assert response.status_code == 200
+
+    data = response.json['data']
+    assert data['content'] == content
+    assert data['state'] == 'DRAFT'
+    assert data['teacher_id'] is None
 
 
 def test_submit_assignment_student_1(client, h_student_1):
+    assignment = Assignment.get_by_id(2)
+    assignment.state = AssignmentStateEnum.DRAFT
+    assignment.teacher_id = None
+    db.session.flush()
+    db.session.commit()
     response = client.post(
         '/student/assignments/submit',
         headers=h_student_1,
@@ -79,7 +115,7 @@ def test_assignment_resubmit_error(client, h_student_1):
         '/student/assignments/submit',
         headers=h_student_1,
         json={
-            'id': 2,
+            'id': 1,
             'teacher_id': 2
         })
     error_response = response.json

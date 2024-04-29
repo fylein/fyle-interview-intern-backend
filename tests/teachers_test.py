@@ -1,3 +1,7 @@
+from core import db
+from core.models.assignments import Assignment, AssignmentStateEnum, GradeEnum
+
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -86,6 +90,10 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     """
     failure case: only a submitted assignment can be graded
     """
+    assignment = Assignment.get_by_id(2)
+    assignment.state = AssignmentStateEnum.DRAFT
+    db.session.flush()
+    db.session.commit()
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_1
@@ -94,8 +102,23 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
             "grade": "A"
         }
     )
-
     assert response.status_code == 400
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+def test_grade_assignment(client, h_teacher_2):
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            'id': 4,
+            'grade': GradeEnum.C.value
+        }
+    )
+
+    assert response.status_code == 200
+
+    assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
+    assert response.json['data']['grade'] == GradeEnum.C
