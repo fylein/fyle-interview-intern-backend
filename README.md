@@ -35,6 +35,18 @@ virtualenv env --python=python3.8
 source env/bin/activate
 pip install -r requirements.txt
 ```
+
+### Install requirements for  window
+
+```
+pip install virtualenv
+virtualenv my_env
+\my_env\Scripts>./activate
+pip install -r requirements.txt
+```
+
+
+
 ### Reset DB
 
 ```
@@ -42,6 +54,16 @@ export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
 ```
+### Reset DB - window
+
+```
+set FLASK_APP=core\server.py
+del core\store.sqlite3
+Remove-Item core\store.sqlite3
+flask db upgrade -d core\migrations\
+```
+
+
 ### Start Server
 
 ```
