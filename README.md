@@ -50,9 +50,10 @@ bash run.sh
 ### Run Tests
 
 ```
-pytest -vvv -s tests/
+bash test.sh
+```
 
-# for test coverage report
-# pytest --cov
-# open htmlcov/index.html
+### Dockerized Image
+```
+docker run -p 7755:7755 fyle-interview-intern-backend_app
 ```
