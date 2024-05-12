@@ -13,6 +13,8 @@ We are an extremely transparent organization. Check out our [careers page](https
 
 ## Challenge outline
 
+**You are allowed to use any online/AI tool such as ChatGPT, Gemini, etc. to complete the challenge. However, we expect you to fully understand the code and logic involved.**
+
 This challenge involves writing a backend service for a classroom. The challenge is described in detail [here](./Application.md)
 
 
