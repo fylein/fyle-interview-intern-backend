@@ -12,6 +12,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 app.test_client()
+app.app_context().push()
 
 
 # this is to enforce fk (not done by default in sqlite3)

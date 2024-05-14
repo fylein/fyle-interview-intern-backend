@@ -90,7 +90,7 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
         '/teacher/assignments/grade',
         headers=h_teacher_1
         , json={
-            "id": 2,
+            "id": 5,
             "grade": "A"
         }
     )

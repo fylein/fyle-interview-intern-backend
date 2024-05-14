@@ -1,5 +1,8 @@
 from core.models.assignments import AssignmentStateEnum, GradeEnum
 
+def test_main_endpoint(client):
+    response = client.get('/')
+    assert response.status_code == 200
 
 def test_get_assignments(client, h_principal):
     response = client.get(
@@ -11,7 +14,7 @@ def test_get_assignments(client, h_principal):
 
     data = response.json['data']
     for assignment in data:
-        assert assignment['state'] in [AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED]
+        assert assignment['state'] not in [AssignmentStateEnum.DRAFT]
 
 
 def test_grade_assignment_draft_assignment(client, h_principal):
@@ -34,7 +37,7 @@ def test_grade_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
         json={
-            'id': 4,
+            'id': 1,
             'grade': GradeEnum.C.value
         },
         headers=h_principal
@@ -50,7 +53,7 @@ def test_regrade_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
         json={
-            'id': 4,
+            'id': 1,
             'grade': GradeEnum.B.value
         },
         headers=h_principal

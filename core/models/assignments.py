@@ -34,7 +34,7 @@ class Assignment(db.Model):
     def __repr__(self):
         return '<Assignment %r>' % self.id
 
-    @classmethod
+    @classmethod 
     def filter(cls, *criterion):
         db_query = db.session.query(cls)
         return db_query.filter(*criterion)
@@ -65,7 +65,7 @@ class Assignment(db.Model):
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
-
+        assignment.state = AssignmentStateEnum.SUBMITTED
         assignment.teacher_id = teacher_id
         db.session.flush()
 
@@ -89,5 +89,5 @@ class Assignment(db.Model):
         return cls.filter(cls.student_id == student_id).all()
 
     @classmethod
-    def get_assignments_by_teacher(cls):
-        return cls.query.all()
+    def get_assignments_by_teacher(cls, teacher_id):
+        return cls.filter(cls.teacher_id == teacher_id).all()

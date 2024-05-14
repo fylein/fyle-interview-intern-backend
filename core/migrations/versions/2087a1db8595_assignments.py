@@ -12,7 +12,7 @@ from core.apis.decorators import AuthPrincipal
 from core.models.users import User
 from core.models.students import Student
 from core.models.teachers import Teacher
-from core.models.assignments import Assignment
+from core.models.assignments import Assignment,AssignmentStateEnum, GradeEnum
 
 # revision identifiers, used by Alembic.
 revision = '2087a1db8595'
@@ -57,25 +57,30 @@ def upgrade():
     student_2 = Student(user_id=User.get_by_email('student2@fylebe.com').id)
     teacher_1 = Teacher(user_id=User.get_by_email('teacher1@fylebe.com').id)
     teacher_2 = Teacher(user_id=User.get_by_email('teacher2@fylebe.com').id)
+    teacher_3 = Teacher(user_id=User.get_by_email('teacher3@fylebe.com').id)
+    teacher_4 = Teacher(user_id=User.get_by_email('teacher4@fylebe.com').id)
 
     db.session.add(student_1)
     db.session.add(student_2)
     db.session.add(teacher_1)
     db.session.add(teacher_2)
+    db.session.add(teacher_3)
+    db.session.add(teacher_4)
     db.session.flush()
 
     assignment_1 = Assignment(student_id=student_1.id, content='ESSAY T1')
     assignment_2 = Assignment(student_id=student_1.id, content='THESIS T1')
     assignment_3 = Assignment(student_id=student_2.id, content='ESSAY T2')
     assignment_4 = Assignment(student_id=student_2.id, content='THESIS T2')
-
     assignment_5 = Assignment(student_id=student_1.id, content='SOLUTION T1')
+    assignment_6 = Assignment(student_id=student_1.id, content="Test Graded", grade=GradeEnum.A, state=AssignmentStateEnum.GRADED)
 
     db.session.add(assignment_1)
     db.session.add(assignment_2)
     db.session.add(assignment_3)
     db.session.add(assignment_4)
     db.session.add(assignment_5)
+    db.session.add(assignment_6)
 
     db.session.flush()
 

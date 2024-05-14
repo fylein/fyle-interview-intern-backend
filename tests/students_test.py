@@ -10,7 +10,6 @@ def test_get_assignments_student_1(client, h_student_1):
     for assignment in data:
         assert assignment['student_id'] == 1
 
-
 def test_get_assignments_student_2(client, h_student_2):
     response = client.get(
         '/student/assignments',
@@ -74,12 +73,12 @@ def test_submit_assignment_student_1(client, h_student_1):
     assert data['teacher_id'] == 2
 
 
-def test_assignment_resubmit_error(client, h_student_1):
+def test_assignment_resubmit_error(client, h_student_2):
     response = client.post(
         '/student/assignments/submit',
-        headers=h_student_1,
+        headers=h_student_2,
         json={
-            'id': 2,
+            'id': 3,
             'teacher_id': 2
         })
     error_response = response.json
