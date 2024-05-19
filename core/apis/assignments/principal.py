@@ -26,47 +26,15 @@ def regrade_assignment(p, incoming_payload):
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
 
     assignment = Assignment.get_by_id(grade_assignment_payload.id)
-
-    print("////////////////////first time/////////////////////")
-    print(assignment.content)
-    print(assignment.state)
-    print(assignment.grade)
-    print("////////////////////first time/////////////////////")
-    print()
-    print()
-
     assertions.assert_found(assignment, 'No assignment with this id was found')
-
-
     assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT,
                             'Assignment in draft state can not be graded')
-
-    # assertions.assert_valid(
-    #     assignment.state == AssignmentStateEnum.GRADED or assignment.state == AssignmentStateEnum.SUBMITTED,
-    #     'Assignment in draft state can not be graded')
-
-
-
-    print("this should not be reacheddddddddddddddddddddddddddddddddddddddddddd    ************** -------------------------")
-
-    assertions.assert_valid(p.principal_id is not None,
-                            'Assignment has been submitted to another teacher')
-
 
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,
         auth_principal=p
     )
-    # db.session.commit()
+    db.session.commit()
     graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
-
-    print("////////////////////second time/////////////////////")
-    print(assignment.content)
-    print(assignment.state)
-    print(assignment.grade)
-    print("////////////////////second time/////////////////////")
-    print()
-    print()
-
     return APIResponse.respond(data=graded_assignment_dump)

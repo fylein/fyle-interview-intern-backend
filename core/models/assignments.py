@@ -80,25 +80,7 @@ class Assignment(db.Model):
     @classmethod
     def mark_grade(cls, _id, grade, auth_principal: AuthPrincipal):
         assignment = Assignment.get_by_id(_id)
-        # assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
-        # assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, 'draft assignment cannot be graded')
-        # assertions.assert_valid(
-        #     (auth_principal.teacher_id is not None and assignment.state != AssignmentStateEnum.GRADED) or auth_principal.principal_id is not None,
-        #     'Only teachers and principal can grade the assignments and already graded assignments cannot be graded '
-        #     'again by teachers')
-
-        # if auth_principal.teacher_id is not None:
-        #     assertions.assert_valid(assignment.state != AssignmentStateEnum.GRADED,
-        #                             'already graded assignments cannot be graded again by teachers')
-        #     assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id,
-        #                             'assignment has been submitted to another teacher')
-        #
-        # else:
-        #     assertions.assert_valid(auth_principal.principal_id is not None,
-        #                             'Only the teacher and principle can grade the assignments')
-        #     assignment.grade = grade
-        #     assignment.state = AssignmentStateEnum.GRADED
 
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
