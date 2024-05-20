@@ -5,10 +5,6 @@
 > 
 >  python3.8.19
 
-### Clone this repo and setup the fylenv using this cmd.
-```
-git clone https://github.com/birdiegyal/fyle-interview-intern-backend.git
-
 cd fyle-interview-intern-backend
 
 virtualenv fylenv --python=python3.8
