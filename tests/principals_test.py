@@ -31,6 +31,7 @@ def test_grade_assignment_draft_assignment(client, h_principal):
 
 
 def test_grade_assignment(client, h_principal):
+    """Grade the assignment by principal"""
     response = client.post(
         '/principal/assignments/grade',
         json={
@@ -47,6 +48,7 @@ def test_grade_assignment(client, h_principal):
 
 
 def test_regrade_assignment(client, h_principal):
+    """Regrade the assignment by principal"""
     response = client.post(
         '/principal/assignments/grade',
         json={
@@ -60,3 +62,32 @@ def test_regrade_assignment(client, h_principal):
 
     assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
     assert response.json['data']['grade'] == GradeEnum.B
+
+
+
+def test_get_teachers(client, h_principal):
+    """Return all teachers"""
+    response = client.get(
+        '/principal/teachers',
+        headers=h_principal
+    )
+
+    assert response.status_code == 200
+
+    data = response.json['data']
+    for teacher in data:
+        assert teacher['id'] in [1,2]
+
+def test_grade_bad_assignment(client, h_principal):
+    """
+    failure case: If an assignment does not exists check and throw 404
+    """
+    response = client.post(
+        '/principal/assignments/grade',
+        headers=h_principal,
+        json={
+            "id": 12311,
+            "grade": "A"
+        }
+    )
+    assert response.status_code == 404
