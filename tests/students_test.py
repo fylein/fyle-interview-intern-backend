@@ -86,3 +86,15 @@ def test_assignment_resubmit_error(client, h_student_1):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+def test_student_does_not_exist(client, unknown_student):
+    """
+    Test case for an invalid student
+    """
+    response = client.get(
+        '/student/assignments',
+        headers=unknown_student
+    )
+
+    assert response.status_code == 404
+

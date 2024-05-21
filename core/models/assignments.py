@@ -1,4 +1,5 @@
-import enum
+import enum,json
+from flask import request
 from core import db
 from core.apis.decorators import AuthPrincipal
 from core.libs import helpers, assertions
@@ -65,8 +66,10 @@ class Assignment(db.Model):
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
+        assertions.assert_valid(assignment.state is not AssignmentStateEnum.SUBMITTED,"only a draft assignment can be submitted")
 
         assignment.teacher_id = teacher_id
+        assignment.state = AssignmentStateEnum.SUBMITTED
         db.session.flush()
 
         return assignment
@@ -74,10 +77,13 @@ class Assignment(db.Model):
 
     @classmethod
     def mark_grade(cls, _id, grade, auth_principal: AuthPrincipal):
+        t_data = json.loads(request.headers.get("X-Principal"))
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
-
+        assertions.assert_valid(assignment.state is not AssignmentStateEnum.DRAFT,"assigmemnt with draft state cannot be graded")
+        if("teacher_id" in t_data):
+            assertions.assert_valid(assignment.teacher_id is t_data["teacher_id"],"teacher id is not allowed for this assignment")
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
         db.session.flush()
@@ -86,8 +92,15 @@ class Assignment(db.Model):
 
     @classmethod
     def get_assignments_by_student(cls, student_id):
-        return cls.filter(cls.student_id == student_id).all()
+        alldata =  cls.filter(cls.student_id == student_id).all()
+        print(alldata)
+        if(len(alldata) == 0):
+            raise assertions.FyleError(404,"Assignments with this student id not found")
+        return alldata
 
     @classmethod
     def get_assignments_by_teacher(cls):
         return cls.query.all()
+    @classmethod
+    def get_assignments_by_teacher_id(cls,t_id):
+        return cls.query.filter(cls.teacher_id == t_id).all()

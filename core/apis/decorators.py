@@ -16,6 +16,8 @@ def accept_payload(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         incoming_payload = request.json
+        if('content' in incoming_payload):
+            assertions.assert_valid(incoming_payload["content"] is not None,"Content cannot be null")
         return func(incoming_payload, *args, **kwargs)
     return wrapper
 
