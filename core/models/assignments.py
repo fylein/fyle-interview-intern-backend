@@ -55,7 +55,7 @@ class Assignment(db.Model):
         else:
             assignment = assignment_new
             db.session.add(assignment_new)
-
+        assignment.state = AssignmentStateEnum.DRAFT #added this
         db.session.flush()
         return assignment
 
@@ -67,6 +67,7 @@ class Assignment(db.Model):
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
 
         assignment.teacher_id = teacher_id
+        assignment.state = AssignmentStateEnum.SUBMITTED #added this
         db.session.flush()
 
         return assignment
@@ -77,6 +78,12 @@ class Assignment(db.Model):
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
+
+        # Ensure the assignment is not in the DRAFT state
+        assertions.assert_valid(
+        assignment.state != AssignmentStateEnum.DRAFT,
+        'assignment in DRAFT state cannot be graded'
+        )
 
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
@@ -98,6 +105,12 @@ class Assignment(db.Model):
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
 
+        # Ensure the assignment is not in the DRAFT state
+        assertions.assert_valid(
+        assignment.state != AssignmentStateEnum.DRAFT,
+        'assignment in DRAFT state cannot be graded'
+        )
+        
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
         db.session.flush()
