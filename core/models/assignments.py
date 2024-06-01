@@ -5,6 +5,7 @@ from core.libs import helpers, assertions
 from core.models.teachers import Teacher
 from core.models.students import Student
 from sqlalchemy.types import Enum as BaseEnum
+from sqlalchemy import func 
 
 
 class GradeEnum(str, enum.Enum):
@@ -85,6 +86,7 @@ class Assignment(db.Model):
 
         # Ensure the assignment is not in the DRAFT state
         assertions.assert_valid(assignment.state == AssignmentStateEnum.SUBMITTED,'only a submitted assignment can be graded')
+
         # Ensure the assignment is submitted to the correct teacher:
         assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id, 'This assignment is not assigned to you')
 
@@ -98,9 +100,6 @@ class Assignment(db.Model):
     def get_assignments_by_student(cls, student_id):
         return cls.filter(cls.student_id == student_id).all()
 
-    #@classmethod
-    #def get_assignments_by_teacher(cls):
-    #   return cls.query.all()
 
     @classmethod
     def get_assignments_by_teacher(cls, teacher_id):
@@ -124,3 +123,8 @@ class Assignment(db.Model):
     @classmethod
     def get_all_graded_and_submitted_assignments(cls):
         return cls.filter(cls.state != AssignmentStateEnum.DRAFT).all()
+    
+    @classmethod
+    def get_graded_assignments_count_for_each_student(cls):
+        results = db.session.query(cls.student_id, func.count(cls.id)).filter(cls.state == AssignmentStateEnum.GRADED).group_by(cls.student_id).all()
+        return results
