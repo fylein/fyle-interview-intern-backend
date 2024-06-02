@@ -86,7 +86,6 @@ class Assignment(db.Model):
 
         # Ensure the assignment is not in the DRAFT state
         assertions.assert_valid(assignment.state == AssignmentStateEnum.SUBMITTED,'only a submitted assignment can be graded')
-
         # Ensure the assignment is submitted to the correct teacher:
         assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id, 'This assignment is not assigned to you')
 
