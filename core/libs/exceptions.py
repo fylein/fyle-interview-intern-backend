@@ -1,3 +1,4 @@
+# core/libs/exceptions.py
 class FyleError(Exception):
     status_code = 400
 

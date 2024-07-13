@@ -1,6 +1,5 @@
 from core.models.assignments import AssignmentStateEnum, GradeEnum
 
-
 # def test_get_assignments(client, h_principal):
 #     response = client.get(
 #         '/principal/assignments',
