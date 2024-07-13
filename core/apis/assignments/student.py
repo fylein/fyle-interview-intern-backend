@@ -1,3 +1,4 @@
+# /core/apis/assignments/student.py
 from flask import Blueprint
 from core import db
 from core.apis import decorators

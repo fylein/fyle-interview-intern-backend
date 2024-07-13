@@ -1,9 +1,11 @@
+# /core/models/assignments.py
 import enum
 from core import db
 from core.apis.decorators import AuthPrincipal
 from core.libs import helpers, assertions
 from core.models.teachers import Teacher
 from core.models.students import Student
+from core.libs.exceptions import FyleError
 from sqlalchemy.types import Enum as BaseEnum
 
 
@@ -47,12 +49,14 @@ class Assignment(db.Model):
     def upsert(cls, assignment_new: 'Assignment'):
         if assignment_new.id is not None:
             assignment = Assignment.get_by_id(assignment_new.id)
+            print(assignment.id, assignment.student_id, assignment.content)
             assertions.assert_found(assignment, 'No assignment with this id was found')
             assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT,
                                     'only assignment in draft state can be edited')
-
+            assertions.assert_valid(assignment_new.content is not None, 'assignment content cannot be null')
             assignment.content = assignment_new.content
         else:
+            assertions.assert_valid(assignment_new.content is not None, 'assignment content cannot be null')
             assignment = assignment_new
             db.session.add(assignment_new)
 
@@ -63,10 +67,14 @@ class Assignment(db.Model):
     def submit(cls, _id, teacher_id, auth_principal: AuthPrincipal):
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
-        assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
+        if assignment.state != AssignmentStateEnum.DRAFT:
+            raise FyleError(400, "only a draft assignment can be submitted")
+        assertions.assert_valid(assignment.student_id == auth_principal.student_id, 
+                                'This assignment belongs to some other student')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
 
         assignment.teacher_id = teacher_id
+        assignment.state = AssignmentStateEnum.SUBMITTED
         db.session.flush()
 
         return assignment

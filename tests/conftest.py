@@ -1,10 +1,11 @@
+# /tests/conftest.py
 import pytest
 import json
 from tests import app
 
-
 @pytest.fixture
 def client():
+    app.testing = True
     return app.test_client()
 
 
