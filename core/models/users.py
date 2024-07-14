@@ -1,3 +1,4 @@
+# /core/models/users.py
 from core import db
 from core.libs import helpers
 

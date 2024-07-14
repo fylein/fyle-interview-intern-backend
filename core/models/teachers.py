@@ -1,6 +1,7 @@
+# /core/models/teachers.py
 from core import db
 from core.libs import helpers
-
+from core.apis.decorators import AuthPrincipal
 
 class Teacher(db.Model):
     __tablename__ = 'teachers'
@@ -11,3 +12,7 @@ class Teacher(db.Model):
 
     def __repr__(self):
         return '<Teacher %r>' % self.id
+    
+    @classmethod
+    def get_teachers(cls):
+        return cls.query.all()

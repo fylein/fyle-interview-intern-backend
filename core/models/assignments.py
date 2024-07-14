@@ -49,7 +49,6 @@ class Assignment(db.Model):
     def upsert(cls, assignment_new: 'Assignment'):
         if assignment_new.id is not None:
             assignment = Assignment.get_by_id(assignment_new.id)
-            print(assignment.id, assignment.student_id, assignment.content)
             assertions.assert_found(assignment, 'No assignment with this id was found')
             assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT,
                                     'only assignment in draft state can be edited')
@@ -84,9 +83,13 @@ class Assignment(db.Model):
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
 
-        if assignment.teacher_id != teacher_id:
-            raise FyleError(400, "teacher can only grade the assignments submitted to them")
+        if teacher_id:
+            if assignment.teacher_id != teacher_id:
+                raise FyleError(400, "teacher can only grade the assignments submitted to them")
+        else:
+            assertions.assert_valid(auth_principal.principal_id is not None, 'assignment with empty grade cannot be graded')
         
+        assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, "draft assignment cannot be graded")
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
 
         assignment.grade = grade
@@ -102,3 +105,7 @@ class Assignment(db.Model):
     @classmethod
     def get_assignments_by_teacher(cls, teacher_id):
         return cls.filter(cls.teacher_id == teacher_id).all()
+
+    @classmethod
+    def get_submitted_assignments(cls):
+        return cls.filter(cls.state != AssignmentStateEnum.DRAFT).all()
