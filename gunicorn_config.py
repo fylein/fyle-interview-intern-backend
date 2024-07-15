@@ -3,7 +3,7 @@ import os
 # https://docs.gunicorn.org/en/stable/settings.html
 
 proc_name = 'fyle-interview-be'
-port_number = int(os.environ.get('GUNICORN_PORT', 7755))
+port_number = int(os.environ.get('GUNICORN_PORT', 5000))
 bind = '0.0.0.0:{0}'.format(port_number)
 
 backlog      = int(os.environ.get('GUNICORN_BACKLOG', 50))
