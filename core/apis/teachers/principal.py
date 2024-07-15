@@ -1,6 +1,6 @@
 from flask import Blueprint
 from core.apis import decorators
-from core.models.teachers import Teacher
+from core.models.principals import Principal
 from core.apis.responses import APIResponse
 from core.apis.teachers.schema import TeacherSchema
 principal_teachers_resources = Blueprint('principal_teachers_resources', __name__)
@@ -9,6 +9,6 @@ principal_teachers_resources = Blueprint('principal_teachers_resources', __name_
 @decorators.authenticate_principal
 def list_teachers(p):
     #feature:  Returns list of teachers
-    teachers = Teacher.get_all()
+    teachers = Principal.get_all()
     teachers_dump = TeacherSchema().dump(teachers, many=True)
     return APIResponse.respond(data=teachers_dump)

@@ -21,7 +21,7 @@ def test_grade_assignment_draft_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
         json={
-            'id': 14,
+            'id': 101,
             'grade': GradeEnum.A.value
         },
         headers=h_principal
@@ -34,7 +34,7 @@ def test_grade_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
         json={
-            'id': 3,
+            'id': 88,
             'grade': GradeEnum.C.value
         },
         headers=h_principal
@@ -50,7 +50,7 @@ def test_regrade_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
         json={
-            'id': 4,
+            'id': 88,
             'grade': GradeEnum.B.value
         },
         headers=h_principal

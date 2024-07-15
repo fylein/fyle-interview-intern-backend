@@ -13,5 +13,5 @@ class Principal(db.Model):
         return '<Principal %r>' % self.id
 
     @classmethod
-    def get_by_id(cls, _id):
-        return cls.query.filter_by(id=_id).first()
+    def get_all(cls):
+        return cls.query.all()
