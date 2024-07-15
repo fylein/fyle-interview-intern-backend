@@ -99,3 +99,22 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+    def test_grade_submitted_assignment_invalid(client, h_teacher_1):
+        response = client.post(
+            '/teacher/assignments/grade',
+            headers=h_teacher_1,
+            json={
+                "id": 19,
+                "grade": "H"
+            }
+        )
+
+        assert response.status_code == 400
+
+    def test_grade_for_coverage(client, h_teacher_2):
+        response = client.post(
+            "/teacher/assignments/grade", headers=h_teacher_2, json={"id": 2, "grade": "B"}
+        )
+
+        assert response.status_code == 200
