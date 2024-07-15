@@ -86,3 +86,47 @@ def test_assignment_resubmit_error(client, h_student_1):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+
+def test_post_assignment_student_1_with_id_not_in_draft(client, h_student_1):
+    content = "test content"
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'id': 2,
+            'content': content
+        })
+
+    assert response.status_code == 400
+
+    data = response.json
+    assert data['message'] == 'only assignment in draft state can be edited'
+
+
+def test_post_assignment_student_1_with_id_null_content(client, h_student_1):
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'id': 6,
+            'content': None
+        })
+
+    assert response.status_code == 400
+
+    data = response.json
+    assert data['message'] == 'empty assignment cannot be submitted'
+
+
+def test_post_assignment_student_1_with_id_updated_content(client, h_student_1):
+    content = 'UPDATED CONTENT'
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'id': 6,
+            'content': content
+        })
+
+    assert response.status_code == 200
