@@ -15,3 +15,4 @@ export FLASK_APP=core/server.py
 
 # Run server
 gunicorn -c gunicorn_config.py core.server:app
+
