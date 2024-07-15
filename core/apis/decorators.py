@@ -28,9 +28,9 @@ def authenticate_principal(func):
         p_dict = json.loads(p_str)
         p = AuthPrincipal(
             user_id=p_dict['user_id'],
-            student_id=p_dict.get('student_id'),
+            principal_id=p_dict.get('principal_id'),
             teacher_id=p_dict.get('teacher_id'),
-            principal_id=p_dict.get('principal_id')
+            student_id=p_dict.get('student_id')
         )
 
         if request.path.startswith('/student'):
@@ -41,6 +41,5 @@ def authenticate_principal(func):
             assertions.assert_true(p.principal_id is not None, 'requester should be a principal')
         else:
             assertions.assert_found(None, 'No such api')
-
         return func(p, *args, **kwargs)
     return wrapper

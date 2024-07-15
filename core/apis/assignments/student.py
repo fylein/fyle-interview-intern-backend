@@ -1,4 +1,7 @@
 from flask import Blueprint
+
+import sys
+import os
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
@@ -22,9 +25,7 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
-    assignment = AssignmentSchema().load(incoming_payload)
-    assignment.student_id = p.student_id
-
+    assignment = AssignmentSubmitSchema().load(incoming_payload)
     upserted_assignment = Assignment.upsert(assignment)
     db.session.commit()
     upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
