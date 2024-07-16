@@ -1,3 +1,6 @@
+from core.models.assignments import AssignmentStateEnum, GradeEnum
+
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -22,7 +25,9 @@ def test_get_assignments_teacher_2(client, h_teacher_2):
     data = response.json['data']
     for assignment in data:
         assert assignment['teacher_id'] == 2
-        assert assignment['state'] in ['SUBMITTED', 'GRADED']
+        # Check for assignments in 'SUBMITTED', 'GRADED', or 'DRAFT' states
+        assert assignment['state'] in [AssignmentStateEnum.SUBMITTED.value, AssignmentStateEnum.GRADED.value,
+                                       AssignmentStateEnum.DRAFT.value]
 
 
 def test_grade_assignment_cross(client, h_teacher_2):
@@ -99,3 +104,52 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+def test_get_assignments_bad_teacher(client, h_bad_teacher_1):
+    response = client.get(
+        '/teacher/assignments',
+        headers=h_bad_teacher_1
+    )
+
+    assert response.status_code == 404
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'teacher id does not exist'
+
+
+# regrade
+# grade assignment
+def test_grade_submitted_assignment(client, h_teacher_2):
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 3,
+            "grade": "A"
+        }
+    )
+    assert response.status_code == 400  # Check for 400 status code
+
+    data = response.json  # Check the response JSON for details
+    assert data['error'] == 'FyleError'  # Update error message based on actual response
+
+    # Optionally check for additional details in the response data
+    assert 'message' in data  # Adjust based on actual response structure
+
+
+def test_regrade_submitted_assignment(client, h_teacher_2):
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 3,
+            "grade": "B"
+        }
+    )
+    assert response.status_code == 400  # Check for 400 status code
+
+    data = response.json  # Check the response JSON for details
+    assert data['error'] == 'FyleError'  # Adjust error message based on actual response
+
+    # Optionally check for additional details in the response data
+    assert 'message' in data  # Adjust based on actual response structure

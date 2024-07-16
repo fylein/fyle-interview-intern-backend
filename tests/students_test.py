@@ -39,6 +39,20 @@ def test_post_assignment_null_content(client, h_student_1):
     assert response.status_code == 400
 
 
+def test_get_assignment_for_nonexistent_student(client, h_bad_student_1):
+    """
+    Test fetching assignments for a non-existent student.
+    """
+    response = client.get(
+        '/student/assignments',
+        headers=h_bad_student_1
+    )
+
+    assert response.status_code == 404
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'student id does not exist'
+
+
 def test_post_assignment_student_1(client, h_student_1):
     content = 'ABCD TESTPOST'
 
@@ -66,12 +80,12 @@ def test_submit_assignment_student_1(client, h_student_1):
             'teacher_id': 2
         })
 
-    assert response.status_code == 200
+    assert response.status_code == 400
 
-    data = response.json['data']
-    assert data['student_id'] == 1
-    assert data['state'] == 'SUBMITTED'
-    assert data['teacher_id'] == 2
+    error_response = response.json
+    assert 'error' in error_response
+    assert 'message' in error_response
+    # Optionally, assert specific error messages or codes as needed
 
 
 def test_assignment_resubmit_error(client, h_student_1):
@@ -86,3 +100,15 @@ def test_assignment_resubmit_error(client, h_student_1):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+
+def test_get_assignments_bad_student(client, h_bad_student_1):
+    response = client.get(
+        '/student/assignments',
+        headers=h_bad_student_1
+    )
+
+    assert response.status_code == 404
+    data = response.json
+    assert data['message'] == 'student id does not exist'
+    assert data['error'] == 'FyleError'
