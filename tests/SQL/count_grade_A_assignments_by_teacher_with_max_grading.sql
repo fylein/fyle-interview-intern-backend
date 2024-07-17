@@ -1,3 +1,4 @@
+-- /tests/SQL/count_grade_A_assignments_by_teacher_with_max_grading.sql
 -- Write query to find the number of grade A's given by the teacher who has graded the most assignments
 WITH graded_assignments AS (
     SELECT teacher_id, COUNT(*) AS count

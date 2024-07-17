@@ -26,7 +26,7 @@ def upsert_assignment(p, incoming_payload):
     assignment = AssignmentSchema().load(incoming_payload)
     assignment.student_id = p.student_id
 
-    upserted_assignment = Assignment.upsert(assignment)
+    upserted_assignment = Assignment.upsert(assignment, auth_principal=p)
     db.session.commit()
     upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
     return APIResponse.respond(data=upserted_assignment_dump)
