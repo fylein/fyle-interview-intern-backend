@@ -57,6 +57,7 @@ class Assignment(db.Model):
         else:
             assignment = assignment_new
             db.session.add(assignment_new)
+        print("athish")
 
         db.session.flush()
         return assignment
