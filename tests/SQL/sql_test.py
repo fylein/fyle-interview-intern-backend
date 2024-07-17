@@ -4,7 +4,6 @@ from sqlalchemy import text
 from core import db
 from core.models.assignments import Assignment, AssignmentStateEnum, GradeEnum
 
-
 def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1) -> int:
     """
     Creates 'n' graded assignments for a specified teacher and returns the count of assignments with grade 'A'.
@@ -17,7 +16,7 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
     - int: Count of assignments with grade 'A'.
     """
     # Count the existing assignments with grade 'A' for the specified teacher
-    grade_a_counter: int = Assignment.filter(
+    grade_a_counter: int = Assignment.query.filter(
         Assignment.teacher_id == teacher_id,
         Assignment.grade == GradeEnum.A
     ).count()
@@ -30,7 +29,7 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
         # Create a new Assignment instance
         assignment = Assignment(
             teacher_id=teacher_id,
-            student_id=1,
+            student_id=1,  # Assuming student_id is 1 for simplicity
             grade=grade,
             content='test content',
             state=AssignmentStateEnum.GRADED
@@ -41,7 +40,7 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
 
         # Update the grade_a_counter if the grade is 'A'
         if grade == GradeEnum.A:
-            grade_a_counter = grade_a_counter + 1
+            grade_a_counter += 1
 
     # Commit changes to the database
     db.session.commit()
@@ -49,12 +48,11 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
     # Return the count of assignments with grade 'A'
     return grade_a_counter
 
-
 def test_get_assignments_in_graded_state_for_each_student():
     """Test to get graded assignments for each student"""
 
     # Find all the assignments for student 1 and change its state to 'GRADED'
-    submitted_assignments: Assignment = Assignment.filter(Assignment.student_id == 1)
+    submitted_assignments = Assignment.query.filter(Assignment.student_id == 1).all()
 
     # Iterate over each assignment and update its state
     for assignment in submitted_assignments:
@@ -66,7 +64,7 @@ def test_get_assignments_in_graded_state_for_each_student():
     db.session.commit()
 
     # Define the expected result before any changes
-    expected_result = [(1, 3)]
+    expected_result = [(1, 3)]  # Example expected result, adjust based on your data
 
     # Execute the SQL query and compare the result with the expected result
     with open('tests/SQL/number_of_graded_assignments_for_each_student.sql', encoding='utf8') as fo:
@@ -76,8 +74,6 @@ def test_get_assignments_in_graded_state_for_each_student():
     sql_result = db.session.execute(text(sql)).fetchall()
     for itr, result in enumerate(expected_result):
         assert result[0] == sql_result[itr][0]
-
-
 def test_get_grade_A_assignments_for_teacher_with_max_grading():
     """Test to get count of grade A assignments for teacher which has graded maximum assignments"""
 
