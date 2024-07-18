@@ -1,6 +1,6 @@
 from core import db
 from core.libs import helpers
-
+from core.models.users import User
 
 class Teacher(db.Model):
     __tablename__ = 'teachers'

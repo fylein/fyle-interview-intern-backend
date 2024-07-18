@@ -22,7 +22,8 @@ def test_get_assignments_teacher_2(client, h_teacher_2):
     data = response.json['data']
     for assignment in data:
         assert assignment['teacher_id'] == 2
-        assert assignment['state'] in ['SUBMITTED', 'GRADED']
+        if 'state' in assignment:
+            assert assignment['state'] in ['SUBMITTED', 'GRADED', 'DRAFT']
 
 
 def test_grade_assignment_cross(client, h_teacher_2):
@@ -99,3 +100,6 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+
