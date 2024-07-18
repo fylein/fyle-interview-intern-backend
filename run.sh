@@ -1,4 +1,5 @@
-#!/bin/bash
+# /run.sh
+# !/bin/bash
 
 # to stop on first error
 set -e

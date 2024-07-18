@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7755:7755"
+    environment:
+      FLASK_APP: core/server.py
+      FLASK_RUN_HOST: 0.0.0.0
+    volumes:
+      - .:/app
+    command: bash run.sh
