@@ -99,3 +99,36 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+def test_grade_assignment_success(client, h_teacher_1, h_student_1):
+    # First, create and submit an assignment
+    content = 'Test Assignment'
+    create_response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={'content': content}
+    )
+    assert create_response.status_code == 200
+    assignment_id = create_response.json['data']['id']
+
+    submit_response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_1,
+        json={'id': assignment_id, 'teacher_id': 1}
+    )
+    assert submit_response.status_code == 200
+
+    # Now grade the assignment
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            'id': assignment_id,
+            'grade': 'A'
+        }
+    )
+    assert response.status_code == 200
+    data = response.json['data']
+    assert data['id'] == assignment_id
+    assert data['grade'] == 'A'
+    assert data['state'] == 'GRADED'

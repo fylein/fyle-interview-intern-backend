@@ -60,3 +60,29 @@ def test_regrade_assignment(client, h_principal):
 
     assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
     assert response.json['data']['grade'] == GradeEnum.B
+
+def test_get_teachers_wrong_role(client, h_principal2):
+    # Assuming h_teacher provides headers for a teacher (non-principal) user
+    response = client.get(
+        '/principal/teachers',
+        headers=h_principal2
+    )
+
+    assert response.status_code == 401  
+
+def test_list_teachers_unauthorized(client, h_student_1):
+    response = client.get(
+        '/principal/teachers',
+        headers=h_student_1
+    )
+
+    assert response.status_code == 403
+
+def test_list_teachers_principal(client, h_principal):
+    response = client.get(
+        '/principal/teachers',
+        headers=h_principal
+    )
+
+    assert response.status_code == 200
+    data = response.json['data']

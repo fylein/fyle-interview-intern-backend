@@ -1,5 +1,7 @@
 from core import db
 from core.libs import helpers
+from core.libs import helpers, assertions
+from core.models.teachers import Teacher
 
 
 class Principal(db.Model):
@@ -11,3 +13,9 @@ class Principal(db.Model):
 
     def __repr__(self):
         return '<Principal %r>' % self.id
+
+    @classmethod
+    def get_by_id(cls, _id):
+        principal= cls.query.get(_id)
+        assertions.assert_auth(principal is not None,'No principal with this id was found')
+        return True
