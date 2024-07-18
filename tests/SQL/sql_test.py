@@ -41,7 +41,7 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
 
         # Update the grade_a_counter if the grade is 'A'
         if grade == GradeEnum.A:
-            grade_a_counter = grade_a_counter + 1
+            grade_a_counter += 1
 
     # Commit changes to the database
     db.session.commit()
@@ -54,7 +54,7 @@ def test_get_assignments_in_graded_state_for_each_student():
     """Test to get graded assignments for each student"""
 
     # Find all the assignments for student 1 and change its state to 'GRADED'
-    submitted_assignments: Assignment = Assignment.filter(Assignment.student_id == 1)
+    submitted_assignments = Assignment.filter(Assignment.student_id == 1)
 
     # Iterate over each assignment and update its state
     for assignment in submitted_assignments:
@@ -72,7 +72,7 @@ def test_get_assignments_in_graded_state_for_each_student():
     with open('tests/SQL/number_of_graded_assignments_for_each_student.sql', encoding='utf8') as fo:
         sql = fo.read()
 
-    # Execute the SQL query compare the result with the expected result
+    # Execute the SQL query and compare the result with the expected result
     sql_result = db.session.execute(text(sql)).fetchall()
     for itr, result in enumerate(expected_result):
         assert result[0] == sql_result[itr][0]
