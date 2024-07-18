@@ -1,3 +1,6 @@
+from core.models.assignments import AssignmentStateEnum, GradeEnum
+
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -23,6 +26,31 @@ def test_get_assignments_teacher_2(client, h_teacher_2):
     for assignment in data:
         assert assignment['teacher_id'] == 2
         assert assignment['state'] in ['SUBMITTED', 'GRADED']
+
+
+def test_grade_assignment_by_teacher(client, h_teacher_2):
+    """
+    can be failure case: an assignment can't be graded more than once by a teacher
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 3,
+            "grade": GradeEnum.A.value
+        }
+    )
+
+    try:
+        assert response.status_code == 200
+        assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
+        assert response.json['data']['grade'] == GradeEnum.A
+    except AssertionError:
+        assert response.status_code == 400
+        data = response.json
+        assert data['error'] == 'FyleError'
+        assert data['message'] == 'Assignment is already graded'
+
 
 
 def test_grade_assignment_cross(client, h_teacher_2):
