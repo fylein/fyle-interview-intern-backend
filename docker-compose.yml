@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "7755:7755"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
+      - SQLALCHEMY_DATABASE_URI=sqlite:///./store.sqlite3
+      - GUNICORN_PORT=7755
+    command: >
+      sh -c "flask db upgrade -d core/migrations/ &&
+             gunicorn -c gunicorn_config.py core.server:app"

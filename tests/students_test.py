@@ -1,3 +1,6 @@
+from core.models.assignments import Assignment,AssignmentStateEnum
+
+
 def test_get_assignments_student_1(client, h_student_1):
     response = client.get(
         '/student/assignments',
@@ -58,6 +61,9 @@ def test_post_assignment_student_1(client, h_student_1):
 
 
 def test_submit_assignment_student_1(client, h_student_1):
+    assignment = Assignment.get_by_id(2)
+    assignment.state = AssignmentStateEnum.DRAFT
+
     response = client.post(
         '/student/assignments/submit',
         headers=h_student_1,
