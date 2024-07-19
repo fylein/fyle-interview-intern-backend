@@ -1,0 +1,111 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/
+*.egg
+*.log
+*.db
+*.sqlite3
+*.db-journal
+instance/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+
+
+# PyTest
+.pytest_cache/
+.htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+__pypackages__/
+
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+venv.bak/
+
+# Flask
+instance/
+*.db
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose*.yml
+*.md
+*.log
+*.sql
+*.sqlite3
+*.db
+*.db-journal
+
+# Git
+.git
+.gitignore
+
+# Linux
+*~
+*~
+
+# pyenv
+.python-version
+
+# pytest
+.pytest_cache/
+.coverage
+.tox/
+.htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+

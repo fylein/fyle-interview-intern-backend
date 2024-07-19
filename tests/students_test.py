@@ -62,7 +62,7 @@ def test_submit_assignment_student_1(client, h_student_1):
         '/student/assignments/submit',
         headers=h_student_1,
         json={
-            'id': 2,
+            'id': 5,
             'teacher_id': 2
         })
 
@@ -79,10 +79,21 @@ def test_assignment_resubmit_error(client, h_student_1):
         '/student/assignments/submit',
         headers=h_student_1,
         json={
-            'id': 2,
+            'id': 1,
             'teacher_id': 2
         })
     error_response = response.json
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+def test_get_assignments_bad_student(client, h_bad_student_1):
+    response = client.get(
+        '/student/assignments',
+        headers=h_bad_student_1
+    )
+
+    assert response.status_code == 404
+    data = response.json
+    assert data['message'] == 'student id does not exist'
+    assert data['error'] == 'FyleError'

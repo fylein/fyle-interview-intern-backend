@@ -56,3 +56,38 @@ pytest -vvv -s tests/
 # pytest --cov
 # open htmlcov/index.html
 ```
+## Building and Running application using Docker
+
+1) Clone the repo on your machine.
+
+2) Navigate to the project directory
+
+ `cd fyle-interview-intern-backend`
+
+3) Build the docker image
+   `docker build -t my-app .`
+
+4) Run the Docker container
+    `docker run -d --name my-running-flask-app -p 7755:7755 my-app`
+
+5) Access the application:
+
+   The application will be available at `http://localhost:7755`.
+
+## Building and running with docker compose
+
+1) Clone the repo on your machine.
+   ```
+      git clone https://github.com/hiteshmishra2103/fyle-interview-intern-backend
+      cd fyle-interview-intern-backend
+   ```
+
+2) Run the docker compose command:
+   `docker-componse up`
+
+3) To stop the Docker Compose services, press Ctrl + C, and then run:
+   `docker-compose down` 
+
+4) Access the application:
+
+   The application will be available at `http://localhost:7755`.
