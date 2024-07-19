@@ -2,6 +2,7 @@ from flask import Blueprint
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
+from core.libs.exceptions import FyleError
 from core.models.assignments import Assignment
 
 from .schema import AssignmentSchema, AssignmentSubmitSchema
@@ -24,6 +25,9 @@ def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
     assignment = AssignmentSchema().load(incoming_payload)
     assignment.student_id = p.student_id
+
+    if not assignment.content:
+        raise FyleError(400, "Content cannot be null")
 
     upserted_assignment = Assignment.upsert(assignment)
     db.session.commit()
