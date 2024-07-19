@@ -1,4 +1,4 @@
-from operator import or_
+from sqlalchemy import or_
 from flask import Blueprint
 from core import db
 from core.apis import decorators
@@ -32,6 +32,7 @@ def grade_assignment_by_principal(p, incoming_payload):
         grade=grade_assignment_payload.grade,
         auth_principal=p
     )
+    print(graded_assignment,end=" ")
     db.session.commit()
     graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
     return APIResponse.respond(data=graded_assignment_dump)

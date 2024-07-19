@@ -13,5 +13,6 @@ principal_teachers_resources = Blueprint('principal_teachers_resources', __name_
 def list_teachers(p):
     """Returns list of teachers"""
     teachers_list = Teacher.fetch_all()
+    print(teachers_list[0],end=" ")
     teachers_list_dump = TeacherSchema().dump(teachers_list, many=True)
     return APIResponse.respond(data=teachers_list_dump)

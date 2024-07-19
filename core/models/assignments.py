@@ -1,5 +1,4 @@
 import enum
-from operator import or_
 from core import db
 from core.apis.decorators import AuthPrincipal
 from core.libs import helpers, assertions

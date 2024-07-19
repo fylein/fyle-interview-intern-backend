@@ -7,3 +7,4 @@ def test_index(client):
 def test_invalid_endpoint(client, h_principal):
     response = client.get("/invalid", headers=h_principal)
     assert response.status_code == 404
+    assert response.json["error"] == "NotFound"
