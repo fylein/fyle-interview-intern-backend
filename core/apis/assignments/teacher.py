@@ -10,9 +10,9 @@ teacher_assignments_resources = Blueprint('teacher_assignments_resources', __nam
 
 @teacher_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
-def list_assignments(p):
+def list_assignments_by_teacher(p):
     """Returns list of assignments"""
-    teachers_assignments = Assignment.get_assignments_by_teacher()
+    teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id)
     teachers_assignments_dump = AssignmentSchema().dump(teachers_assignments, many=True)
     return APIResponse.respond(data=teachers_assignments_dump)
 
@@ -20,7 +20,7 @@ def list_assignments(p):
 @teacher_assignments_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
 @decorators.authenticate_principal
-def grade_assignment(p, incoming_payload):
+def grade_assignment_by_teacher(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
 
