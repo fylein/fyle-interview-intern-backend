@@ -1,48 +1,44 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
 from core.models.assignments import Assignment
-
 from .schema import AssignmentSchema, AssignmentSubmitSchema
+
 student_assignments_resources = Blueprint('student_assignments_resources', __name__)
 
-
-@student_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
+@student_assignments_resources.route('/assignments/<int:assignment_id>', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
-def list_assignments(p):
-    """Returns list of assignments"""
-    students_assignments = Assignment.get_assignments_by_student(p.student_id)
-    students_assignments_dump = AssignmentSchema().dump(students_assignments, many=True)
-    return APIResponse.respond(data=students_assignments_dump)
+def get_assignment(p, assignment_id):
+    """Returns a specific assignment"""
+    assignment = Assignment.query.get(assignment_id)
+    if not assignment:
+        return APIResponse.respond_error(message='Assignment not found', status_code=404)
+    assignment_dump = AssignmentSchema().dump(assignment)
+    return APIResponse.respond(data=assignment_dump)
 
-
-@student_assignments_resources.route('/assignments', methods=['POST'], strict_slashes=False)
+@student_assignments_resources.route('/assignments/<int:assignment_id>', methods=['PUT'], strict_slashes=False)
 @decorators.accept_payload
 @decorators.authenticate_principal
-def upsert_assignment(p, incoming_payload):
-    """Create or Edit an assignment"""
-    assignment = AssignmentSchema().load(incoming_payload)
-    assignment.student_id = p.student_id
+def update_assignment(p, assignment_id, incoming_payload):
+    """Update an assignment"""
+    assignment = Assignment.query.get(assignment_id)
+    if not assignment:
+        return APIResponse.respond_error(message='Assignment not found', status_code=404)
 
-    upserted_assignment = Assignment.upsert(assignment)
+    updated_assignment = AssignmentSchema().load(incoming_payload, instance=assignment, partial=True)
     db.session.commit()
-    upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
-    return APIResponse.respond(data=upserted_assignment_dump)
+    updated_assignment_dump = AssignmentSchema().dump(updated_assignment)
+    return APIResponse.respond(data=updated_assignment_dump)
 
-
-@student_assignments_resources.route('/assignments/submit', methods=['POST'], strict_slashes=False)
-@decorators.accept_payload
+@student_assignments_resources.route('/assignments/<int:assignment_id>', methods=['DELETE'], strict_slashes=False)
 @decorators.authenticate_principal
-def submit_assignment(p, incoming_payload):
-    """Submit an assignment"""
-    submit_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
+def delete_assignment(p, assignment_id):
+    """Delete an assignment"""
+    assignment = Assignment.query.get(assignment_id)
+    if not assignment:
+        return APIResponse.respond_error(message='Assignment not found', status_code=404)
 
-    submitted_assignment = Assignment.submit(
-        _id=submit_assignment_payload.id,
-        teacher_id=submit_assignment_payload.teacher_id,
-        auth_principal=p
-    )
+    db.session.delete(assignment)
     db.session.commit()
-    submitted_assignment_dump = AssignmentSchema().dump(submitted_assignment)
-    return APIResponse.respond(data=submitted_assignment_dump)
+    return APIResponse.respond(message='Assignment deleted successfully')

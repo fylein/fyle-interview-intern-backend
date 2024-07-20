@@ -4,6 +4,17 @@ from marshmallow_enum import EnumField
 from core.models.assignments import Assignment, GradeEnum
 from core.libs.helpers import GeneralObject
 
+class AssignmentUpdateSchema(Schema):
+    class Meta:
+        unknown = EXCLUDE
+
+    content = fields.String(required=False, allow_none=True)
+    grade = EnumField(GradeEnum, required=False, allow_none=True)
+    state = fields.String(required=False, allow_none=True)
+
+    @post_load
+    def initiate_class(self, data_dict, many, partial):
+        return GeneralObject(**data_dict)
 
 class AssignmentSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -21,9 +32,7 @@ class AssignmentSchema(SQLAlchemyAutoSchema):
 
     @post_load
     def initiate_class(self, data_dict, many, partial):
-        # pylint: disable=unused-argument,no-self-use
         return Assignment(**data_dict)
-
 
 class AssignmentSubmitSchema(Schema):
     class Meta:
@@ -34,9 +43,7 @@ class AssignmentSubmitSchema(Schema):
 
     @post_load
     def initiate_class(self, data_dict, many, partial):
-        # pylint: disable=unused-argument,no-self-use
         return GeneralObject(**data_dict)
-
 
 class AssignmentGradeSchema(Schema):
     class Meta:
@@ -47,5 +54,4 @@ class AssignmentGradeSchema(Schema):
 
     @post_load
     def initiate_class(self, data_dict, many, partial):
-        # pylint: disable=unused-argument,no-self-use
         return GeneralObject(**data_dict)

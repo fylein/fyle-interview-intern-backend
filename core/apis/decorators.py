@@ -1,8 +1,7 @@
 import json
 from flask import request
-from core.libs import assertions
 from functools import wraps
-
+from core.libs import assertions
 
 class AuthPrincipal:
     def __init__(self, user_id, student_id=None, teacher_id=None, principal_id=None):
@@ -11,14 +10,12 @@ class AuthPrincipal:
         self.teacher_id = teacher_id
         self.principal_id = principal_id
 
-
 def accept_payload(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         incoming_payload = request.json
         return func(incoming_payload, *args, **kwargs)
     return wrapper
-
 
 def authenticate_principal(func):
     @wraps(func)
@@ -40,7 +37,7 @@ def authenticate_principal(func):
         elif request.path.startswith('/principal'):
             assertions.assert_true(p.principal_id is not None, 'requester should be a principal')
         else:
-            assertions.assert_found(None, 'No such api')
+            assertions.assert_found(None, 'No such API')
 
         return func(p, *args, **kwargs)
     return wrapper

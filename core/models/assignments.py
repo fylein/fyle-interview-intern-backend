@@ -1,4 +1,5 @@
 import enum
+from datetime import datetime
 from core import db
 from core.apis.decorators import AuthPrincipal
 from core.libs import helpers, assertions
@@ -6,20 +7,19 @@ from core.models.teachers import Teacher
 from core.models.students import Student
 from sqlalchemy.types import Enum as BaseEnum
 
-
+# Enum Definitions
 class GradeEnum(str, enum.Enum):
     A = 'A'
     B = 'B'
     C = 'C'
     D = 'D'
 
-
 class AssignmentStateEnum(str, enum.Enum):
     DRAFT = 'DRAFT'
     SUBMITTED = 'SUBMITTED'
     GRADED = 'GRADED'
 
-
+# Assignment Model
 class Assignment(db.Model):
     __tablename__ = 'assignments'
     id = db.Column(db.Integer, db.Sequence('assignments_id_seq'), primary_key=True)
@@ -70,7 +70,6 @@ class Assignment(db.Model):
         db.session.flush()
 
         return assignment
-
 
     @classmethod
     def mark_grade(cls, _id, grade, auth_principal: AuthPrincipal):
