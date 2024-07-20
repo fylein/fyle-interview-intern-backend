@@ -1,0 +1,8 @@
+// to create a image  
+docker built -t imageName:version .
+
+//check images 
+docker ps
+
+//to run docker compose 
+docker-compose up 
