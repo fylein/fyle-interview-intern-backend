@@ -65,7 +65,7 @@ flask db upgrade -d core/migrations/
 ```
 bash run.sh
 ```
-### Access the application at http://localhost:7755
+#### Access the application at http://localhost:7755
 
 ### Stop the application
 ` press Ctrl+C `
@@ -97,7 +97,7 @@ docker-compose -f docker-compose.build.yaml build
 ```
 docker-compose -f docker-compose.run.yaml up
 ```
-### Access the application at http://localhost:9999
+#### Access the application at http://localhost:9999
 
 ### Stop the application
 ` press Ctrl+C ` and run bellow command
