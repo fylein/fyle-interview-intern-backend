@@ -13,7 +13,7 @@ There are 5 resources:
 - A principal can view all the assignments submitted and/or graded by teachers.
 - A principal can re-grade the assignments already graded by the teacher.
 - A student can create and edit a draft assignment
-- A student can list all his created assignments
+- A student can list all his/her/they created assignments
 - A student can submit a draft assignment to a teacher
 - A teacher can list all assignments submitted to him
 - A teacher can grade an assignment submitted to him
@@ -33,7 +33,7 @@ Your tasks
     - number_of_graded_assignments_for_each_student.sql
 - Optionally, Dockerize your application by creating a Dockerfile and a docker-compose.yml file, providing clear documentation on building and running the application with Docker, to stand out in your submission
 
-***Once you are done with your task, please use [this form](https://forms.gle/dJLNMyBmBCJSv6EH7) to complete your submission.***
+***Once you are done with your task, please use [this form](https://forms.gle/TbpVhYojG84cyUD77) to complete your submission.***
 
 You will hear back within 48 hours from us via email. 
 
