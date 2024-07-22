@@ -45,6 +45,7 @@ class Assignment(db.Model):
 
     @classmethod
     def upsert(cls, assignment_new: 'Assignment'):
+        assertions.assert_valid(assignment_new.content is not None, 'content can not be null')
         if assignment_new.id is not None:
             assignment = Assignment.get_by_id(assignment_new.id)
             assertions.assert_found(assignment, 'No assignment with this id was found')
@@ -65,7 +66,7 @@ class Assignment(db.Model):
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
-        assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT, 'this assignment is alredy submitted')
+        assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT, 'only a draft assignment can be submitted')
 
         assignment.teacher_id = teacher_id
         assignment.state = AssignmentStateEnum.SUBMITTED
@@ -77,9 +78,13 @@ class Assignment(db.Model):
     @classmethod
     def mark_grade(cls, _id, grade, auth_principal: AuthPrincipal):
         assignment = Assignment.get_by_id(_id)
+            
         assertions.assert_found(assignment, 'No assignment with this id was found')
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
-        assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, 'no assignment with this id is submited')
+        assertions.assert_valid(assignment.state.value != AssignmentStateEnum.DRAFT, 'no assignment with this id is submitted')
+        assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id 
+                                or auth_principal.principal_id is not None, 
+                                'raise error: no principal or teacher found')
 
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED

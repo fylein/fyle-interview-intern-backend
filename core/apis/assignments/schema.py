@@ -10,8 +10,8 @@ class AssignmentSchema(SQLAlchemyAutoSchema):
         model = Assignment
         unknown = EXCLUDE
 
-    id = auto_field(required=False, allow_none=True)
-    content = auto_field()
+    id = auto_field(dump_only=True)
+    content = auto_field(required=True)
     created_at = auto_field(dump_only=True)
     updated_at = auto_field(dump_only=True)
     teacher_id = auto_field(dump_only=True)
