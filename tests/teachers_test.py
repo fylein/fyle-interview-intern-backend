@@ -99,3 +99,56 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+def test_grade_assignment_missing_fields(client, h_teacher_1):
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 1
+        }
+    )
+
+    assert response.status_code == 400
+    data = response.json
+    assert data['error'] == 'ValidationError'
+
+
+
+def test_grade_assignment_by_different_teacher(client, h_teacher_2):
+    """
+    Test grading an assignment by a teacher who does not own the assignment.
+    """
+    # Assuming assignment 1 belongs to teacher 1
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 1,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 400
+    data = response.json
+    assert data['error'] == 'FyleError'
+
+def test_grade_already_graded_assignment(client, h_teacher_1):
+    """
+    Test grading an assignment that has already been graded.
+    """
+    # Assuming assignment 3 is already graded
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 3,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 400
+    data = response.json
+    assert data['error'] == 'FyleError'
+    assert data["message"] == "This assignment belongs to some other teacher"

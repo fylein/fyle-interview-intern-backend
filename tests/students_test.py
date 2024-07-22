@@ -73,6 +73,21 @@ def test_submit_assignment_student_1(client, h_student_1):
     assert data['state'] == 'SUBMITTED'
     assert data['teacher_id'] == 2
 
+def test_submit_nonexistent_assignment(client, h_student_1):
+    """
+    Test submitting an assignment that does not exist.
+    """
+    response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_1,
+        json={
+            'id': 999,
+            'teacher_id': 2
+        }
+    )
+
+    assert response.status_code == 404
+
 
 def test_assignment_resubmit_error(client, h_student_1):
     response = client.post(
