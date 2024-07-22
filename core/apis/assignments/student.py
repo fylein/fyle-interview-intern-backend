@@ -2,6 +2,8 @@ from flask import Blueprint
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
+from core.libs import assertions
+from core.libs.exceptions import FyleError
 from core.models.assignments import Assignment
 
 from .schema import AssignmentSchema, AssignmentSubmitSchema
@@ -22,9 +24,12 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
+    
+    assertions.assert_valid(incoming_payload.get('content') is not None, 'content cannot be null')
+    
     assignment = AssignmentSchema().load(incoming_payload)
     assignment.student_id = p.student_id
-
+    
     upserted_assignment = Assignment.upsert(assignment)
     db.session.commit()
     upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
@@ -38,7 +43,7 @@ def submit_assignment(p, incoming_payload):
     """Submit an assignment"""
     submit_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
 
-    submitted_assignment = Assignment.submit(
+    submitted_assignment = Assignment.submit( 
         _id=submit_assignment_payload.id,
         teacher_id=submit_assignment_payload.teacher_id,
         auth_principal=p
