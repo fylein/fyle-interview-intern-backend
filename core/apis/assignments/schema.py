@@ -3,7 +3,8 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
 from marshmallow_enum import EnumField
 from core.models.assignments import Assignment, GradeEnum
 from core.libs.helpers import GeneralObject
-
+from core.models.teachers import Teacher
+from core.models.users import User 
 
 class AssignmentSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -49,3 +50,20 @@ class AssignmentGradeSchema(Schema):
     def initiate_class(self, data_dict, many, partial):
         # pylint: disable=unused-argument,no-self-use
         return GeneralObject(**data_dict)
+    
+# Schema for the User model to serialization and deserialization    
+class UserSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        load_instance = True
+
+# Schema for Teacher model to serialization and deserialization        
+class TeacherSchema(SQLAlchemyAutoSchema):
+    user = fields.Nested(UserSchema, exclude=('teachers',)) 
+    class Meta:
+       model = Teacher
+       include_relationships = True
+       load_instance = True
+     
+
+  
