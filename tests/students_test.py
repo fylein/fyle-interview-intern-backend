@@ -39,6 +39,35 @@ def test_post_assignment_null_content(client, h_student_1):
 
     assert response.status_code == 400
 
+def test_post_assignment_not_in_draft_state(client, h_student_1):
+    """
+    failure case: editing assignment not in draft state
+    """
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'id':3,
+            'content': "New Edited Text"
+        })
+
+    assert response.status_code == 400
+    
+def test_submit_nonexistent_assignment(client, h_student_1):
+    """
+    Test submitting an assignment that does not exist.
+    """
+    response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_1,
+        json={
+            'id': 999,
+            'teacher_id': 2
+        }
+    )
+
+    assert response.status_code == 404
 
 def test_post_assignment_student_1(client, h_student_1):
     content = 'ABCD TESTPOST'
@@ -91,3 +120,19 @@ def test_assignment_resubmit_error(client, h_student_1):
         assert response.status_code == 400
         assert error_response['error'] == 'FyleError'
         assert error_response["message"] == 'only a draft assignment can be submitted'
+
+
+def test_submit_assignment_invalid_student_id(client):
+    """
+    failure case: Invalid student id
+    """
+
+    response = client.post(
+        '/student/assignments/submit',
+        headers={"user_id":6, "student_id":4},
+        json={
+            "id":2,
+            "teacher_id":2
+        })
+
+    assert response.status_code == 401

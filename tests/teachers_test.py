@@ -43,7 +43,25 @@ def test_grade_assignment_cross(client, h_teacher_2):
 
     assert data['error'] == 'FyleError'
 
+def test_grade_already_graded_assignment(client, h_teacher_1):
+    """
+    Test grading an assignment that has already been graded.
+    """
+    # Assuming assignment 3 is already graded
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 3,
+            "grade": "A"
+        }
+    )
 
+    assert response.status_code == 400
+    data = response.json
+    assert data['error'] == 'FyleError'
+    assert data["message"] == "Error"
+    
 def test_grade_assignment_bad_grade(client, h_teacher_1):
     """
     failure case: API should allow only grades available in enum
