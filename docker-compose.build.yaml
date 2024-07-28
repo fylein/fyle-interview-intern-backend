@@ -1,0 +1,8 @@
+version: '3.12'
+
+services:
+  build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fyle-interview-intern-backend:latest
