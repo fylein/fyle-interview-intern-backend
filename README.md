@@ -1,5 +1,43 @@
 # Fyle Backend Challenge
 
+## How to run using Docker
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) (version 20.10 or higher)
+- [Docker Compose](https://docs.docker.com/compose/install/) (version 1.29 or higher)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/your-repo.git
+cd your-repo
+```
+
+### 2. Build and Start Containers
+Use Docker Compose to build and start the application:
+```bash
+docker-compose build
+docker-compose up -d
+```
+### 3. Access the Docker Container and migrations
+```bash
+docker-compose exec app /bin/bash
+flask db upgrade -d core/migrations/
+```
+### 4. Run Tests
+```bash
+pytest -vvv -s tests/
+pytest --cov
+```
+
+### 5.Stopping the Application
+To exit and stop the containers:
+```bash
+exit
+docker-compose down
+```
+
+
 ## Who is this for?
 
 This challenge is meant for candidates who wish to intern at Fyle and work with our engineering team. You should be able to commit to at least 6 months of dedicated time for internship.

@@ -12,8 +12,9 @@ teacher_assignments_resources = Blueprint('teacher_assignments_resources', __nam
 @decorators.authenticate_principal
 def list_assignments(p):
     """Returns list of assignments"""
-    teachers_assignments = Assignment.get_assignments_by_teacher()
-    teachers_assignments_dump = AssignmentSchema().dump(teachers_assignments, many=True)
+    teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id)
+    filtered_assignments = [a for a in teachers_assignments if a.state in ['SUBMITTED', 'GRADED']]
+    teachers_assignments_dump = AssignmentSchema().dump(filtered_assignments, many=True)
     return APIResponse.respond(data=teachers_assignments_dump)
 
 

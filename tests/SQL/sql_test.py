@@ -53,6 +53,7 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
 def test_get_assignments_in_graded_state_for_each_student():
     """Test to get graded assignments for each student"""
 
+
     # Find all the assignments for student 1 and change its state to 'GRADED'
     submitted_assignments: Assignment = Assignment.filter(Assignment.student_id == 1)
 

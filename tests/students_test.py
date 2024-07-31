@@ -86,3 +86,41 @@ def test_assignment_resubmit_error(client, h_student_1):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+def test_get_assignment_not_found(client, h_student_1):
+    # Assume assignment with id 9999 doesn't exist
+    non_existent_id = 9999
+    
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+              'id': non_existent_id,
+              'content': 'some updated text'
+        })
+
+    assert response.status_code == 404
+
+def test_edit_assignment_not_in_draft_state(client, h_student_1):
+    
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+              'id': 1,
+              'content': 'some updated text'
+        })
+
+    assert response.status_code == 400
+
+def test_no_such_api(client, h_student_1):
+    """Test that accessing a non-existent API endpoint results in a 404 error with the 'No such api' message"""
+
+    # Simulate a request to a non-existent endpoint
+    response = client.get(
+        '/unsupported',
+        headers=h_student_1
+    )
+
+    # Check that the status code is 404 Not Found
+    assert response.status_code == 404

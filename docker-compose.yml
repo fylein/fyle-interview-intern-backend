@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "7755:7755"
+    volumes:
+      - .:/app
+    command: ["bash", "run.sh"]
+
+networks:
+  default:
+    driver: bridge
