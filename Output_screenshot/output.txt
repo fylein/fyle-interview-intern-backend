@@ -1,0 +1,109 @@
+(myenv) E:\clg\fyle-interview-intern-backend>pytest --cov
+================================================= test session starts =================================================
+platform win32 -- Python 3.11.6, pytest-8.2.1, pluggy-1.5.0
+rootdir: E:\clg\fyle-interview-intern-backend
+configfile: pytest.ini
+plugins: anyio-4.3.0, cov-5.0.0
+collected 19 items
+
+tests\SQL\sql_test.py ..                                                                                         [ 10%]
+tests\principals_test.py .....                                                                                   [ 36%]
+tests\students_test.py ...F..                                                                                    [ 68%]
+tests\teachers_test.py ......                                                                                    [100%]
+
+================================================================================================================= FAILURES =================================================================================================================
+______________________________________________________________________________________________________ test_post_assignment_student_1 ______________________________________________________________________________________________________
+
+client = <FlaskClient <Flask 'core'>>, h_student_1 = {'X-Principal': '{"student_id": 1, "user_id": 1}'}
+
+    def test_post_assignment_student_1(client, h_student_1):
+        content = 'ABCD TESTPOST'
+
+        response = client.post(
+            '/student/assignments',
+            headers=h_student_1,
+            json={
+                'content': content
+            })
+>       assert response.status_code == 200
+E       assert 400 == 200
+E        +  where 400 = <WrapperTestResponse streamed [400 BAD REQUEST]>.status_code
+
+tests\students_test.py:51: AssertionError
+----------------------------------------------------------------------------------------------------------- Captured stdout call -----------------------------------------------------------------------------------------------------------
+athish
+
+---------- coverage: platform win32, python 3.11.6-final-0 -----------
+Name                                                                                               Stmts   Miss  Cover
+----------------------------------------------------------------------------------------------------------------------
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\colorama\ansitowin32.py                 146    110    25%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\colorama\win32.py                        96     86    10%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\colorama\winterm.py                     137    129     6%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\__init__.py                     27     19    30%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\filter.py                       22     12    45%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\filters\__init__.py            169    128    24%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\formatter.py                    29      6    79%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\formatters\__init__.py          85     59    31%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\formatters\_mapping.py           2      1    50%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\formatters\html.py             413    291    30%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexer.py                       475    373    21%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\__init__.py             191    157    18%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\_css_builtins.py          2      0   100%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\_mapping.py               2      1    50%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\_scheme_builtins.py       3      0   100%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\actionscript.py          35      4    89%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\agile.py                 12      0   100%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\css.py                   76     15    80%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\d.py                     23      0   100%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\data.py                 295    231    22%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\factor.py                22      0   100%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\html.py                  87     13    85%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\iolang.py                11      0   100%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\javascript.py           156     50    68%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\jvm.py                  184     21    89%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\lisp.py                 317    133    58%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\perl.py                 137     96    30%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\php.py                   81     47    42%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\python.py                96     18    81%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\ruby.py                 110     62    44%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\scripting.py            248     99    60%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\tcl.py                   18      1    94%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\web.py                   10      0   100%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\lexers\webmisc.py              233    139    40%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\modeline.py                     20     14    30%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\plugin.py                       33     23    30%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\regexopt.py                     43     32    26%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\style.py                       101     23    77%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\styles\__init__.py              29     14    52%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\styles\_mapping.py               2      1    50%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\styles\default.py                8      0   100%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\token.py                        59     14    76%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\unistring.py                    41      4    90%
+C:\Users\echo\AppData\Roaming\Python\Python311\site-packages\pygments\util.py                        159    116    27%
+core\__init__.py                                                                                      20      1    95%
+core\apis\__init__.py                                                                                  0      0   100%
+core\apis\assignments\__init__.py                                                                      4      1    75%
+core\apis\assignments\principal.py                                                                    22      0   100%
+core\apis\assignments\schema.py                                                                       37      2    95%
+core\apis\assignments\student.py                                                                      35      5    86%
+core\apis\assignments\teacher.py                                                                      22      3    86%
+core\apis\decorators.py                                                                               32      1    97%
+core\apis\responses.py                                                                                 6      1    83%
+core\apis\teachers\__init__.py                                                                         2      1    50%
+core\apis\teachers\principal.py                                                                       14      1    93%
+core\apis\teachers\schema.py                                                                          17      2    88%
+core\libs\__init__.py                                                                                  0      0   100%
+core\libs\assertions.py                                                                               16      3    81%
+core\libs\exceptions.py                                                                               11      4    64%
+core\libs\helpers.py                                                                                  11      1    91%
+core\models\__init__.py                                                                                0      0   100%
+core\models\assignments.py                                                                            82     12    85%
+core\models\students.py                                                                               11      2    82%
+core\models\teachers.py                                                                               14      2    86%
+core\server.py                                                                                        30      8    73%
+----------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                               4831   2592    46%
+
+========================================================================================================= short test summary info ==========================================================================================================
+FAILED tests/students_test.py::test_post_assignment_student_1 - assert 400 == 200
+======================================================================================================= 1 failed, 18 passed in 2.61s =======================================================================================================
