@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
@@ -25,10 +25,13 @@ def upsert_assignment(p, incoming_payload):
     assignment = AssignmentSchema().load(incoming_payload)
     assignment.student_id = p.student_id
 
-    upserted_assignment = Assignment.upsert(assignment)
-    db.session.commit()
-    upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
-    return APIResponse.respond(data=upserted_assignment_dump)
+    if assignment.content is not None:
+        upserted_assignment = Assignment.upsert(assignment)
+        db.session.commit()
+        upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
+        return APIResponse.respond(data=upserted_assignment_dump)
+    else:
+        return jsonify(error='Content is null ! Content Cannot be null'), 400
 
 
 @student_assignments_resources.route('/assignments/submit', methods=['POST'], strict_slashes=False)
