@@ -1,7 +1,7 @@
 import pytest
 import json
 from tests import app
-
+from core.models.assignments import AssignmentStateEnum
 
 @pytest.fixture
 def client():
@@ -54,7 +54,6 @@ def h_teacher_2():
     }
 
     return headers
-
 
 @pytest.fixture
 def h_principal():

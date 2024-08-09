@@ -1,4 +1,5 @@
 from flask import Blueprint
+from marshmallow import ValidationError
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
@@ -22,14 +23,31 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
-    assignment = AssignmentSchema().load(incoming_payload)
+
+    # Load and validate the incoming payload using the Assignment schema
+    try:
+        assignment = AssignmentSchema().load(incoming_payload)
+    except ValidationError as e:
+        return APIResponse.respond(
+            error='BadRequest',
+            message='Invalid assignment data',
+            status_code=400
+        )
+    
+    # Set the student_id from the authenticated principal
     assignment.student_id = p.student_id
 
+    # Upsert the assignment in the database
     upserted_assignment = Assignment.upsert(assignment)
-    db.session.commit()
-    upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
-    return APIResponse.respond(data=upserted_assignment_dump)
 
+    # Commit the transaction to the database
+    db.session.commit()
+
+    # Serialize the upserted assignment
+    upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
+
+    # Return the response
+    return APIResponse.respond(data=upserted_assignment_dump)
 
 @student_assignments_resources.route('/assignments/submit', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
