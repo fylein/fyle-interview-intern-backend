@@ -25,6 +25,8 @@ limit_request_line = 0
 
 spew = False
 
+L1 = []
+
 daemon = False
 pidfile = None
 umask = 0
