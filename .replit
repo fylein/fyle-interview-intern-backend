@@ -1,4 +1,8 @@
-modules = ["python-3.12", "bash"]
+modules = ["bash", "python-3.11", "python-3.12"]
 
 [nix]
 channel = "stable-24_05"
+
+[[ports]]
+localPort = 7755
+externalPort = 80
