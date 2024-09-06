@@ -62,10 +62,13 @@ def test_submit_assignment_student_1(client, h_student_1):
         '/student/assignments/submit',
         headers=h_student_1,
         json={
-            'id': 2,
-            'teacher_id': 2
-        })
-
+            'id': 2,         # Check if the assignment ID and teacher ID are valid
+            'teacher_id': 2  # Ensure that this teacher exists in the test setup
+        }
+    )
+    if response.status_code != 200:
+        print("Status Code:", response.status_code)
+        print("Response Body:", response.json)
     assert response.status_code == 200
 
     data = response.json['data']
