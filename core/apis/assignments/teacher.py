@@ -3,6 +3,7 @@ from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
 from core.models.assignments import Assignment
+from core.libs import assertions
 
 from .schema import AssignmentSchema, AssignmentGradeSchema
 
@@ -33,7 +34,7 @@ def grade_assignment(p, incoming_payload):
     assertions.assert_found(assignment,"Assignment not found")
 
     # Validate the teacher's ownership of the assignment
-    assertions.assert_true(p.teacher_id == assignment.teacher_id,"Assignment submitted to another teacher")
+    assertions.assert_valid(p.teacher_id == assignment.teacher_id,"Assignment submitted to another teacher")
     
     #Grade it after all the checks
     graded_assignment = Assignment.mark_grade(

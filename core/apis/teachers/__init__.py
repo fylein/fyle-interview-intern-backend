@@ -1,2 +1,2 @@
-from .principal import principal_teacher_resources
+from .principal import principal_teachers_resources
 
