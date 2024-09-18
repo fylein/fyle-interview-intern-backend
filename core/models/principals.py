@@ -11,3 +11,7 @@ class Principal(db.Model):
 
     def __repr__(self):
         return '<Principal %r>' % self.id
+
+    @classmethod
+    def get_all(cls):
+        return cls.query.all()
