@@ -21,7 +21,7 @@ def test_grade_assignment_draft_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
         json={
-            'id': 5,
+            'id':5,
             'grade': GradeEnum.A.value
         },
         headers=h_principal
@@ -68,3 +68,15 @@ def test_get_teachers(client, h_principal):
         )
 
         assert response.status_code == 200
+
+
+def test_grade_assignment_invalid_grade(client, h_principal):
+    """Only valid grades are A,B,C,D"""
+    response = client.post(
+        '/principal/assignments/grade',
+        json={
+            'id': 4,
+            'grade': 'CF'
+        },
+        headers=h_principal
+    )

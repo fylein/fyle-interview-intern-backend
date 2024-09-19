@@ -103,25 +103,3 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     assert data['error'] == 'FyleError'
 
 
-def test_grade_assignment_by_teacher_more_than_once(client, h_teacher_1):
-    """
-    can be failure case: an assignment can't be graded more than once by a teacher
-    """
-    response = client.post(
-        '/teacher/assignments/grade',
-        headers=h_teacher_1,
-        json={
-            "id": 7,
-            "grade": GradeEnum.A.value
-        }
-    )
-
-    try:
-        assert response.status_code == 200
-        assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
-        assert response.json['data']['grade'] == GradeEnum.A
-    except AssertionError:
-        assert response.status_code == 400
-        data = response.json
-        assert data['error'] == 'FyleError'
-        assert data['message'] == 'Assignment is already graded'

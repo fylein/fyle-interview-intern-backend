@@ -71,13 +71,13 @@ class Assignment(db.Model):
         assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
 
         # Bug fix
-        assertions.assert_valid(assignment.state != AssignmentStateEnum.SUBMITTED, "only a draft assignment can be submitted")
-
-        assignment.teacher_id = teacher_id
-        assignment.state = AssignmentStateEnum.SUBMITTED
-        db.session.flush()
-
-        return assignment
+        if assignment.state == AssignmentStateEnum.SUBMITTED:
+            assertions.assert_valid(False,'only a draft assignment can be submitted')
+        else:
+            assignment.teacher_id = teacher_id
+            assignment.state=AssignmentStateEnum.SUBMITTED
+            db.session.flush()
+            return assignment
 
 
     @classmethod
@@ -87,10 +87,9 @@ class Assignment(db.Model):
 
         assertions.assert_found(assignment, 'No assignment with this id was found')
         # Assignment grade not in GradeEnum does not pass
-        print(assignment)
 
         assertions.assert_valid(grade is not None and grade in GradeEnum, 'assignment with empty grade cannot be graded')
-        assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, 'Cannot grade an assignment in DRAFT state')
+        assertions.assert_valid(auth_principal.principal_id and assignment.state != AssignmentStateEnum.DRAFT, 'Cannot grade an assignment in DRAFT state by principal')
         if not auth_principal.principal_id:
             #bug:  id mismatch
             assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id,'Assignment belongs to another teacher')
