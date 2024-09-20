@@ -1,7 +1,6 @@
 """ 
 workflow:
-> we 're going to create a Blueprint so that all the views associated to the principal is grouped and managed from here.
-> then we 're going to register the required views for /assignments, /teachers, /assignments/grade
+Create a Blueprint to group and manage principal-related views. Register views for /assignments, /teachers, and /assignments/grade.
 """
 
 from flask import Blueprint

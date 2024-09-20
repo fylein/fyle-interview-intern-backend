@@ -53,15 +53,18 @@ class AssignmentGradeSchema(Schema):
 # we need to build a Teacher's Schema rh.
 """ 
 thought process:
-because we 're creating a Schema for a table record. to do that we got to serialize the python obj that we ve got. And then this base class generates the fields directly from the obj so here we 're using the SQLAlchemyAutoSchema not Schema.
+We’re creating a table Schema by serializing the Python object. Using SQLAlchemyAutoSchema instead of Schema to auto-generate fields from the object.
 """
 
 class TeacherSchema(SQLAlchemyAutoSchema):
     # this is the pragma | directive thing that we ve got to instruct marshmallow-sqlalchemy for config purpose.
+
     class Meta:
         # let em know what model to use to generate the auto schema.
+
         model = Teacher
         # exclude all them unknown pros and dont raise an error for that thing.
+        
         unknown = EXCLUDE
 
     id = auto_field(allow_none=False, required=True) # being consistent with the table attrs.
@@ -71,6 +74,7 @@ class TeacherSchema(SQLAlchemyAutoSchema):
     updated_at = auto_field(dump_only=True)
 
     """  this method is ivked when we got to deserialize. many repr that we're going to ve multiple dicts | dicts[]. partial is used to flag the checkpoint that we're going to create the obj from scratch or only some of them. dump_only kicks right in here. """
+
     @post_load
     def initiate_class(self, data_dict, many, partial):
         return GeneralObject(**data_dict)
