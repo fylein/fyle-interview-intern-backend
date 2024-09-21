@@ -25,7 +25,10 @@ class Assignment(db.Model):
     id = db.Column(db.Integer, db.Sequence('assignments_id_seq'), primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey(Student.id), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey(Teacher.id), nullable=True)
-    content = db.Column(db.Text)
+    
+    """Bug - It cannot be null"""
+    content = db.Column(db.Text,nullable=False)
+    
     grade = db.Column(BaseEnum(GradeEnum))
     state = db.Column(BaseEnum(AssignmentStateEnum), default=AssignmentStateEnum.DRAFT, nullable=False)
     created_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False)
@@ -54,6 +57,7 @@ class Assignment(db.Model):
             assignment.content = assignment_new.content
         else:
             assignment = assignment_new
+            assertions.assert_valid(assignment.content is not None, "assignment without content cannot be posted")
             db.session.add(assignment_new)
 
         db.session.flush()
@@ -76,8 +80,16 @@ class Assignment(db.Model):
     def mark_grade(cls, _id, grade, auth_principal: AuthPrincipal):
         assignment = Assignment.get_by_id(_id)
         assertions.assert_found(assignment, 'No assignment with this id was found')
-        assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
+        # Assignment grade not in GradeEnum does not pass
+        assertions.assert_valid(grade is not None and grade in Enum, 'assignment with empty grade cannot be graded')
+        # Assignment draft state cannot be graded
+        assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT, "cannot grade a assignment in draft mode.")
 
+        if not auth_principal.principal_id:
+            #bug:  (id_mismatch)
+            assertions.assert_valid(assignment.teacher_id == auth_principal.teacher_id,'Assignment belongs to another teacher')
+            # assignment is already graded
+            assertions.assert_valid(assignment.state != AssignmentStateEnum.GRADED, 'Assignment is already graded')
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED
         db.session.flush()
@@ -89,5 +101,9 @@ class Assignment(db.Model):
         return cls.filter(cls.student_id == student_id).all()
 
     @classmethod
-    def get_assignments_by_teacher(cls):
-        return cls.query.all()
+    def get_assignments_by_teacher(cls,teacher_id):
+        return cls.query.filter(cls.teacher_id == teacher.id).all()
+
+    @classmethod
+    def list_all_graded_submitted_assignments(cls):
+        return cls.query.filter(or_(cls.state == AssignmentStateEnum.SUBMITTED, cls.state == AssignmentStateEnum.GRADED)).all()

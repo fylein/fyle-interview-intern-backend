@@ -1,5 +1,6 @@
 from flask import Blueprint
 from core import db
+from core.libs import assertions
 from core.apis import decorators
 from core.apis.responses import APIResponse
 from core.models.assignments import Assignment
@@ -12,7 +13,8 @@ teacher_assignments_resources = Blueprint('teacher_assignments_resources', __nam
 @decorators.authenticate_principal
 def list_assignments(p):
     """Returns list of assignments"""
-    teachers_assignments = Assignment.get_assignments_by_teacher()
+    # bug fix
+    teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id)
     teachers_assignments_dump = AssignmentSchema().dump(teachers_assignments, many=True)
     return APIResponse.respond(data=teachers_assignments_dump)
 
@@ -20,9 +22,23 @@ def list_assignments(p):
 @teacher_assignments_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
 @decorators.authenticate_principal
+
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
+
+    #no payload present
+    if not incoming_payload:
+        assertions.assert_valid(None, "Missing payload")
+    assignment_with_payload = Assignment.get_by_id(grade_assignment_payload)
+
+    #assignment not found
+    assertions.assert_found(assignment_with_payload, "Assigment not found")
+
+    # Validate the teacher's ownership of the assignment
+    assertions.assert_true(p.teacher_id == assignment_with_payload.teacher_id,"Assignment submitted to another teacher")
+    
+    #Grade it after all the checks
 
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,

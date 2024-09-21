@@ -11,3 +11,8 @@ class Principal(db.Model):
 
     def __repr__(self):
         return '<Principal %r>' % self.id
+
+# method to get all teachers
+@classmethod
+def get_all_teachers(ctx):
+    ctx.query.all()
