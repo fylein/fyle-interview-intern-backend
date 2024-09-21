@@ -31,7 +31,7 @@ def grade_assignment(p, incoming_payload):
     #no payload present
     if not incoming_payload:
         assertions.assert_valid(None, "Missing payload")
-    assignment_with_payload = Assignment.get_by_id(grade_assignment_payload)
+    assignment_with_payload = Assignment.get_by_id(grade_assignment_payload.id)
 
     #assignment not found
     assertions.assert_found(assignment_with_payload, "Assigment not found")
