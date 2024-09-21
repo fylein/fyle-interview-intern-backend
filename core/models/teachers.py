@@ -12,7 +12,7 @@ class Teacher(db.Model):
     def __repr__(self):
         return '<Teacher %r>' % self.id
 
-#get all
-@classmethod
-def get_all(ctx):
-    return ctx.query.all()
+    #get all
+    @classmethod
+    def get_all(ctx):
+        return ctx.query.all()

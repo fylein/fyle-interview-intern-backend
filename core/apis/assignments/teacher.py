@@ -6,6 +6,7 @@ from core.apis.responses import APIResponse
 from core.models.assignments import Assignment
 
 from .schema import AssignmentSchema, AssignmentGradeSchema
+
 teacher_assignments_resources = Blueprint('teacher_assignments_resources', __name__)
 
 
@@ -36,7 +37,7 @@ def grade_assignment(p, incoming_payload):
     assertions.assert_found(assignment_with_payload, "Assigment not found")
 
     # Validate the teacher's ownership of the assignment
-    assertions.assert_true(p.teacher_id == assignment_with_payload.teacher_id,"Assignment submitted to another teacher")
+    assertions.assert_valid(p.teacher_id == assignment_with_payload.teacher_id,"Assignment submitted to another teacher")
     
     #Grade it after all the checks
 

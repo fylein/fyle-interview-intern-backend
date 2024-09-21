@@ -10,7 +10,7 @@ principal_assignments_resources = Blueprint('principal_assignments_resources', _
 
 
 #principal route setup
-@principal_assignments_resources.route('assignments', methods=['GET'], strict_slashes=False)
+@principal_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
 @decorators.authenticate_principal
 def list_all_assignments(p):
     """Returns list of all submitted and graded assignments"""

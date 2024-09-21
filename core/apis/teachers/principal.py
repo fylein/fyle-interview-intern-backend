@@ -10,6 +10,6 @@ principal_teachers_resources = Blueprint('principal_teachers_resources', __name_
 @decorators.authenticate_principal
 def list_teachers(p):
     #feat:  Returns list of all teachers
-    teachers = Principal.get_all()
+    teachers = Principal.get_all_teachers()
     teachers_dump = TeacherSchema().dump(teachers, many=True)
     return APIResponse.respond(data=teachers_dump)  
