@@ -12,7 +12,7 @@ teacher_assignments_resources = Blueprint('teacher_assignments_resources', __nam
 @decorators.authenticate_principal
 def list_assignments(p):
     """Returns list of assignments"""
-    teachers_assignments = Assignment.get_assignments_by_teacher()
+    teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id)
     teachers_assignments_dump = AssignmentSchema().dump(teachers_assignments, many=True)
     return APIResponse.respond(data=teachers_assignments_dump)
 
@@ -23,6 +23,16 @@ def list_assignments(p):
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
+
+    if not incoming_payload:
+        return APIResponse.respond(error="Payloads are missing"), 400
+
+    assignment = Assignment.get_by_id(grade_assignment_payload.id)
+    if not assignment:
+        return APIResponse.respond(error="Assignment not found"), 404
+
+    if p.teacher_id != assignment.teacher_id:
+        return APIResponse.respond(error="Assignment submitted to another teacher"), 403
 
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
