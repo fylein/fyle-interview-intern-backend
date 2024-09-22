@@ -24,16 +24,6 @@ def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
 
-    if not incoming_payload:
-        return APIResponse.respond(error="Payloads are missing"), 400
-
-    assignment = Assignment.get_by_id(grade_assignment_payload.id)
-    if not assignment:
-        return APIResponse.respond(error="Assignment not found"), 404
-
-    if p.teacher_id != assignment.teacher_id:
-        return APIResponse.respond(error="Assignment submitted to another teacher"), 403
-
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,

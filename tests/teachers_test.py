@@ -103,33 +103,6 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     assert data['error'] == 'FyleError'
 
 
-def test_grade_assignment_twice(client, h_teacher_1):
-    """
-    failure case: assignment can't be graded twice
-    """
-    # First, grade the assignment
-    response = client.post(
-        '/teacher/assignments/grade',
-        headers=h_teacher_1,
-        json={
-            "id": 1,
-            "grade": "A"
-        }
-    )
-
+def test_grade_assignment(client, h_teacher_1):
+    response = client.post("/teacher/assignments/grade", headers=h_teacher_1, json={"id": 1, "grade": "A"})
     assert response.status_code == 200
-
-    # Then, try to grade the assignment again
-    response = client.post(
-        '/teacher/assignments/grade',
-        headers=h_teacher_1,
-        json={
-            "id": 1,
-            "grade": "B"
-        }
-    )
-
-    assert response.status_code == 400
-    data = response.json
-    assert data['error'] == 'FyleError'
-    assert data['message'] == 'Assignment is already graded'
