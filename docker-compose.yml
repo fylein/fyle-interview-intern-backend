@@ -1,0 +1,6 @@
+services:
+  backend:
+    container_name: edu-backend
+    build: .
+    ports:
+      - "7755:7755"
