@@ -2,7 +2,9 @@ import json
 from flask import request
 from core.libs import assertions
 from functools import wraps
-
+from core.models.students import Student
+from core.models.teachers import Teacher
+from core.models.principals import Principal
 
 class AuthPrincipal:
     def __init__(self, user_id, student_id=None, teacher_id=None, principal_id=None):
@@ -35,10 +37,22 @@ def authenticate_principal(func):
 
         if request.path.startswith('/student'):
             assertions.assert_true(p.student_id is not None, 'requester should be a student')
+            student = Student.query.filter(Student.id == p.student_id).first()
+            assertions.assert_found(student, 'Student does not exist')
+            user_id_ = student.user_id
+            assertions.assert_valid(p.user_id == user_id_, 'invalid user')
         elif request.path.startswith('/teacher'):
             assertions.assert_true(p.teacher_id is not None, 'requester should be a teacher')
+            teacher = Teacher.query.filter(Teacher.id == p.teacher_id).first()
+            assertions.assert_found(teacher, 'teacher does not exist')
+            user_id_ = teacher.user_id
+            assertions.assert_valid(p.user_id == user_id_, 'invalid user')
         elif request.path.startswith('/principal'):
             assertions.assert_true(p.principal_id is not None, 'requester should be a principal')
+            principal = Principal.query.filter(Principal.id == p.principal_id).first()
+            assertions.assert_found(principal, 'principal does not exist')
+            user_id_ = principal.user_id
+            assertions.assert_valid(p.user_id == user_id_, 'invalid user')
         else:
             assertions.assert_found(None, 'No such api')
 
