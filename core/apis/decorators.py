@@ -37,19 +37,19 @@ def authenticate_principal(func):
 
         if request.path.startswith('/student'):
             assertions.assert_true(p.student_id is not None, 'requester should be a student')
-            student = Student.query.filter(Student.id == p.student_id).first()
+            student = Student.get_by_id(p.student_id)
             assertions.assert_found(student, 'Student does not exist')
             user_id_ = student.user_id
             assertions.assert_valid(p.user_id == user_id_, 'invalid user')
         elif request.path.startswith('/teacher'):
             assertions.assert_true(p.teacher_id is not None, 'requester should be a teacher')
-            teacher = Teacher.query.filter(Teacher.id == p.teacher_id).first()
+            teacher = Teacher.get_by_id(p.teacher_id)
             assertions.assert_found(teacher, 'teacher does not exist')
             user_id_ = teacher.user_id
             assertions.assert_valid(p.user_id == user_id_, 'invalid user')
         elif request.path.startswith('/principal'):
             assertions.assert_true(p.principal_id is not None, 'requester should be a principal')
-            principal = Principal.query.filter(Principal.id == p.principal_id).first()
+            principal = Principal.get_by_id(p.principal_id)
             assertions.assert_found(principal, 'principal does not exist')
             user_id_ = principal.user_id
             assertions.assert_valid(p.user_id == user_id_, 'invalid user')
