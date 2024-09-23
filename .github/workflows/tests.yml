@@ -1,0 +1,35 @@
+name: Run tests and View Coverage
+
+env:
+  FLASK_APP: core/server.py
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Python 3.8
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.8
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Reset Database
+        run: flask db upgrade -d core/migrations/
+
+      - name: Run tests and view coverage
+        run: pytest -v --cov -s tests/
