@@ -2,6 +2,7 @@ from core import db
 from core.libs import helpers
 
 
+
 class Teacher(db.Model):
     __tablename__ = 'teachers'
     id = db.Column(db.Integer, db.Sequence('teachers_id_seq'), primary_key=True)
@@ -11,3 +12,18 @@ class Teacher(db.Model):
 
     def __repr__(self):
         return '<Teacher %r>' % self.id
+
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+        }    
+
+
+
+    @classmethod
+    def get_all_teachers(cls):
+        return db.session.query(cls).all()    

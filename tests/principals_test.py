@@ -1,4 +1,13 @@
 from core.models.assignments import AssignmentStateEnum, GradeEnum
+from flask import jsonify
+from core.libs.exceptions import FyleError
+from marshmallow.exceptions import ValidationError
+from sqlalchemy.exc import IntegrityError
+import pytest
+from core import app
+from core.libs import helpers
+from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import BadRequest, InternalServerError
 
 
 def test_get_assignments(client, h_principal):
@@ -21,7 +30,7 @@ def test_grade_assignment_draft_assignment(client, h_principal):
     response = client.post(
         '/principal/assignments/grade',
         json={
-            'id': 5,
+            'id': 156,
             'grade': GradeEnum.A.value
         },
         headers=h_principal

@@ -1,0 +1,273 @@
+.\env\Scripts\activate
+set FLASK_APP=core/server.py
+
+
+
+
+
+
+================================================================================ FAILURES =================================================================================
+_________________________________________________________________ test_grade_assignment_draft_assignment __________________________________________________________________
+
+client = <FlaskClient <Flask 'core'>>, h_principal = {'X-Principal': '{"principal_id": 1, "user_id": 5}'}
+
+    def test_grade_assignment_draft_assignment(client, h_principal):
+        """
+        failure case: If an assignment is in Draft state, it cannot be graded by principal
+        """
+        response = client.post(
+            '/principal/assignments/grade',
+            json={
+                'id': 5,
+                'grade': GradeEnum.A.value
+            },
+            headers=h_principal
+        )
+
+>       assert response.status_code == 400
+E       assert 200 == 400
+E         +200
+E         -400
+
+tests\principals_test.py:30: AssertionError
+__________________________________________________________________________ test_grade_assignment __________________________________________________________________________
+
+client = <FlaskClient <Flask 'core'>>, h_principal = {'X-Principal': '{"principal_id": 1, "user_id": 5}'}
+
+    def test_grade_assignment(client, h_principal):
+        response = client.post(
+            '/principal/assignments/grade',
+            json={
+                'id': 4,
+                'grade': GradeEnum.C.value
+            },
+            headers=h_principal
+        )
+
+>       assert response.status_code == 200
+E       assert 500 == 200
+E         +500
+E         -200
+
+tests\principals_test.py:43: AssertionError
+_________________________________________________________________________ test_regrade_assignment _________________________________________________________________________
+
+client = <FlaskClient <Flask 'core'>>, h_principal = {'X-Principal': '{"principal_id": 1, "user_id": 5}'}
+
+    def test_regrade_assignment(client, h_principal):
+        response = client.post(
+            '/principal/assignments/grade',
+            json={
+                'id': 4,
+                'grade': GradeEnum.B.value
+            },
+            headers=h_principal
+        )
+
+>       assert response.status_code == 200
+E       assert 500 == 200
+E         +500
+E         -200
+
+tests\principals_test.py:59: AssertionError
+this is the test cases i want to pass 
+from flask import Blueprint
+from core import db
+from core.apis import decorators
+from core.apis.responses import APIResponse
+from core.models.assignments import Assignment
+from .schema import AssignmentSchema
+from core.models.teachers import Teacher
+from marshmallow import ValidationError
+from flask import request
+from core.models.assignments import AssignmentStateEnum
+from core.libs import helpers, assertions
+
+
+principal_assignments_resources = Blueprint('principal_assignments_resources', __name__)
+
+@principal_assignments_resources.route('/assignments', methods=['GET'], strict_slashes=False)
+@decorators.authenticate_principal
+def list_assignments(p):
+    """Returns list of submitted and graded assignments"""
+    principal_assignments = Assignment.get_all_submitted_and_graded_by_principal(p.principal_id)
+    principal_assignments_dump = AssignmentSchema().dump(principal_assignments, many=True)
+    return APIResponse.respond(data=principal_assignments_dump)
+
+
+
+@principal_assignments_resources.route('/teachers', methods=['GET'], strict_slashes=False)
+@decorators.authenticate_principal
+def list_teachers(p):
+    """Returns list of Teacher"""
+    teachers_list = Teacher.get_all_teachers()
+    teachers_dict = [teacher.to_dict() for teacher in teachers_list]
+    return APIResponse.respond(data=teachers_dict)    
+
+
+
+@principal_assignments_resources.route('/assignments/grade', methods=['POST'], strict_slashes=False)
+@decorators.authenticate_principal
+def grade_assignment(p):
+    """
+    Grade or re-grade an assignment
+    """
+    try:
+       
+        payload = request.get_json()
+        assignment_id = payload.get('id')
+        grade = payload.get('grade')
+        
+
+        
+        
+        if not assignment_id or not grade:
+            return APIResponse.respond_error('Missing required fields: id or grade', 400)
+
+
+        assignment = Assignment.get_by_id(assignment_id)
+        assertions.assert_found(assignment, 'No assignment with this id was found')
+
+        # Check if the assignment is in draft state
+        # if assignment.state == AssignmentStateEnum.DRAFT:
+        #     return APIResponse.respond_error('Assignment is in draft state and cannot be graded', 400)
+
+     
+       
+        updated_assignment = Assignment.mark_grade(
+            _id=assignment_id, 
+            grade=grade, 
+            auth_principal=p
+        )
+
+       
+        assignment_dump = AssignmentSchema().dump(updated_assignment)
+        
+        return APIResponse.respond(data=assignment_dump)
+
+    except ValidationError as err:
+        return APIResponse.respond_error(f"Invalid input: {err.messages}", 400)
+
+    except Exception as err:
+        return APIResponse.respond_error(f"An error occurred: {str(err)}", 500)   
+  
+    
+
+
+this is principal.py
+import enum
+from core import db
+from core.apis.decorators import AuthPrincipal
+from core.libs import helpers, assertions
+from core.models.teachers import Teacher
+from core.models.students import Student
+from sqlalchemy.types import Enum as BaseEnum
+
+
+class GradeEnum(str, enum.Enum):
+    A = 'A'
+    B = 'B'
+    C = 'C'
+    D = 'D'
+   
+
+
+class AssignmentStateEnum(str, enum.Enum):
+    DRAFT = 'DRAFT'
+    SUBMITTED = 'SUBMITTED'
+    GRADED = 'GRADED'
+
+
+class Assignment(db.Model):
+    __tablename__ = 'assignments'
+    id = db.Column(db.Integer, db.Sequence('assignments_id_seq'), primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey(Student.id), nullable=False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey(Teacher.id), nullable=True)
+    content = db.Column(db.Text)
+    grade = db.Column(BaseEnum(GradeEnum))
+    state = db.Column(BaseEnum(AssignmentStateEnum), default=AssignmentStateEnum.DRAFT, nullable=False)
+    created_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False)
+    updated_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False, onupdate=helpers.get_utc_now)
+
+    def __repr__(self):
+        return '<Assignment %r>' % self.id
+
+    @classmethod
+    def filter(cls, *criterion):
+        db_query = db.session.query(cls)
+        return db_query.filter(*criterion)
+
+    @classmethod
+    def get_by_id(cls, _id):
+        return cls.filter(cls.id == _id).first()
+
+    @classmethod
+    def upsert(cls, assignment_new: 'Assignment'):
+        if assignment_new.id is not None:
+            assignment = Assignment.get_by_id(assignment_new.id)
+            assertions.assert_found(assignment, 'No assignment with this id was found')
+            assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT,
+                                    'only assignment in draft state can be edited')
+
+            assignment.content = assignment_new.content
+        else:
+            assignment = assignment_new
+            db.session.add(assignment_new)
+
+        db.session.flush()
+        return assignment
+
+    @classmethod
+    def submit(cls, _id, teacher_id, auth_principal: AuthPrincipal):
+        assignment = Assignment.get_by_id(_id)
+        assertions.assert_found(assignment, 'No assignment with this id was found')
+        assertions.assert_valid(assignment.student_id == auth_principal.student_id, 'This assignment belongs to some other student')
+        assertions.assert_valid(assignment.content is not None, 'assignment with empty content cannot be submitted')
+
+        assignment.teacher_id = teacher_id
+        db.session.flush()
+
+        return assignment
+
+
+    @classmethod
+    def mark_grade(cls, _id, grade, auth_principal: AuthPrincipal):
+        assignment = Assignment.get_by_id(_id)
+        
+        # assertions.assert_valid(assignment.state==DRAFT, "Assignment is in draft state")
+        assertions.assert_found(assignment, 'No assignment with this id was found')
+        assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
+        assertions.assert_valid(assignment.state != AssignmentStateEnum.DRAFT,'Assignment is in draft state and cannot be graded')
+        assignment.grade = grade
+        
+        assignment.state = AssignmentStateEnum.GRADED
+        db.session.flush()
+
+        return assignment
+
+    @classmethod
+    def get_assignments_by_student(cls, student_id):
+        return cls.filter(cls.student_id == student_id).all()
+
+    @classmethod
+    def get_assignments_by_teacher(cls):
+        return cls.query.all()
+
+
+
+    @classmethod
+    def get_all_submitted_and_graded_by_principal(cls, principal_id):
+   
+        return cls.query.filter(
+            cls.state.in_([AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED]),           
+        ).all()
+
+
+        
+
+
+
+     
+ 
+this is assignments.py 
+here if i wrote the logic to handle draft state then my test_grade_assignment and test_regrade_assignment both fails and if i commented that logic both the test passes how to solve this and pass all the test cases 
