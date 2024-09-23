@@ -31,6 +31,19 @@ def h_student_2():
 
     return headers
 
+@pytest.fixture
+def h_grading_by_teacher_2():
+    """ this fixture is created to exclude the natural order of test execution due to which some inconsistency were observed. """
+
+    headers = {
+        'X-Principal': json.dumps({
+            'teacher_id': 2,
+            'user_id': 4
+        })
+    }
+
+    return headers
+
 
 @pytest.fixture
 def h_teacher_1():
