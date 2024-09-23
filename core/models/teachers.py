@@ -1,19 +1,56 @@
-from core import db
+from flask import jsonify
+from marshmallow.exceptions import ValidationError
+from core import app
+# from core.apis.assignments import student_assignments_resources, teacher_assignments_resources
+from core.apis.assignments import student_assignments_resources, teacher_assignments_resources, principal_resources
 from core.libs import helpers
+from core.libs.exceptions import FyleError
+from werkzeug.exceptions import HTTPException
+
+from sqlalchemy.exc import IntegrityError
+
+""" 
+desc:
+just so that you can keep your related rsrcs grouped at one place, you're using blueprints in flask.
+params:
+> blueprint is the blueprint to register.
+> url_prefix is a prefix thats prefixes the url for accessing rest of the rsrcs.
+note:
+you got to register all of them blueprints before you start running your app. its just the part of "APP SETUP PHASE".
+"""
+
+app.register_blueprint(student_assignments_resources, url_prefix='/student')
+app.register_blueprint(teacher_assignments_resources, url_prefix='/teacher')
+app.register_blueprint(principal_resources, url_prefix='/principal')
 
 
-class Teacher(db.Model):
-    __tablename__ = 'teachers'
-    id = db.Column(db.Integer, db.Sequence('teachers_id_seq'), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    created_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False)
-    updated_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False, onupdate=helpers.get_utc_now)
+@app.route('/')
+def ready():
+    response = jsonify({
+        'status': 'ready',
+        'time': helpers.get_utc_now()
+    })
 
-    def __repr__(self):
-        return '<Teacher %r>' % self.id
+    return response
 
-    @classmethod
-    def list_teachers(cls):
-        """ Returns a list of Teachers. """
-        list_of_teachers = db.session.execute(db.select(cls)).scalars()
-        return list_of_teachers    
+
+@app.errorhandler(Exception)
+def handle_error(err):
+    if isinstance(err, FyleError):
+        return jsonify(
+            error=err.__class__.__name__, message=err.message
+        ), err.status_code
+    elif isinstance(err, ValidationError):
+        return jsonify(
+            error=err.__class__.__name__, message=err.messages
+        ), 400
+    elif isinstance(err, IntegrityError):
+        return jsonify(
+            error=err.__class__.__name__, message=str(err.orig)
+        ), 400
+    elif isinstance(err, HTTPException):
+        return jsonify(
+            error=err.__class__.__name__, message=str(err)
+        ), err.code
+
+    raise err
