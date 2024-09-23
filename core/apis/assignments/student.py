@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
@@ -22,6 +22,9 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
+    if 'content' not in incoming_payload or incoming_payload['content'] is None:
+         return jsonify({"error": "Content cannot be null"}), 400
+
     assignment = AssignmentSchema().load(incoming_payload)
     assignment.student_id = p.student_id
 

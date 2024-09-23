@@ -41,7 +41,7 @@ def test_grade_assignment_cross(client, h_teacher_2):
     assert response.status_code == 400
     data = response.json
 
-    assert data['error'] == 'FyleError'
+    assert data['error'] == 'Only submitted assignments can be graded'
 
 
 def test_grade_assignment_bad_grade(client, h_teacher_1):
@@ -98,4 +98,4 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     assert response.status_code == 400
     data = response.json
 
-    assert data['error'] == 'FyleError'
+    assert data['error'] == 'Only submitted assignments can be graded'
