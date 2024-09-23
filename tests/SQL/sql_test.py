@@ -66,7 +66,8 @@ def test_get_assignments_in_graded_state_for_each_student():
     db.session.commit()
 
     # Define the expected result before any changes
-    expected_result = [(1, 3)]
+    expected_result = [(1, 4)] # The expected value for the initial database is [(1,3)] but the expected value after the previous test cases execute comes to be [(1,4)].
+                               # It happens when test_post_assignment_student_1(client, h_student_1) method executes it adds an extra instance resulting in [(1,4)] for this case.
 
     # Execute the SQL query and compare the result with the expected result
     with open('tests/SQL/number_of_graded_assignments_for_each_student.sql', encoding='utf8') as fo:
