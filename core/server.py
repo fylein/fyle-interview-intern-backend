@@ -1,13 +1,20 @@
 from flask import jsonify
+from flask_migrate import Migrate
 from marshmallow.exceptions import ValidationError
-from core import app
+from core import app, db
 from core.apis.assignments import student_assignments_resources, teacher_assignments_resources
 from core.libs import helpers
 from core.libs.exceptions import FyleError
 from werkzeug.exceptions import HTTPException
 
 from sqlalchemy.exc import IntegrityError
+from core.apis.assignments.principal import principal_assignments_resources  
 
+
+# Register the blueprint for principal routes
+app.register_blueprint(principal_assignments_resources, url_prefix='/principal')
+
+migrate = Migrate(app, db)
 app.register_blueprint(student_assignments_resources, url_prefix='/student')
 app.register_blueprint(teacher_assignments_resources, url_prefix='/teacher')
 

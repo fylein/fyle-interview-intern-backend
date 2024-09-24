@@ -1,7 +1,8 @@
 import pytest
 import json
 from tests import app
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 @pytest.fixture
 def client():
@@ -66,3 +67,11 @@ def h_principal():
     }
 
     return headers
+
+@pytest.fixture(scope='module')
+def setup_database():
+    engine = create_engine('sqlite:///your_database.db', echo=True)
+    Session = sessionmaker(bind=engine)
+    db_session = Session()
+    yield db_session
+    db_session.close()

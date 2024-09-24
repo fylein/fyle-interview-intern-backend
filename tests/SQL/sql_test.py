@@ -1,7 +1,6 @@
 import random
 from sqlalchemy import text
-
-from core import db
+from core import app,db
 from core.models.assignments import Assignment, AssignmentStateEnum, GradeEnum
 
 
@@ -49,33 +48,34 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
     # Return the count of assignments with grade 'A'
     return grade_a_counter
 
-
 def test_get_assignments_in_graded_state_for_each_student():
     """Test to get graded assignments for each student"""
+    with app.app_context():  # Ensure you have app context for the Flask app
+        # Find all the assignments for student 1 and change its state to 'GRADED'
+        submitted_assignments = Assignment.filter(Assignment.student_id == 1).all()
 
-    # Find all the assignments for student 1 and change its state to 'GRADED'
-    submitted_assignments: Assignment = Assignment.filter(Assignment.student_id == 1)
+        # Iterate over each assignment and update its state
+        for assignment in submitted_assignments:
+            assignment.state = AssignmentStateEnum.GRADED  # Or any other desired state
 
-    # Iterate over each assignment and update its state
-    for assignment in submitted_assignments:
-        assignment.state = AssignmentStateEnum.GRADED  # Or any other desired state
+        # Flush the changes to the database session
+        db.session.flush()
 
-    # Flush the changes to the database session
-    db.session.flush()
-    # Commit the changes to the database
-    db.session.commit()
+        # Commit the changes to the database
+        db.session.commit()
 
-    # Define the expected result before any changes
-    expected_result = [(1, 3)]
+        # Define the expected result before any changes
+        expected_result = [(1, 3)]
 
-    # Execute the SQL query and compare the result with the expected result
-    with open('tests/SQL/number_of_graded_assignments_for_each_student.sql', encoding='utf8') as fo:
-        sql = fo.read()
+        # Execute the SQL query and compare the result with the expected result
+        with open('tests/SQL/number_of_graded_assignments_for_each_student.sql', encoding='utf8') as fo:
+            sql = fo.read()
 
-    # Execute the SQL query compare the result with the expected result
-    sql_result = db.session.execute(text(sql)).fetchall()
-    for itr, result in enumerate(expected_result):
-        assert result[0] == sql_result[itr][0]
+        # Execute the SQL query and compare the result with the expected result
+        sql_result = db.session.execute(text(sql)).fetchall()
+        for itr, result in enumerate(expected_result):
+            assert result[0] == sql_result[itr][0]
+
 
 
 def test_get_grade_A_assignments_for_teacher_with_max_grading():
