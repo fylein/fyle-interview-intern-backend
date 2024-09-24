@@ -18,7 +18,7 @@ pip install -r requirements.txt
 export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
-# lets see
+
 pytest -vvv -s tests/
 ```
 
@@ -29,7 +29,7 @@ pytest -vvv -s tests/
 export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
-# then lets go
+
 bash run.sh
 ```
 
@@ -39,7 +39,7 @@ bash run.sh
 export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
-# lets go
+
 pytest --cov --cov-report html
 open htmlcov/index.html
 ```
