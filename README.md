@@ -1,11 +1,10 @@
 # Fyle Backend Challenge completed ✅
 
 ### Development env: 
-> Ubuntu 22.04 LTS
-> 
+ 
 >  python3.8.19
 
-cd fyle-interview-intern-backend
+cd fyle-intern-backend-challenge
 
 virtualenv fylenv --python=python3.8
 . fylenv/bin/activate
