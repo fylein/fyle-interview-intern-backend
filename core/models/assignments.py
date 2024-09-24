@@ -81,6 +81,7 @@ class Assignment(db.Model):
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
         assertions.assert_valid((assignment.teacher_id == auth_principal.teacher_id)|(auth_principal.principal_id is not None), 'This assignment was submitted to some other teacher')
         assertions.assert_valid((assignment.state == AssignmentStateEnum.SUBMITTED) |( assignment.state == AssignmentStateEnum.GRADED), 'only a submitted assignment can be graded')
+        assertions.assert_valid((assignment.state != AssignmentStateEnum.GRADED) | ((auth_principal.principal_id is not None)), 'Cannot grade an already graded assignment')
 
         assignment.grade = grade
         assignment.state = AssignmentStateEnum.GRADED

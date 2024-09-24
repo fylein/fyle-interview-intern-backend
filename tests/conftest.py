@@ -66,3 +66,27 @@ def h_principal():
     }
 
     return headers
+
+
+@pytest.fixture
+def h_invalid_student():
+    headers = {
+        'X-Principal': json.dumps({
+            'student_id': 3,
+            'user_id': 6
+        })
+    }
+
+    return headers
+
+
+@pytest.fixture
+def h_invalid_teacher():
+    headers = {
+        'X-Principal': json.dumps({
+            'student_id': 3,
+            'user_id': 6
+        })
+    }
+
+    return headers

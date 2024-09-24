@@ -1,3 +1,7 @@
+from core.libs.exceptions import FyleError
+from core.models.assignments import AssignmentStateEnum, GradeEnum
+
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -99,3 +103,55 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+def test_grade_submitted_assignment(client, h_teacher_2):
+    """
+    Test case for grading correct assignment
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 3,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json
+    assert data['data']['state'] == AssignmentStateEnum.GRADED.value
+    assert data['data']['grade'] == GradeEnum.A
+
+
+def test_regrade_graded_assignment(client, h_teacher_2):
+    """
+    Test case for regrading an already graded assignment
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 3,
+            "grade": "C"
+        }
+    )
+
+    assert response.status_code == 400
+    data = response.json
+    assert data['error'] == 'FyleError'
+    assert data['message'] == 'Cannot grade an already graded assignment'
+
+
+def test_get_assignments_for_invalid_teacher(client, h_invalid_teacher):
+    """
+    Test case for an invalid teacher
+    """
+    response = client.get(
+        '/teacher/assignments',
+        headers=h_invalid_teacher
+    )
+
+    assert response.status_code == 404
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'Teacher with given id does not exist'
