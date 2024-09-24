@@ -10,6 +10,5 @@ class GeneralObject:
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-
 def get_utc_now():
     return datetime.utcnow()
