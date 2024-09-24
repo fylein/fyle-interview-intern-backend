@@ -1,4 +1,5 @@
-from core.models.assignments import AssignmentStateEnum, GradeEnum
+from core.models.assignments import AssignmentStateEnum, GradeEnum,Assignment
+from core import db
 
 
 def test_get_assignments(client, h_principal):
@@ -31,6 +32,7 @@ def test_grade_assignment_draft_assignment(client, h_principal):
 
 
 def test_grade_assignment(client, h_principal):
+
     response = client.post(
         '/principal/assignments/grade',
         json={
@@ -55,6 +57,7 @@ def test_regrade_assignment(client, h_principal):
         },
         headers=h_principal
     )
+
 
     assert response.status_code == 200
 
