@@ -49,3 +49,7 @@ class AssignmentGradeSchema(Schema):
     def initiate_class(self, data_dict, many, partial):
         # pylint: disable=unused-argument,no-self-use
         return GeneralObject(**data_dict)
+class TeacherSchema(Schema):
+    id = fields.Int()
+    name = fields.Str()
+    # Add other fields as necessary

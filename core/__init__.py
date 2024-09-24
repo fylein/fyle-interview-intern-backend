@@ -21,3 +21,8 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.close()
+
+with app.app_context():
+    from core import server
+    # db.create_all()  
+
