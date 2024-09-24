@@ -2,7 +2,7 @@
 
 Revision ID: 52a401750a76
 Revises: 2087a1db8595
-Create Date: 2024-01-07 19:15:22.771993
+Create Date: 2024-09-12 19:15:22.771993
 
 """
 from alembic import op
@@ -11,7 +11,6 @@ import sqlalchemy as sa
 from core import db
 from core.models.users import User
 from core.models.principals import Principal
-
 
 # revision identifiers, used by Alembic.
 revision = '52a401750a76'
