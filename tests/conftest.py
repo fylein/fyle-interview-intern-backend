@@ -66,3 +66,25 @@ def h_principal():
     }
 
     return headers
+
+@pytest.fixture
+def h_unauth_user():
+    headers = {
+        'X-Principal': json.dumps({
+            'principal_id': 1,
+            'user_id': 4
+        })
+    }
+
+    return headers
+
+@pytest.fixture
+def blank_header():
+    headers = {
+        'X-Principal': json.dumps({
+            'principal_id': None,
+            'user_id': 5
+        })
+    }
+
+    return headers
