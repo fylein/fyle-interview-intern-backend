@@ -96,9 +96,10 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     )
 
     assert response.status_code == 400
-    data = response.get_json()  # Correctly parse the JSON response
+    data = response.get_json()
 
     assert data['message'] == "Cannot grade a draft assignment"
+
 
 
 def test_grade_assignment(client, h_teacher_1):

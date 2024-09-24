@@ -27,13 +27,19 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
-    grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
+    try:
+        grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
 
-    graded_assignment = Assignment.mark_grade(
-        _id=grade_assignment_payload.id,
-        grade=grade_assignment_payload.grade,
-        auth_principal=p
-    )
-    db.session.commit()
-    graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
-    return APIResponse.respond(data=graded_assignment_dump)
+        # Call the mark_grade method, which handles the validation
+        graded_assignment = Assignment.mark_grade(
+            _id=grade_assignment_payload.id,
+            grade=grade_assignment_payload.grade,
+            auth_principal=p
+        )
+        db.session.commit()
+        graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
+        return APIResponse.respond(data=graded_assignment_dump)
+    
+    except ValueError as e:
+        return APIResponse.respond_error(message=str(e), status_code=400)
+
