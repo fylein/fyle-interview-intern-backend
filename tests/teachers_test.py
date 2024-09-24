@@ -84,18 +84,23 @@ def test_grade_assignment_bad_assignment(client, h_teacher_1):
 
 def test_grade_assignment_draft_assignment(client, h_teacher_1):
     """
-    failure case: only a submitted assignment can be graded
+    Failure case: only a submitted assignment can be graded
     """
     response = client.post(
         '/teacher/assignments/grade',
-        headers=h_teacher_1
-        , json={
-            "id": 2,
+        headers=h_teacher_1,
+        json={
+            "id": 2,  # Ensure this ID corresponds to a draft assignment
             "grade": "A"
         }
     )
 
     assert response.status_code == 400
-    data = response.json
+    data = response.get_json()  # Correctly parse the JSON response
 
-    assert data['error'] == 'FyleError'
+    assert data['message'] == "Cannot grade a draft assignment"
+
+
+def test_grade_assignment(client, h_teacher_1):
+    response = client.post("/teacher/assignments/grade", headers=h_teacher_1, json={"id": 1, "grade": "A"})
+    assert response.status_code == 200

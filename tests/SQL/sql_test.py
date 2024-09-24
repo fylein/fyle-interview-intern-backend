@@ -1,9 +1,12 @@
 import random
 from sqlalchemy import text
-
+import sqlalchemy
 from core import db
 from core.models.assignments import Assignment, AssignmentStateEnum, GradeEnum
 
+
+import random
+from sqlalchemy.orm import sessionmaker
 
 def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1) -> int:
     """
@@ -49,33 +52,38 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
     # Return the count of assignments with grade 'A'
     return grade_a_counter
 
-
 def test_get_assignments_in_graded_state_for_each_student():
     """Test to get graded assignments for each student"""
 
-    # Find all the assignments for student 1 and change its state to 'GRADED'
-    submitted_assignments: Assignment = Assignment.filter(Assignment.student_id == 1)
+    # Find all assignments for student 1 and change their state to 'GRADED'
+    submitted_assignments = Assignment.query.filter(Assignment.student_id == 1).all()
 
-    # Iterate over each assignment and update its state
+    assert submitted_assignments, "No assignments found for student 1"
+
     for assignment in submitted_assignments:
-        assignment.state = AssignmentStateEnum.GRADED  # Or any other desired state
+        assignment.state = AssignmentStateEnum.GRADED
 
-    # Flush the changes to the database session
-    db.session.flush()
-    # Commit the changes to the database
     db.session.commit()
 
-    # Define the expected result before any changes
-    expected_result = [(1, 3)]
+    expected_result = [(1, len(submitted_assignments))]
 
     # Execute the SQL query and compare the result with the expected result
-    with open('tests/SQL/number_of_graded_assignments_for_each_student.sql', encoding='utf8') as fo:
-        sql = fo.read()
+    try:
+        with open('tests/SQL/number_of_graded_assignments_for_each_student.sql', encoding='utf8') as fo:
+            sql = fo.read()
 
-    # Execute the SQL query compare the result with the expected result
-    sql_result = db.session.execute(text(sql)).fetchall()
-    for itr, result in enumerate(expected_result):
-        assert result[0] == sql_result[itr][0]
+        # Ensure the SQL query is a SELECT statement and returns results
+        sql_result = db.session.execute(text(sql)).fetchall()
+        assert sql_result, "SQL query returned no results"
+
+        for itr, result in enumerate(expected_result):
+            assert result == sql_result[itr], f"Expected {result}, got {sql_result[itr]}"
+
+    except sqlalchemy.exc.ResourceClosedError:
+        raise AssertionError("SQL query did not return any data. Ensure it is a SELECT query.")
+    except Exception as e:
+        raise AssertionError(f"SQL query failed with error: {e}")
+
 
 
 def test_get_grade_A_assignments_for_teacher_with_max_grading():
