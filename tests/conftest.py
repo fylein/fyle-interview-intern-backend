@@ -1,7 +1,8 @@
 import pytest
 import json
 from tests import app
-
+from core.models.assignments import AssignmentStateEnum, Assignment
+from core import db
 
 @pytest.fixture
 def client():
