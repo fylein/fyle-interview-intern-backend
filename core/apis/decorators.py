@@ -3,7 +3,6 @@ from flask import request
 from core.libs import assertions
 from functools import wraps
 
-
 class AuthPrincipal:
     def __init__(self, user_id, student_id=None, teacher_id=None, principal_id=None):
         self.user_id = user_id
@@ -23,6 +22,7 @@ def accept_payload(func):
 def authenticate_principal(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
+        # first checkpoint to know whether Principal header is defined or not.
         p_str = request.headers.get('X-Principal')
         assertions.assert_auth(p_str is not None, 'principal not found')
         p_dict = json.loads(p_str)
