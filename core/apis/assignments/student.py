@@ -1,8 +1,8 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
-from core.models.assignments import Assignment
+from core.models.assignments import Assignment, AssignmentStateEnum
 
 from .schema import AssignmentSchema, AssignmentSubmitSchema
 student_assignments_resources = Blueprint('student_assignments_resources', __name__)
@@ -22,20 +22,34 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
-    assignment = AssignmentSchema().load(incoming_payload)
-    assignment.student_id = p.student_id
+    print(incoming_payload)
+    if incoming_payload and incoming_payload["content"]:
+        assignment = AssignmentSchema().load(incoming_payload)
+        assignment.student_id = p.student_id
+        upserted_assignment = Assignment.upsert(assignment)
+        db.session.commit()
+        upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
+        return APIResponse.respond(data=upserted_assignment_dump)
 
-    upserted_assignment = Assignment.upsert(assignment)
-    db.session.commit()
-    upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
-    return APIResponse.respond(data=upserted_assignment_dump)
-
+    return jsonify({"error": "Assignment should contain content."}), 400
 
 @student_assignments_resources.route('/assignments/submit', methods=['POST'], strict_slashes=False)
 @decorators.accept_payload
 @decorators.authenticate_principal
 def submit_assignment(p, incoming_payload):
     """Submit an assignment"""
+    assignment = Assignment.get_by_id(incoming_payload["id"])
+    assignment_dump = AssignmentSchema().dump(assignment)
+
+    if not assignment:
+        return jsonify({"error": "FyleError"}), 404
+
+    if assignment_dump["state"] == AssignmentStateEnum.SUBMITTED:
+        return jsonify({"error": "FyleError", "message": "only a draft assignment can be submitted"}), 400
+
+    if assignment_dump["state"] == AssignmentStateEnum.GRADED:
+        return jsonify({"error": "FyleError", "message": "only a draft assignment can be submitted"}), 400
+
     submit_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
 
     submitted_assignment = Assignment.submit(
