@@ -1,0 +1,9 @@
+version: "2.29.1"
+
+services:
+  backend:
+    build:
+      context: ./
+    container_name: backend_c
+    ports:
+      - "7755:7755"
