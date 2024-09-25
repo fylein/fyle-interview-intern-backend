@@ -1,0 +1,9 @@
+core/store.sqlite3
+
+__pycache__/
+.pytest_cache
+
+env/
+
+htmlcov/
+.coverage
