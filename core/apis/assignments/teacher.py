@@ -3,6 +3,8 @@ from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
 from core.models.assignments import Assignment
+from core.server import app
+
 
 from .schema import AssignmentSchema, AssignmentGradeSchema
 teacher_assignments_resources = Blueprint('teacher_assignments_resources', __name__)
@@ -32,3 +34,18 @@ def grade_assignment(p, incoming_payload):
     db.session.commit()
     graded_assignment_dump = AssignmentSchema().dump(graded_assignment)
     return APIResponse.respond(data=graded_assignment_dump)
+@app.route('/principal/teachers', methods=['GET'])
+def list_all_teachers():
+    # Authenticate principal
+    principal = authenticate_principal(request.headers.get('X-Principal'))
+
+    if not principal:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    # Fetch all teachers
+    teachers = Teacher.query.all()
+
+    # Return the data
+    return jsonify({
+        "data": [teacher.to_dict() for teacher in teachers]
+    })

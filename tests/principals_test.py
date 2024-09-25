@@ -60,3 +60,24 @@ def test_regrade_assignment(client, h_principal):
 
     assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
     assert response.json['data']['grade'] == GradeEnum.B
+
+def test_list_all_assignments(client, principal_headers):
+    response = client.get('/principal/assignments', headers=principal_headers)
+    
+    assert response.status_code == 200
+    assert 'data' in response.json
+
+def test_list_all_teachers(client, principal_headers):
+    response = client.get('/principal/teachers', headers=principal_headers)
+    
+    assert response.status_code == 200
+    assert 'data' in response.json
+
+def test_regrade_assignment(client, principal_headers):
+    response = client.post('/principal/assignments/grade', json={
+        "assignment_id": 1,
+        "new_grade": "A"
+    }, headers=principal_headers)
+    
+    assert response.status_code == 200
+    assert response.json['data']['grade'] == 'A'

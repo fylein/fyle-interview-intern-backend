@@ -44,3 +44,12 @@ def authenticate_principal(func):
 
         return func(p, *args, **kwargs)
     return wrapper
+
+def principal_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Logic to verify principal permissions
+        if not user_is_principal():
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function

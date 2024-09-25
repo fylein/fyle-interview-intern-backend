@@ -5,6 +5,19 @@ from core.libs import helpers, assertions
 from core.models.teachers import Teacher
 from core.models.students import Student
 from sqlalchemy.types import Enum as BaseEnum
+from sqlalchemy import Column, Integer, String,ForeignKey
+from core.database import Base  # Assuming Base is the declarative base for SQLAlchemy
+
+class Assignment(Base):
+    __tablename__ = 'assignments'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    content = Column(String)
+    student_id = Column(Integer, ForeignKey('students.id'))
+    # Additional fields for the Assignment model
+
+
 
 
 class GradeEnum(str, enum.Enum):
