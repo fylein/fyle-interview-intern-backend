@@ -38,6 +38,11 @@ def test_post_assignment_null_content(client, h_student_1):
 
     assert response.status_code == 400
 
+    """These new lines are added here below as per requirement"""
+    error_response = response.json
+    assert error_response['error'] == 'InvalidRequestError'
+    assert error_response['message'] == 'Content cannot be null'
+
 
 def test_post_assignment_student_1(client, h_student_1):
     content = 'ABCD TESTPOST'
@@ -86,3 +91,47 @@ def test_assignment_resubmit_error(client, h_student_1):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+    """New attemp happened below"""
+
+def test_submit_non_existent_assignment(client, h_student_1):
+    """
+    failure case: submitting a non-existent assignment
+    """
+    response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_1,
+        json={
+            'id': 9999,  # Assuming this ID does not exist
+            'teacher_id': 2
+        }
+    )
+
+    assert response.status_code == 404
+
+    # Check for an informative error message
+    error_response = response.json
+    assert error_response['error'] == 'AssignmentNotFoundError'
+    assert error_response['message'] == 'The requested assignment was not found'
+
+def test_submit_assignment_invalid_teacher(client, h_student_1):
+    """
+    failure case: submitting an assignment to an invalid teacher
+    """
+    response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_1,
+        json={
+            'id': 2,  # Valid assignment ID
+            'teacher_id': 9999  # Assuming this teacher ID does not exist
+        }
+    )
+
+    assert response.status_code == 400
+
+    # Check for an informative error message
+    error_response = response.json
+    assert error_response['error'] == 'InvalidTeacherError'
+    assert error_response['message'] == 'The teacher ID provided is invalid'
+
+

@@ -42,6 +42,7 @@ def test_grade_assignment_cross(client, h_teacher_2):
     data = response.json
 
     assert data['error'] == 'FyleError'
+    assert data['message'] == 'You are not allowed to grade this assignment. It was submitted to a different teacher.'
 
 
 def test_grade_assignment_bad_grade(client, h_teacher_1):
@@ -61,11 +62,12 @@ def test_grade_assignment_bad_grade(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'ValidationError'
+    assert data['message'] == 'Grade must be one of the following: A, B, C, D, F'
 
 
 def test_grade_assignment_bad_assignment(client, h_teacher_1):
     """
-    failure case: If an assignment does not exists check and throw 404
+    failure case: If an assignment does not exist, check and throw 404
     """
     response = client.post(
         '/teacher/assignments/grade',
@@ -80,6 +82,7 @@ def test_grade_assignment_bad_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+    assert data['message'] == 'Assignment not found with the provided ID.'
 
 
 def test_grade_assignment_draft_assignment(client, h_teacher_1):
@@ -88,8 +91,8 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     """
     response = client.post(
         '/teacher/assignments/grade',
-        headers=h_teacher_1
-        , json={
+        headers=h_teacher_1,
+        json={
             "id": 2,
             "grade": "A"
         }
@@ -99,3 +102,43 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+    assert data['message'] == 'Only submitted assignments can be graded.'
+
+
+def test_grade_assignment_invalid_id_format(client, h_teacher_1):
+    """
+    failure case: invalid format for assignment ID
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": "invalid_id",  # Invalid ID format (string instead of int)
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 400
+    data = response.json
+
+    assert data['error'] == 'ValidationError'
+    assert data['message'] == 'Assignment ID must be an integer.'
+
+
+def test_grade_assignment_missing_grade(client, h_teacher_1):
+    """
+    failure case: missing grade in the request payload
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 1  # Missing grade field
+        }
+    )
+
+    assert response.status_code == 400
+    data = response.json
+
+    assert data['error'] == 'ValidationError'
+    assert data['message'] == 'Grade is a required field.'

@@ -4,6 +4,12 @@ from core.models.assignments import AssignmentStateEnum, GradeEnum
 def test_get_assignments(client, h_principal):
     response = client.get(
         '/principal/assignments',
+        json={
+            'id':4,
+            'teacher':'',
+            'subject':''    
+            """APi should contains all required Items"""
+        },
         headers=h_principal
     )
 
@@ -27,7 +33,8 @@ def test_grade_assignment_draft_assignment(client, h_principal):
         headers=h_principal
     )
 
-    assert response.status_code == 400
+    assert response.json.status_code == 400
+    """.json is added over here for more clarity!"""
 
 
 def test_grade_assignment(client, h_principal):
