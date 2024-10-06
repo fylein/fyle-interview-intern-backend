@@ -1,3 +1,4 @@
+import json
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -99,3 +100,21 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+
+def test_invalid_headers(client):
+    """
+    Test for requests with invalid or missing X-Principal headers.
+    """
+    response = client.post(
+        '/principal/assignments/grade',
+        json={
+            'id': 1,
+            'grade': 'A'
+        },
+        headers={'X-Principal': json.dumps({
+            'wrong_key': 1,
+            'user_id': 5
+        })}
+    )
+    assert response.status_code == 403  # Unauthorized or forbidden

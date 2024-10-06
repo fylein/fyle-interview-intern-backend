@@ -1,8 +1,10 @@
 import random
 from sqlalchemy import text
 
+
 from core import db
 from core.models.assignments import Assignment, AssignmentStateEnum, GradeEnum
+
 
 
 def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1) -> int:
