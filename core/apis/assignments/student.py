@@ -1,9 +1,9 @@
-from flask import Blueprint
+from flask import Blueprint,abort
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
-from core.models.assignments import Assignment
-
+from core.models.assignments import Assignment,AssignmentStateEnum
+from core.models.teachers import Teacher
 from .schema import AssignmentSchema, AssignmentSubmitSchema
 student_assignments_resources = Blueprint('student_assignments_resources', __name__)
 
@@ -23,8 +23,9 @@ def list_assignments(p):
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
     assignment = AssignmentSchema().load(incoming_payload)
+    if assignment.content is None:
+        abort(400, 'Content cannot be null')
     assignment.student_id = p.student_id
-
     upserted_assignment = Assignment.upsert(assignment)
     db.session.commit()
     upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
@@ -37,7 +38,14 @@ def upsert_assignment(p, incoming_payload):
 def submit_assignment(p, incoming_payload):
     """Submit an assignment"""
     submit_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
-
+    assignment = Assignment.get_by_id(submit_assignment_payload.id)
+    teacher = Teacher.get_by_id(submit_assignment_payload.teacher_id)
+    if assignment.student_id != p.student_id:
+        return APIResponse.respond({'error':'FyleError', 'message':'assignment does not belong to the student'},status=400)
+    if teacher is None:
+        return APIResponse.respond({'error':'FyleError', 'message':'teacher does not exist'},status=404)
+    if assignment.state.value != AssignmentStateEnum.DRAFT.value:
+        return APIResponse.respond({'error':'FyleError', 'message':'only a draft assignment can be submitted'},status=400)
     submitted_assignment = Assignment.submit(
         _id=submit_assignment_payload.id,
         teacher_id=submit_assignment_payload.teacher_id,

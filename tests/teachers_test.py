@@ -1,3 +1,15 @@
+import warnings
+import marshmallow_enum
+import pytest
+from core.models.assignments import GradeEnum
+
+def patched_fail(self, key, **kwargs):
+    raise self.make_error(key, **kwargs)
+
+marshmallow_enum.EnumField.fail = patched_fail
+
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="marshmallow_enum")
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -59,7 +71,6 @@ def test_grade_assignment_bad_grade(client, h_teacher_1):
 
     assert response.status_code == 400
     data = response.json
-
     assert data['error'] == 'ValidationError'
 
 
@@ -75,10 +86,9 @@ def test_grade_assignment_bad_assignment(client, h_teacher_1):
             "grade": "A"
         }
     )
-
+    
     assert response.status_code == 404
     data = response.json
-
     assert data['error'] == 'FyleError'
 
 
@@ -97,5 +107,22 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
 
     assert response.status_code == 400
     data = response.json
-
     assert data['error'] == 'FyleError'
+
+@pytest.mark.parametrize("invalid_payload", [
+    {},
+    {"grade": GradeEnum.A.value},
+    {"id": 1},
+    {"id": "not_an_int", "grade": GradeEnum.A.value},
+    {"id": 1, "grade": "not_a_valid_grade"},
+])
+def test_grade_assignment_invalid_payload(client, h_teacher_1, invalid_payload):
+    """Test grading an assignment with invalid payload"""
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json=invalid_payload
+    )
+
+    assert response.status_code == 400
+    assert 'error' in response.json

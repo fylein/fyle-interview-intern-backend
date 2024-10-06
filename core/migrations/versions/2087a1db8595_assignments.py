@@ -45,7 +45,7 @@ def upgrade():
     sa.Column('teacher_id', sa.Integer(), nullable=True),
     sa.Column('content', sa.Text(), nullable=True),
     sa.Column('grade', sa.Enum('A', 'B', 'C', 'D', name='gradeenum'), nullable=True),
-    sa.Column('state', sa.Enum('DRAFT', 'SUBMITTED', name='assignmentstateenum'), nullable=True),
+    sa.Column('state', sa.Enum('DRAFT', 'GRADED', 'SUBMITTED', name='assignmentstateenum'), nullable=True),
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['student_id'], ['students.id'], ),
@@ -67,7 +67,7 @@ def upgrade():
     assignment_1 = Assignment(student_id=student_1.id, content='ESSAY T1')
     assignment_2 = Assignment(student_id=student_1.id, content='THESIS T1')
     assignment_3 = Assignment(student_id=student_2.id, content='ESSAY T2')
-    assignment_4 = Assignment(student_id=student_2.id, content='THESIS T2')
+    assignment_4 = Assignment(student_id=student_2.id, content='THESIS T2',state='SUBMITTED')
 
     assignment_5 = Assignment(student_id=student_1.id, content='SOLUTION T1')
 

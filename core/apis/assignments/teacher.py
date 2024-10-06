@@ -2,7 +2,7 @@ from flask import Blueprint
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
-from core.models.assignments import Assignment
+from core.models.assignments import Assignment,AssignmentStateEnum
 
 from .schema import AssignmentSchema, AssignmentGradeSchema
 teacher_assignments_resources = Blueprint('teacher_assignments_resources', __name__)
@@ -12,7 +12,7 @@ teacher_assignments_resources = Blueprint('teacher_assignments_resources', __nam
 @decorators.authenticate_principal
 def list_assignments(p):
     """Returns list of assignments"""
-    teachers_assignments = Assignment.get_assignments_by_teacher()
+    teachers_assignments = Assignment.get_assignments_by_teacher(p.teacher_id)
     teachers_assignments_dump = AssignmentSchema().dump(teachers_assignments, many=True)
     return APIResponse.respond(data=teachers_assignments_dump)
 
@@ -23,7 +23,13 @@ def list_assignments(p):
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
-
+    assignment = Assignment.get_by_id(grade_assignment_payload.id)
+    if assignment is None:
+        return APIResponse.respond({'error':'FyleError', 'message':'assignment does not exist'},status=404)
+    if assignment.state != AssignmentStateEnum.SUBMITTED:
+        return APIResponse.respond({'error':'FyleError', 'message':'only a submitted assignment can be graded'},status=400)
+    if assignment.teacher_id != p.teacher_id:
+        return APIResponse.respond({'error':'FyleError', 'message':'assignment was not submitted to this teacher'},status=400)
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
         grade=grade_assignment_payload.grade,
