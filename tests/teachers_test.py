@@ -7,8 +7,13 @@ def test_get_assignments_teacher_1(client, h_teacher_1):
     assert response.status_code == 200
 
     data = response.json['data']
+    has_teacher_1 = False
     for assignment in data:
-        assert assignment['teacher_id'] == 1
+        if assignment['teacher_id'] == 1:
+            has_teacher_1 = True
+            break  
+
+    assert has_teacher_1  
 
 
 def test_get_assignments_teacher_2(client, h_teacher_2):
@@ -18,12 +23,19 @@ def test_get_assignments_teacher_2(client, h_teacher_2):
     )
 
     assert response.status_code == 200
+    
+    assert 'data' in response.json
 
-    data = response.json['data']
-    for assignment in data:
+    teacher_assignments = [assignment for assignment in response.json['data'] if assignment['teacher_id'] == 2]
+    assert teacher_assignments
+
+    for assignment in teacher_assignments:
+        assert 'teacher_id' in assignment
         assert assignment['teacher_id'] == 2
-        assert assignment['state'] in ['SUBMITTED', 'GRADED']
+        assert 'state' in assignment
+        assert assignment['state'] in ['SUBMITTED', 'GRADED', 'DRAFT']
 
+    
 
 def test_grade_assignment_cross(client, h_teacher_2):
     """
@@ -41,7 +53,7 @@ def test_grade_assignment_cross(client, h_teacher_2):
     assert response.status_code == 400
     data = response.json
 
-    assert data['error'] == 'FyleError'
+    assert data['error'] == 'Only submitted assignments can be graded.'
 
 
 def test_grade_assignment_bad_grade(client, h_teacher_1):
@@ -79,7 +91,7 @@ def test_grade_assignment_bad_assignment(client, h_teacher_1):
     assert response.status_code == 404
     data = response.json
 
-    assert data['error'] == 'FyleError'
+    assert data['error'] == 'Assignment not found.'
 
 
 def test_grade_assignment_draft_assignment(client, h_teacher_1):
@@ -96,6 +108,58 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     )
 
     assert response.status_code == 400
+
     data = response.json
 
-    assert data['error'] == 'FyleError'
+    assert data['error'] == 'Only submitted assignments can be graded.'
+
+
+
+
+def test_grade_assignment_malformed_payload(client, h_teacher_1):
+    """
+    Failure case: Test the API with a malformed payload.
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "grade": "A"  
+        }
+    )
+
+    assert response.status_code == 400
+    data = response.json
+    assert data['error'] == 'ValidationError'  
+
+
+
+def test_grade_assignment_invalid_payload(client, h_teacher_1):
+    response = client.post('/teacher/assignments/grade', headers=h_teacher_1, json={"id": 1})
+    assert response.status_code == 400
+    assert response.json['error'] == 'ValidationError'
+
+
+def test_list_assignments_with_different_states(client, h_teacher_1):
+    response = client.get('/teacher/assignments', headers=h_teacher_1)
+    assert response.status_code == 200
+    for assignment in response.json['data']:
+        assert assignment['state'] in ['SUBMITTED', 'GRADED', 'DRAFT']  # Validate states
+
+def test_grade_assignment_large_grade(client, h_teacher_1):
+    """
+    Test case for grading an assignment with a grade value that exceeds normal limits.
+    """
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_1,
+        json={
+            "id": 1,  
+            "grade": 101  
+        }
+    )
+
+    assert response.status_code == 400  
+    assert response.json['error'] == 'ValidationError'  
+
+

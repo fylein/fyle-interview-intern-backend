@@ -8,6 +8,8 @@ class Principal(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False)
     updated_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False, onupdate=helpers.get_utc_now)
+    assignments = db.relationship('Assignment', backref='principal', lazy=True)
+    teachers = db.relationship('Teacher', back_populates='principal')
 
     def __repr__(self):
         return '<Principal %r>' % self.id

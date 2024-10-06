@@ -1,7 +1,8 @@
 import pytest
 import json
 from tests import app
-
+from core import db  
+from core.models.assignments import Assignment  
 
 @pytest.fixture
 def client():
@@ -26,6 +27,17 @@ def h_student_2():
         'X-Principal': json.dumps({
             'student_id': 2,
             'user_id': 2
+        })
+    }
+
+    return headers
+
+@pytest.fixture
+def h_student_3():
+    headers = {
+        'X-Principal': json.dumps({
+            'student_id': 2,
+            'user_id': 1
         })
     }
 
@@ -57,6 +69,18 @@ def h_teacher_2():
 
 
 @pytest.fixture
+def h_teacher_3():
+    headers = {
+        'X-Principal': json.dumps({
+            'teacher_id': 7,
+            'user_id': 10
+        })
+    }
+
+    return headers
+
+
+@pytest.fixture
 def h_principal():
     headers = {
         'X-Principal': json.dumps({
@@ -66,3 +90,18 @@ def h_principal():
     }
 
     return headers
+
+
+@pytest.fixture
+def h_principal_1():
+    headers = {
+        'X-Principal': json.dumps({
+            'principal_id': 3,
+            'user_id': 5
+        })
+    }
+
+    return headers
+
+
+

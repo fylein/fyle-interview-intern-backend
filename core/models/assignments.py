@@ -7,6 +7,7 @@ from core.models.students import Student
 from sqlalchemy.types import Enum as BaseEnum
 
 
+
 class GradeEnum(str, enum.Enum):
     A = 'A'
     B = 'B'
@@ -30,6 +31,8 @@ class Assignment(db.Model):
     state = db.Column(BaseEnum(AssignmentStateEnum), default=AssignmentStateEnum.DRAFT, nullable=False)
     created_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False)
     updated_at = db.Column(db.TIMESTAMP(timezone=True), default=helpers.get_utc_now, nullable=False, onupdate=helpers.get_utc_now)
+    principal_id = db.Column(db.Integer, db.ForeignKey('principals.id'), nullable=False)
+
 
     def __repr__(self):
         return '<Assignment %r>' % self.id
@@ -79,7 +82,6 @@ class Assignment(db.Model):
         assertions.assert_valid(grade is not None, 'assignment with empty grade cannot be graded')
 
         assignment.grade = grade
-        assignment.state = AssignmentStateEnum.GRADED
         db.session.flush()
 
         return assignment
@@ -91,3 +93,17 @@ class Assignment(db.Model):
     @classmethod
     def get_assignments_by_teacher(cls):
         return cls.query.all()
+    
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'student_id': self.student_id,
+            'teacher_id': self.teacher_id,
+            'content': self.content,
+            'grade': self.grade,
+            'state': self.state,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+            'principal_id': self.principal_id  
+        }

@@ -1,0 +1,9 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: core/server.py
+
