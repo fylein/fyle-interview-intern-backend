@@ -22,6 +22,12 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
+
+    # Loophole was found here. Fixed it now. Raising 400 when content is not available.
+    from core.libs.exceptions import FyleError
+    if 'content' not in incoming_payload or incoming_payload['content'] is None:
+        raise FyleError(400, "Content cannot be null.")    
+    
     assignment = AssignmentSchema().load(incoming_payload)
     assignment.student_id = p.student_id
 
