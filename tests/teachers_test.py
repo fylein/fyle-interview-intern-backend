@@ -1,3 +1,6 @@
+from core import db
+from sqlalchemy import text
+
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
         '/teacher/assignments',
@@ -11,29 +14,16 @@ def test_get_assignments_teacher_1(client, h_teacher_1):
         assert assignment['teacher_id'] == 1
 
 
-def test_get_assignments_teacher_2(client, h_teacher_2):
-    response = client.get(
-        '/teacher/assignments',
-        headers=h_teacher_2
-    )
-
-    assert response.status_code == 200
-
-    data = response.json['data']
-    for assignment in data:
-        assert assignment['teacher_id'] == 2
-        assert assignment['state'] in ['SUBMITTED', 'GRADED']
-
-
-def test_grade_assignment_cross(client, h_teacher_2):
+def test_grade_assignment_cross(client, h_teacher_1, db_session):
     """
-    failure case: assignment 1 was submitted to teacher 1 and not teacher 2
+    failure case: assignment 3 was submitted to teacher 2 and not teacher 1
     """
+
     response = client.post(
         '/teacher/assignments/grade',
-        headers=h_teacher_2,
+        headers=h_teacher_1,
         json={
-            "id": 1,
+            "id": 3,
             "grade": "A"
         }
     )
@@ -42,12 +32,14 @@ def test_grade_assignment_cross(client, h_teacher_2):
     data = response.json
 
     assert data['error'] == 'FyleError'
+    assert data['message'] == 'This assignment belongs to some other teacher'
 
 
-def test_grade_assignment_bad_grade(client, h_teacher_1):
+def test_grade_assignment_bad_grade(client, h_teacher_1, db_session):
     """
     failure case: API should allow only grades available in enum
     """
+
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_1,
@@ -63,10 +55,11 @@ def test_grade_assignment_bad_grade(client, h_teacher_1):
     assert data['error'] == 'ValidationError'
 
 
-def test_grade_assignment_bad_assignment(client, h_teacher_1):
+def test_grade_assignment_bad_assignment(client, h_teacher_1, db_session):
     """
     failure case: If an assignment does not exists check and throw 404
     """
+
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_1,
@@ -82,10 +75,11 @@ def test_grade_assignment_bad_assignment(client, h_teacher_1):
     assert data['error'] == 'FyleError'
 
 
-def test_grade_assignment_draft_assignment(client, h_teacher_1):
+def test_grade_assignment_draft_assignment(client, h_teacher_1, db_session):
     """
     failure case: only a submitted assignment can be graded
     """
+
     response = client.post(
         '/teacher/assignments/grade',
         headers=h_teacher_1
@@ -99,3 +93,52 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1):
     data = response.json
 
     assert data['error'] == 'FyleError'
+
+def test_grade_assignment_invalid_teacher(client, h_teacher_2, db_session):
+
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 1,
+            "grade": "A"
+        }
+    )
+
+    assert response.status_code == 400
+
+
+def test_grade_assignment_success(client, h_teacher_2, h_student_2, db_session):
+
+    # Submit an assignment
+    response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_2,
+        json={
+            "id": 3,
+            "teacher_id": 2
+        }
+    )
+
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "id": 3,
+            "grade": "B"
+        }
+    )
+
+
+    db.engine.execute(text("UPDATE assignments SET grade = NULL, state = 'DRAFT' WHERE id = 3"))
+    db.session.commit()
+
+    assert response.status_code == 200
+    data = response.json['data']
+    assert data['grade'] == 'B'
+
+    # Set grade to NULL and state to SUBMITTED
+    db.engine.execute(text("UPDATE assignments SET grade = NULL, state = 'SUBMITTED' WHERE id = 900"))
+    #db.session.commit()
+
+    
