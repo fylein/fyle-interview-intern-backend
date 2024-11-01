@@ -14,7 +14,8 @@ def client():
 @pytest.fixture(scope='session')
 def db_engine():
 
-    engine = create_engine("sqlite:///myfile.db")
+    # Create engine for core/store.sqlite3
+    engine = create_engine(get_sqlite_uri(), echo=True)
 
     # Listener to disable automatic transaction management
     @event.listens_for(engine, "connect")
