@@ -1,11 +1,47 @@
 import pytest
 import json
+from core import db, create_app
 from tests import app
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import scoped_session, sessionmaker
+from core.config import get_sqlite_uri
 
 
 @pytest.fixture
 def client():
     return app.test_client()
+
+@pytest.fixture(scope='session')
+def db_engine():
+
+    engine = create_engine("sqlite:///myfile.db")
+
+    # Listener to disable automatic transaction management
+    @event.listens_for(engine, "connect")
+    def do_connect(dbapi_connection, connection_record):
+        dbapi_connection.isolation_level = None
+
+    # Listener to explicitly begin transactions
+    @event.listens_for(engine, "begin")
+    def do_begin(conn):
+        conn.execute("BEGIN")
+
+    yield engine
+    engine.dispose()
+
+@pytest.fixture(scope='function')
+def db_session(db_engine):
+    print('Creating a new session')
+
+
+
+    Session = sessionmaker(bind=db_engine)
+    session = Session()
+
+    yield session  
+
+    session.rollback()
+    session.close()
 
 
 @pytest.fixture
