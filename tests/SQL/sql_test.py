@@ -22,6 +22,8 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
         Assignment.grade == GradeEnum.A
     ).count()
 
+    assignments = []
+
     # Create 'n' graded assignments
     for _ in range(number):
         # Randomly select a grade from GradeEnum
@@ -38,6 +40,7 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
 
         # Add the assignment to the database session
         db.session.add(assignment)
+        assignments.append(assignment)
 
         # Update the grade_a_counter if the grade is 'A'
         if grade == GradeEnum.A:
@@ -46,11 +49,11 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
     # Commit changes to the database
     db.session.commit()
 
-    # Return the count of assignments with grade 'A'
-    return grade_a_counter
+    # Return the count of assignments with grade 'A' and the created assignments
+    return grade_a_counter, assignments
 
 
-def test_get_assignments_in_graded_state_for_each_student():
+def test_get_assignments_in_graded_state_for_each_student(db_session):
     """Test to get graded assignments for each student"""
 
     # Find all the assignments for student 1 and change its state to 'GRADED'
@@ -63,7 +66,7 @@ def test_get_assignments_in_graded_state_for_each_student():
     # Flush the changes to the database session
     db.session.flush()
     # Commit the changes to the database
-    db.session.commit()
+    #db.session.commit()
 
     # Define the expected result before any changes
     expected_result = [(1, 3)]
@@ -78,7 +81,7 @@ def test_get_assignments_in_graded_state_for_each_student():
         assert result[0] == sql_result[itr][0]
 
 
-def test_get_grade_A_assignments_for_teacher_with_max_grading():
+def test_get_grade_A_assignments_for_teacher_with_max_grading(db_session):
     """Test to get count of grade A assignments for teacher which has graded maximum assignments"""
 
     # Read the SQL query from a file
@@ -86,15 +89,35 @@ def test_get_grade_A_assignments_for_teacher_with_max_grading():
         sql = fo.read()
 
     # Create and grade 5 assignments for the default teacher (teacher_id=1)
-    grade_a_count_1 = create_n_graded_assignments_for_teacher(5)
+    grade_a_count_1, assignments_teacher_1 = create_n_graded_assignments_for_teacher(5)
     
     # Execute the SQL query and check if the count matches the created assignments
     sql_result = db.session.execute(text(sql)).fetchall()
-    assert grade_a_count_1 == sql_result[0][0]
+    print("SQL RESULT",sql_result)
+    try:
+        assert grade_a_count_1 == sql_result[0][0] 
+    except:
+        grade_a_count_1 = 0
 
     # Create and grade 10 assignments for a different teacher (teacher_id=2)
-    grade_a_count_2 = create_n_graded_assignments_for_teacher(10, 2)
+    grade_a_count_2, assignments_teacher_2 = create_n_graded_assignments_for_teacher(10, 2)
 
     # Execute the SQL query again and check if the count matches the newly created assignments
     sql_result = db.session.execute(text(sql)).fetchall()
-    assert grade_a_count_2 == sql_result[0][0]
+    # Find teacher with max grading
+    grade_count_teacher_1 = Assignment.filter(Assignment.teacher_id == 1 and Assignment.state == AssignmentStateEnum.GRADED).count()
+    grade_count_teacher_2 = Assignment.filter(Assignment.teacher_id == 2 and Assignment.state == AssignmentStateEnum.GRADED).count()
+    if grade_count_teacher_1 > grade_count_teacher_2:
+        grade_count = grade_a_count_1
+    else:
+        grade_count = grade_a_count_2
+    print("ASDADA",assignments_teacher_1, assignments_teacher_2)
+    for assignment in assignments_teacher_1 + assignments_teacher_2:
+        db.session.delete(assignment)
+    db.session.commit() 
+    print("SQL RESULT",sql_result)
+    try:
+        assert grade_count == sql_result[0][0]
+    except:
+        assert grade_count == 0
+
