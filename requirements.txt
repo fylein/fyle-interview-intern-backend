@@ -24,6 +24,7 @@ py==1.10.0
 pyparsing==2.4.7
 pytest==6.2.5
 pytest-cov==2.12.1
+pytest-mock==3.14.0
 SQLAlchemy==1.4.23
 toml==0.10.2
 Werkzeug==2.0.1
