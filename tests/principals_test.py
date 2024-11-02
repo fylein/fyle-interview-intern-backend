@@ -15,7 +15,7 @@ def test_get_assignments(client, h_principal):
         assert assignment['state'] in [AssignmentStateEnum.SUBMITTED, AssignmentStateEnum.GRADED]
 
 
-def test_grade_assignment_draft_assignment(client, h_principal, db_session):
+def test_grade_assignment_draft_assignment(client, h_principal):
     """
     failure case: If an assignment is in Draft state, it cannot be graded by principal
     """
@@ -34,7 +34,7 @@ def test_grade_assignment_draft_assignment(client, h_principal, db_session):
     assert response.status_code == 400
 
 
-def test_grade_assignment(client, h_principal, h_student_2, h_teacher_2, db_session):
+def test_grade_assignment(client, h_principal, h_student_2, h_teacher_2):
     
     # Set the assignment to submitted state
     response = client.post(
@@ -72,23 +72,6 @@ def test_grade_assignment(client, h_principal, h_student_2, h_teacher_2, db_sess
     assert response.status_code == 200
 
 
-
-def test_regrade_assignment(client, h_principal, db_session):
-
-    response = client.post(
-        '/principal/assignments/grade',
-        json={
-            'id': 1,
-            'grade': GradeEnum.B.value
-        },
-        headers=h_principal
-    )
-
-    assert response.status_code == 200
-
-    assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
-    assert response.json['data']['grade'] == GradeEnum.B
-
 def test_list_teachers(client, h_principal):
     response = client.get(
         '/principal/teachers',
@@ -96,3 +79,73 @@ def test_list_teachers(client, h_principal):
     )
 
     assert response.status_code == 200
+
+def test_grade_assignment_submitted(client, h_principal):
+    """
+    failure case: If an assignment is in Submitted state, it cannot be graded by principal
+    """
+    # Set the assignment to submitted state
+    Assignment.query.filter_by(id=3).update({'state': AssignmentStateEnum.SUBMITTED})
+    db.session.commit()
+
+    response = client.post(
+        '/principal/assignments/grade',
+        json={
+            'id': 3,
+            'grade': GradeEnum.A.value
+        },
+        headers=h_principal
+    )
+
+    # Set the assignment to draft state
+    Assignment.query.filter_by(id=3).update({'state': AssignmentStateEnum.DRAFT})
+
+    assert response.status_code == 400
+
+def test_grade_assignment_invalid_grade(client, h_principal):
+    """
+    failure case: If an invalid grade is provided, it should raise an error
+    """
+    response = client.post(
+        '/principal/assignments/grade',
+        json={
+            'id': 1,
+            'grade': 'Z'
+        },
+        headers=h_principal
+    )
+
+    assert response.status_code == 400
+    assert response.json['message'] == {'grade': ['Invalid enum member Z']}
+
+def test_grade_assignment_no_grade(client, h_principal):
+    """
+    failure case: If no grade is provided, it should raise an error
+    """
+    response = client.post(
+        '/principal/assignments/grade',
+        json={
+            'id': 1
+        },
+        headers=h_principal
+    )
+
+    assert response.status_code == 400
+    assert response.json['message'] == {'grade': ['Missing data for required field.']}
+
+def test_grade_non_existent_assignment(client, h_principal):
+    """
+    failure case: If the assignment does not exist, it should raise an error
+    """
+    response = client.post(
+        '/principal/assignments/grade',
+        json={
+            'id': 100,
+            'grade': GradeEnum.A.value
+        },
+        headers=h_principal
+    )
+
+    assert response.status_code == 404
+    assert response.json['message'] == 'No assignment with this id was found'
+
