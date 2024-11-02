@@ -1,5 +1,7 @@
 from core import db
 from sqlalchemy import text
+import datetime
+from core.models.teachers import Teacher
 
 def test_get_assignments_teacher_1(client, h_teacher_1):
     response = client.get(
@@ -14,7 +16,7 @@ def test_get_assignments_teacher_1(client, h_teacher_1):
         assert assignment['teacher_id'] == 1
 
 
-def test_grade_assignment_cross(client, h_teacher_1, db_session):
+def test_grade_assignment_cross(client, h_teacher_1):
     """
     failure case: assignment 3 was submitted to teacher 2 and not teacher 1
     """
@@ -35,7 +37,7 @@ def test_grade_assignment_cross(client, h_teacher_1, db_session):
     assert data['message'] == 'This assignment belongs to some other teacher'
 
 
-def test_grade_assignment_bad_grade(client, h_teacher_1, db_session):
+def test_grade_assignment_bad_grade(client, h_teacher_1):
     """
     failure case: API should allow only grades available in enum
     """
@@ -55,7 +57,7 @@ def test_grade_assignment_bad_grade(client, h_teacher_1, db_session):
     assert data['error'] == 'ValidationError'
 
 
-def test_grade_assignment_bad_assignment(client, h_teacher_1, db_session):
+def test_grade_assignment_bad_assignment(client, h_teacher_1):
     """
     failure case: If an assignment does not exists check and throw 404
     """
@@ -75,7 +77,7 @@ def test_grade_assignment_bad_assignment(client, h_teacher_1, db_session):
     assert data['error'] == 'FyleError'
 
 
-def test_grade_assignment_draft_assignment(client, h_teacher_1, db_session):
+def test_grade_assignment_draft_assignment(client, h_teacher_1):
     """
     failure case: only a submitted assignment can be graded
     """
@@ -94,7 +96,7 @@ def test_grade_assignment_draft_assignment(client, h_teacher_1, db_session):
 
     assert data['error'] == 'FyleError'
 
-def test_grade_assignment_invalid_teacher(client, h_teacher_2, db_session):
+def test_grade_assignment_invalid_teacher(client, h_teacher_2):
 
     response = client.post(
         '/teacher/assignments/grade',
@@ -108,7 +110,7 @@ def test_grade_assignment_invalid_teacher(client, h_teacher_2, db_session):
     assert response.status_code == 400
 
 
-def test_grade_assignment_success(client, h_teacher_2, h_student_2, db_session):
+def test_grade_assignment_success(client, h_teacher_2, h_student_2):
 
     # Submit an assignment
     response = client.post(
@@ -141,4 +143,13 @@ def test_grade_assignment_success(client, h_teacher_2, h_student_2, db_session):
     db.engine.execute(text("UPDATE assignments SET grade = NULL, state = 'SUBMITTED' WHERE id = 900"))
     #db.session.commit()
 
+def test_teacher_model(client):
+    teachers = Teacher.get_all()
+    assert len(teachers) == 2
+
+    teacher = teachers[0]
+    assert teacher.id == 1
+    assert teacher.user_id == 3
+    assert isinstance(teacher.created_at, datetime.datetime)
+    assert isinstance(teacher.updated_at, datetime.datetime)
     
