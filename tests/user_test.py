@@ -28,3 +28,7 @@ def test_get_user_by_id():
 def test_get_user_by_email():
     user = User.get_by_email('student1@fylebe.com')
     assert user.id == 1
+
+def test_user_repr():
+    user = User.query.get(1)
+    assert user.__repr__() == '<User %r>' % user.username
