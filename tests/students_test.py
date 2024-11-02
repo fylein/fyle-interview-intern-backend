@@ -1,6 +1,7 @@
 from core import db
 from sqlalchemy import text
 import json
+from core.models.students import Student
 
 def test_get_assignments_student_1(client, h_student_1):
 
@@ -301,3 +302,45 @@ def test_upsert_assignment_wrong_student(client, h_student_1):
     assert response.status_code == 400
     assert response.json['error'] == 'FyleError'
     assert response.json['message'] == 'This assignment belongs to some other student'
+
+def test_upsert_assignment_empty_content(client, h_student_1):
+    """
+    failure case: Content cannot be empty
+    """
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'content': '',
+            'teacher_id': 1
+        })
+    
+    assert response.status_code == 400
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'Content cannot be empty'
+
+def test_submit_assignment_invalid_request_body(client, h_student_1):
+    """
+    failure case: Invalid request body
+    """
+
+    response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_1,
+        json={
+            'teacher_id': 1
+        })
+    
+    assert response.status_code == 400
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == "{'id': ['Missing data for required field.']"
+
+def test_student_model_repr():
+    """
+    Test Student model __repr__ function
+    """
+
+    student = Student()
+    student.id = 1
+    assert student.__repr__() == '<Student 1>'
