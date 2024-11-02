@@ -62,10 +62,9 @@ def upsert_assignment(p, incoming_payload):
 @decorators.authenticate_principal
 def submit_assignment(p, incoming_payload):
     """Submit an assignment"""
-    submit_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
-
+    
     try:
-
+        submit_assignment_payload = AssignmentSubmitSchema().load(incoming_payload)
         assignment = Assignment.get_by_id(submit_assignment_payload.id)
         assertions.assert_valid(assignment.state == AssignmentStateEnum.DRAFT, 'only a draft assignment can be submitted')
         assertions.assert_valid(assignment.student_id == p.student_id, 'This assignment belongs to some other student')
