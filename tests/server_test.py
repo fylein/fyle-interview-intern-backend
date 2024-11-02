@@ -34,7 +34,6 @@ def test_error_handler():
         except Exception as e:
             response_test_error = e
 
-    print(response_http_exception)
     assert response_fyle_error[1] == "TestError"
     assert response_validation_error[1] == 400
     assert response_integrity_error[1] == 400

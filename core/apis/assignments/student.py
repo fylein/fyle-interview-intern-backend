@@ -29,7 +29,6 @@ def list_assignments(p):
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
     try:
-        print("incoming_payload",incoming_payload)
         if incoming_payload.get('id'):
             assignment = Assignment.get_by_id(incoming_payload.get('id'))
             assertions.assert_valid(assignment.student_id == p.student_id, 'This assignment belongs to some other student')
@@ -80,13 +79,11 @@ def submit_assignment(p, incoming_payload):
         submitted_assignment_dump = AssignmentSchema().dump(submitted_assignment)
 
     except FyleError as e:
-        print("e",str(e))
         db.session.rollback()
         raise e
     
     except Exception as e:
         db.session.rollback()
-        print("E",str(e))
         raise FyleError(message=str(e)[:-1], status_code=400)
     
     return APIResponse.respond(data=submitted_assignment_dump)

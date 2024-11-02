@@ -93,7 +93,7 @@ def test_get_grade_A_assignments_for_teacher_with_max_grading():
     
     # Execute the SQL query and check if the count matches the created assignments
     sql_result = db.session.execute(text(sql)).fetchall()
-    print("SQL RESULT",sql_result)
+
     try:
         assert grade_a_count_1 == sql_result[0][0] 
     except:
@@ -111,11 +111,11 @@ def test_get_grade_A_assignments_for_teacher_with_max_grading():
         grade_count = grade_a_count_1
     else:
         grade_count = grade_a_count_2
-    print("ASDADA",assignments_teacher_1, assignments_teacher_2)
+
     for assignment in assignments_teacher_1 + assignments_teacher_2:
         db.session.delete(assignment)
     db.session.commit() 
-    print("SQL RESULT",sql_result)
+
     try:
         assert grade_count == sql_result[0][0]
     except:
