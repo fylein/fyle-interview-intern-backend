@@ -1,49 +1,14 @@
 import pytest
 import json
-from core import db, create_app
 from tests import app
-from sqlalchemy import create_engine, event
-from sqlalchemy.orm import scoped_session, sessionmaker
-from core.config import get_sqlite_uri
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def client():
-    return app.test_client()
+    """A test client for making requests in tests."""
 
-@pytest.fixture(scope='session')
-def db_engine():
-
-    # Create engine for core/store.sqlite3
-    engine = create_engine(get_sqlite_uri(), echo=True)
-
-    # Listener to disable automatic transaction management
-    @event.listens_for(engine, "connect")
-    def do_connect(dbapi_connection, connection_record):
-        dbapi_connection.isolation_level = None
-
-    # Listener to explicitly begin transactions
-    @event.listens_for(engine, "begin")
-    def do_begin(conn):
-        conn.execute("BEGIN")
-
-    yield engine
-    engine.dispose()
-
-@pytest.fixture(scope='function')
-def db_session(db_engine):
-    print('Creating a new session')
-
-
-
-    Session = sessionmaker(bind=db_engine)
-    session = Session()
-
-    yield session  
-
-    session.rollback()
-    session.close()
-
+    with app.test_client() as client:
+        yield client  # Provide the test client to the tests
 
 @pytest.fixture
 def h_student_1():
