@@ -1,6 +1,5 @@
 from core.models.users import User
 from core import db
-from sqlalchemy import text
 import datetime
 
 

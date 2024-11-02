@@ -43,5 +43,5 @@ def test_error_handler():
     assert response_fyle_error[1] == "TestError"
     assert response_validation_error[1] == 400
     assert response_integrity_error[1] == 400
-    assert response_http_exception[1] == None
+    assert response_http_exception[1] is None
     assert response_test_error.message == "TestError"

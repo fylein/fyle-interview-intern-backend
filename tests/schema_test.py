@@ -1,5 +1,4 @@
 from core.apis.assignments.schema import (
-    AssignmentGradeSchema,
     AssignmentSchema,
     AssignmentSubmitSchema,
 )

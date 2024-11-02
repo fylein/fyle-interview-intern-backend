@@ -5,7 +5,6 @@ from core.apis.responses import APIResponse
 from core.models.assignments import Assignment
 from core.libs import assertions
 from core.libs.exceptions import FyleError
-from flask import request
 from .schema import AssignmentSchema, AssignmentSubmitSchema
 from core.models.assignments import AssignmentStateEnum
 from core.models.teachers import Teacher

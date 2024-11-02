@@ -102,7 +102,7 @@ def test_get_grade_A_assignments_for_teacher_with_max_grading():
 
     try:
         assert grade_a_count_1 == sql_result[0][0]
-    except:
+    except Exception:
         grade_a_count_1 = 0
 
     # Create and grade 10 assignments for a different teacher (teacher_id=2)
@@ -130,5 +130,5 @@ def test_get_grade_A_assignments_for_teacher_with_max_grading():
 
     try:
         assert grade_count == sql_result[0][0]
-    except:
+    except Exception:
         assert grade_count == 0

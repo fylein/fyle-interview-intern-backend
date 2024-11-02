@@ -1,6 +1,6 @@
 import pytest
 import json
-from flask import Flask, request
+from flask import Flask
 from core.apis.decorators import authenticate_principal
 from core.libs.exceptions import FyleError
 

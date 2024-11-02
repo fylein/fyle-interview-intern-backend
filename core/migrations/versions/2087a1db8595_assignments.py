@@ -9,7 +9,6 @@ Create Date: 2021-09-16 10:11:14.484440
 from alembic import op
 import sqlalchemy as sa
 from core import db
-from core.apis.decorators import AuthPrincipal
 from core.models.users import User
 from core.models.students import Student
 from core.models.teachers import Teacher

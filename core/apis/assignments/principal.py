@@ -6,8 +6,6 @@ from core.models.assignments import Assignment, AssignmentStateEnum
 from core.models.principals import Principal
 from core.libs.exceptions import FyleError
 from flask import request
-from core.models.assignments import AssignmentStateEnum
-from core.libs import assertions
 from .schema import AssignmentSchema, AssignmentGradeSchema
 
 principal_assignments_resources = Blueprint("principal_assignments_resources", __name__)
