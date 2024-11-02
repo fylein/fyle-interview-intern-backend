@@ -29,3 +29,7 @@ def test_re_grade_belongs_to_other_teacher():
         Assignment.re_grade(1, "A",principal)
     except FyleError as e:
         assert e.message == 'This assignment belongs to some other teacher'
+
+def test_repr():
+    assignment = Assignment()
+    assert assignment.__repr__() == '<Assignment None>'
