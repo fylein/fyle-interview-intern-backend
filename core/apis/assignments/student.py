@@ -8,6 +8,7 @@ from core.libs.exceptions import FyleError
 from flask import request
 from .schema import AssignmentSchema, AssignmentSubmitSchema
 from core.models.assignments import AssignmentStateEnum
+from core.models.teachers import Teacher
 
 student_assignments_resources = Blueprint('student_assignments_resources', __name__)
 
@@ -27,18 +28,28 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def upsert_assignment(p, incoming_payload):
     """Create or Edit an assignment"""
-    assignment = AssignmentSchema().load(incoming_payload)
-    assignment.student_id = p.student_id
-
     try:
-        # Check if content is not empty
-        if not request.json.get('content'):
+        print("incoming_payload",incoming_payload)
+        if incoming_payload.get('id'):
+            assignment = Assignment.get_by_id(incoming_payload.get('id'))
+            assertions.assert_valid(assignment.student_id == p.student_id, 'This assignment belongs to some other student')
+        
+        else:
+            assert 'teacher_id' in incoming_payload, 'teacher_id is required'
+            if Teacher.query.get(incoming_payload['teacher_id']) is None:
+                raise FyleError(message='Teacher not found', status_code=400)
+            assignment = Assignment(student_id=p.student_id, teacher_id=p.teacher_id, content=incoming_payload['content'], state=AssignmentStateEnum.DRAFT)
+    
+        if not incoming_payload['content']:
             raise FyleError(message='Content cannot be empty', status_code=400)
 
         upserted_assignment = Assignment.upsert(assignment)
         db.session.commit()
         upserted_assignment_dump = AssignmentSchema().dump(upserted_assignment)
 
+    except FyleError as e:
+        db.session.rollback()
+        raise e
     except Exception as e:
         db.session.rollback()
         raise FyleError(message=str(e), status_code=400)
