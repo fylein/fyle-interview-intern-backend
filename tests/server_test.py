@@ -7,12 +7,13 @@ from sqlalchemy.exc import IntegrityError
 
 
 def test_ready_endpoint(client, mocker):
-    response = client.get('/')
+    response = client.get("/")
     assert response.status_code == 200
     data = response.json
 
-    assert data['status'] == 'ready'
-    assert 'time' in data
+    assert data["status"] == "ready"
+    assert "time" in data
+
 
 def test_error_handler():
 
@@ -22,15 +23,20 @@ def test_error_handler():
         def __init__(self, message, status_code):
             self.message = message
             self.status_code = status_code
-        
 
     with app.app_context():
-        response_fyle_error = handle_error(FyleError('TestError', 'test error'))
-        response_validation_error = handle_error(ValidationError('TestError', 'test error'))
-        response_integrity_error = handle_error(IntegrityError('TestError', 'test error', 'test error'))
-        response_http_exception = handle_error(HTTPException("TestError",response=None))
+        response_fyle_error = handle_error(FyleError("TestError", "test error"))
+        response_validation_error = handle_error(
+            ValidationError("TestError", "test error")
+        )
+        response_integrity_error = handle_error(
+            IntegrityError("TestError", "test error", "test error")
+        )
+        response_http_exception = handle_error(
+            HTTPException("TestError", response=None)
+        )
         try:
-            response_test_error = handle_error(TestError('TestError', 'test error'))
+            response_test_error = handle_error(TestError("TestError", "test error"))
         except Exception as e:
             response_test_error = e
 
@@ -38,7 +44,4 @@ def test_error_handler():
     assert response_validation_error[1] == 400
     assert response_integrity_error[1] == 400
     assert response_http_exception[1] == None
-    assert response_test_error.message == 'TestError'
-    
-
-    
+    assert response_test_error.message == "TestError"

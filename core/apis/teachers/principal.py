@@ -8,9 +8,10 @@ from core.libs.exceptions import FyleError
 
 from core.apis.assignments.schema import AssignmentSchema
 
-principal_teacher_resources = Blueprint('principal_teacher_resources', __name__)
+principal_teacher_resources = Blueprint("principal_teacher_resources", __name__)
 
-@principal_teacher_resources.route('/', methods=['GET'], strict_slashes=False)
+
+@principal_teacher_resources.route("/", methods=["GET"], strict_slashes=False)
 @decorators.authenticate_principal
 def list_teachers(p):
     """Returns list of teachers"""
