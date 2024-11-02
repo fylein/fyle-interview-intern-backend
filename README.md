@@ -3,6 +3,8 @@
 1. Fork this repository to your github account
 2. Clone the forked repository and proceed with steps mentioned below
 
+### To run the project locally, follow the steps below:
+
 ### Install requirements
 
 ```
@@ -42,5 +44,44 @@ python -m black ./
 
 ```
 ruff check --fix
+```
+
+## To run the project in docker, follow the steps below:
+
+### Build Docker Image
+
+```
+docker build -t fyle-intern-backend .
+```
+
+### Run Docker Container
+
+```
+docker run -d --name fyle-intern-backend-container -p 5000:5000 fyle-intern-backend
+```
+
+### Run Tests
+
+```
+ocker exec fyle-intern-backend-container pytest --cov -vvv -s tests/
+```
+
+### Format Code
+
+```
+docker exec fyle-intern-backend-container python -m black . --check
+```
+
+### Lint Code
+
+```
+docker exec fyle-intern-backend-container ruff check . --fix
+```
+
+### Stop and Remove Docker Container
+
+```
+docker stop fyle-intern-backend-container
+docker rm fyle-intern-backend-container
 ```
 
