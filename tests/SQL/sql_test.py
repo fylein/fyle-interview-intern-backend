@@ -53,7 +53,7 @@ def create_n_graded_assignments_for_teacher(number: int = 0, teacher_id: int = 1
     return grade_a_counter, assignments
 
 
-def test_get_assignments_in_graded_state_for_each_student(db_session):
+def test_get_assignments_in_graded_state_for_each_student():
     """Test to get graded assignments for each student"""
 
     # Find all the assignments for student 1 and change its state to 'GRADED'
@@ -81,7 +81,7 @@ def test_get_assignments_in_graded_state_for_each_student(db_session):
         assert result[0] == sql_result[itr][0]
 
 
-def test_get_grade_A_assignments_for_teacher_with_max_grading(db_session):
+def test_get_grade_A_assignments_for_teacher_with_max_grading():
     """Test to get count of grade A assignments for teacher which has graded maximum assignments"""
 
     # Read the SQL query from a file
