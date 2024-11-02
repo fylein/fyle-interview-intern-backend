@@ -1,0 +1,51 @@
+name: Flask CI
+
+on:
+  push:
+    branches:
+      - interview
+  pull_request:
+    branches:
+      - interview
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.19' 
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-cov
+
+      - name: Set FLASK_APP environment variable and clean database
+        run: |
+          export FLASK_APP=core/server.py
+          rm -f core/store.sqlite3
+          flask db upgrade -d core/migrations/
+
+      - name: Run Black for code formatting
+        run: |
+          python -m black . --check
+
+      - name: Run Ruff for linting
+        run: |
+          ruff check . --fix
+
+      - name: Run Tests with Coverage
+        run: |
+          pytest --cov -vvv -s tests/
+
+      - name: Check Coverage
+        if: success()
+        run: |
+          coverage report --fail-under=94
