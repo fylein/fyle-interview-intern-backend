@@ -6,7 +6,8 @@ from core.models.assignments import Assignment, AssignmentStateEnum
 from core.models.principals import Principal
 from core.libs.exceptions import FyleError
 from flask import request
-
+from core.models.assignments import AssignmentStateEnum
+from core.libs import assertions
 from .schema import AssignmentSchema, AssignmentGradeSchema
 principal_assignments_resources = Blueprint('principal_assignments_resources', __name__)
 
@@ -32,15 +33,15 @@ def list_assignments(p):
 def regrade_assignment(p):
     """Regrades an assignment"""
     data = AssignmentGradeSchema().load(request.json)
-    print("data",data.id,data.grade)
     try:
-
         regraded_assignment=Assignment.re_grade(data.id, data.grade, p)
         print("regraded_assignment",regraded_assignment)
         db.session.commit()
         regraded_assignment_dump = AssignmentSchema().dump(regraded_assignment)
 
-    
+    except FyleError as e:
+        db.session.rollback()
+        raise e
     except Exception as e:
 
         db.session.rollback()
