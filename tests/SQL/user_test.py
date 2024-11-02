@@ -3,7 +3,7 @@ from core import db
 from sqlalchemy import text
 import datetime
 
-def test_create_user(db_session):
+def test_create_user():
 
     user = User(id=90,username='test256',email='test256@gmail.com',created_at=datetime.datetime.now(),updated_at=datetime.datetime.now())
     db.session.add(user)
