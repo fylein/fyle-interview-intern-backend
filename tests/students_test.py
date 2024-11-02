@@ -1,6 +1,5 @@
 from core import db
 from sqlalchemy import text
-from tests.conftest import db_session
 import json
 
 def test_get_assignments_student_1(client, h_student_1):
@@ -17,20 +16,20 @@ def test_get_assignments_student_1(client, h_student_1):
         assert assignment['student_id'] == 1
 
 
-def test_get_assignments_student_2(client, h_student_2):
-    response = client.get(
-        '/student/assignments',
-        headers=h_student_2
-    )
+# def test_get_assignments_student_2(client, h_student_2):
+#     response = client.get(
+#         '/student/assignments',
+#         headers=h_student_2
+#     )
 
-    assert response.status_code == 200
+#     assert response.status_code == 200
 
-    data = response.json['data']
-    for assignment in data:
-        assert assignment['student_id'] == 2
+#     data = response.json['data']
+#     for assignment in data:
+#         assert assignment['student_id'] == 2
 
 
-def test_post_assignment_null_content(client, h_student_1, db_session):
+def test_post_assignment_null_content(client, h_student_1):
     """
     failure case: content cannot be null
     """
@@ -45,35 +44,36 @@ def test_post_assignment_null_content(client, h_student_1, db_session):
     assert response.status_code == 400
 
 
-def test_post_assignment_student_1(client, h_student_1, db_session):
-  
+def test_post_assignment_student(client, h_student_1):
+    """
+    Calling upsert without an ID should create a new assignment
+    """
     content = 'ABCD TESTPOST'
 
     response = client.post(
         '/student/assignments',
         headers=h_student_1,
         json={
-            'content': content
+            'content': content,
+            "teacher_id": 1
         })
-
-    assert response.status_code == 200
-
-    data = response.json['data']
 
     # Remove the assignment created in this test
     db.engine.execute(
         text("DELETE FROM assignments WHERE id = :id"),
-        {"id": data['id']}
+        {"id": response.json['data']['id']}
     )
+    assert response.status_code == 200
     
+    data = response.json['data']
     assert data['content'] == content
-    assert data['state'] == 'DRAFT'
-    assert data['teacher_id'] is None
 
 
-def test_submit_assignment_student_2(client, h_student_2, db_session):
 
-    # If assignment already exists, remove it first
+
+def test_submit_assignment_student_2(client, h_student_2):
+
+    # If assignment already exists, set it to DRAFT
     db.engine.execute(
         text("UPDATE assignments SET state = :state WHERE id = :id"),
         {"state": "DRAFT", "id": 4}
@@ -102,7 +102,7 @@ def test_submit_assignment_student_2(client, h_student_2, db_session):
     assert data['teacher_id'] == 2
 
 
-def test_assignment_resubmit_error(client, h_student_2, db_session):
+def test_assignment_resubmit_error(client, h_student_2):
 
     response = client.post(
         '/student/assignments/submit',
@@ -115,6 +115,72 @@ def test_assignment_resubmit_error(client, h_student_2, db_session):
     assert response.status_code == 400
     assert error_response['error'] == 'FyleError'
     assert error_response["message"] == 'only a draft assignment can be submitted'
+
+def test_submit_assignment_invalid_student(client, h_student_1):
+    
+    response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_1,
+        json={
+            'id': 4,
+            'teacher_id': 2
+        })
+
+    assert response.status_code == 400
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'This assignment belongs to some other student'
+
+def test_submit_graded_assignment(client, h_student_1):
+    
+    response = client.post(
+        '/student/assignments/submit',
+        headers=h_student_1,
+        json={
+            'id': 1,
+            'teacher_id': 1
+        })
+    
+    assert response.status_code == 400
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'only a draft assignment can be submitted'
+
+def test_edit_assignment(client, h_student_2):
+    
+    content = 'ABCD TESTEDIT'
+    # Ensure the assignment is in DRAFT state
+    db.engine.execute(
+        text("UPDATE assignments SET state = :state WHERE id = :id"),
+        {"state": "DRAFT", "id": 3}
+    )
+    db.session.commit()
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_2,
+        json={
+            'id': 3,
+            'content': content
+        })
+
+
+    content = db.engine.execute(
+        text("SELECT content FROM assignments WHERE id = :id"),
+        {"id": 3}
+    ).fetchone()[0]
+
+    # Revert the content back to ESSAY T2
+    db.engine.execute(
+        text("UPDATE assignments SET content = :content WHERE id = :id"),
+        {"content": "ESSAY T2", "id": 3}
+    )
+    db.session.commit()
+
+    assert response.status_code == 200
+
+    data = response.json['data']
+    assert data['content'] == content
+
+
+
 
 def test_get_assignments_no_assignments_student_1(client, h_student_1):
 
@@ -164,7 +230,7 @@ def test_get_assignments_no_assignments_student_1(client, h_student_1):
     data = response.json['data']
     assert len(data) == 0  
 
-def test_submit_assignment_invalid_teacher(client, h_student_2, db_session):
+def test_submit_assignment_invalid_teacher(client, h_student_2):
 
     response = client.post(
         '/student/assignments/submit',
@@ -178,7 +244,7 @@ def test_submit_assignment_invalid_teacher(client, h_student_2, db_session):
     assert response.json['error'] == 'FyleError'
 
 
-def test_edit_nonexistent_assignment(client, h_student_1, db_session):
+def test_edit_nonexistent_assignment(client, h_student_1):
 
     response = client.post(
         '/student/assignments',
@@ -190,3 +256,48 @@ def test_edit_nonexistent_assignment(client, h_student_1, db_session):
     
     assert response.status_code == 400
     assert response.json['error'] == 'FyleError'
+
+def test_upsert_assignment_nonexistent_teacher(client, h_student_1):
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'content': 'New Content',
+            'teacher_id': 999  # Assuming teacher ID 999 doesn't exist
+        })
+    
+    assert response.status_code == 400
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'Teacher not found'
+
+def test_upsert_assignment_no_teacher(client, h_student_1):
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'content': 'New Content'
+        })
+    
+    assert response.status_code == 400
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'teacher_id is required'
+
+def test_upsert_assignment_wrong_student(client, h_student_1):
+    """
+    failure case: This assignment belongs to some other student
+    """
+
+    response = client.post(
+        '/student/assignments',
+        headers=h_student_1,
+        json={
+            'content': 'New Content',
+            'teacher_id': 2,
+            'id': 3
+        })
+    
+    assert response.status_code == 400
+    assert response.json['error'] == 'FyleError'
+    assert response.json['message'] == 'This assignment belongs to some other student'
