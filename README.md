@@ -19,6 +19,15 @@ export FLASK_APP=core/server.py
 rm core/store.sqlite3
 flask db upgrade -d core/migrations/
 ```
+
+> [!NOTE]  
+> If you encounter errors in this step, ensure there is no conflict between your Global Python Interpreter and the Interpreter in the virtual environment created. Try running
+`which flask` (On macOS/Linux) or
+`where flask` (On Windows)
+> to ensure the PATH is updated. Check the `PATH` variable by running `echo $PATH` (On macOS/Linux) or `echo %PATH%` (On Windows). Try
+> updating the local shell configuration and reloading it before running `flask db upgrade -d core/migrations/` to see if it fixes the
+> issue.
+
 ### Start Server
 
 ```
