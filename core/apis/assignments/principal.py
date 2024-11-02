@@ -15,9 +15,6 @@ principal_assignments_resources = Blueprint('principal_assignments_resources', _
 @decorators.authenticate_principal
 def list_assignments(p):
     """Returns list of graded and submitted assignments"""
-    # Check if principal_id is present in the principal table
-    if p.principal_id is None:
-        raise FyleError(message='Principal ID not found', status_code=400)
     
     if Principal.query.get(p.principal_id) is None:
         raise FyleError(message='Principal not found', status_code=400)
@@ -32,10 +29,10 @@ def list_assignments(p):
 @decorators.authenticate_principal
 def regrade_assignment(p):
     """Regrades an assignment"""
-    data = AssignmentGradeSchema().load(request.json)
+    
     try:
+        data = AssignmentGradeSchema().load(request.json)
         regraded_assignment=Assignment.re_grade(data.id, data.grade, p)
-        print("regraded_assignment",regraded_assignment)
         db.session.commit()
         regraded_assignment_dump = AssignmentSchema().dump(regraded_assignment)
 
@@ -48,7 +45,6 @@ def regrade_assignment(p):
         message = {
             "data":{
                 "state": AssignmentStateEnum.GRADED.value,
-                "grade": data.grade
             },
             "message": str(e)
         }
