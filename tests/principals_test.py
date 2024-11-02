@@ -1,6 +1,8 @@
 from core.models.assignments import AssignmentStateEnum, GradeEnum
 from core import db
 from core.models.assignments import Assignment
+import json
+from core.models.principals import Principal
 
 def test_get_assignments(client, h_principal):
     response = client.get(
@@ -116,7 +118,7 @@ def test_grade_assignment_invalid_grade(client, h_principal):
     )
 
     assert response.status_code == 400
-    assert response.json['message'] == {'grade': ['Invalid enum member Z']}
+    assert response.json['message'] == {'data': {'state': 'GRADED'}, 'message': "{'grade': ['Invalid enum member Z']}"}
 
 def test_grade_assignment_no_grade(client, h_principal):
     """
@@ -131,7 +133,7 @@ def test_grade_assignment_no_grade(client, h_principal):
     )
 
     assert response.status_code == 400
-    assert response.json['message'] == {'grade': ['Missing data for required field.']}
+    assert response.json['message'] == {'data': {'state': 'GRADED'}, 'message': "{'grade': ['Missing data for required field.']}"}
 
 def test_grade_non_existent_assignment(client, h_principal):
     """
@@ -149,3 +151,40 @@ def test_grade_non_existent_assignment(client, h_principal):
     assert response.status_code == 404
     assert response.json['message'] == 'No assignment with this id was found'
 
+def test_no_header(client):
+    
+    h_principal = {
+        'X-Principal': json.dumps({
+            'principal_id': 3,
+            'user_id': 5
+        })
+    }
+
+    response = client.get(
+        '/principal/assignments',
+        headers=h_principal
+    )
+
+    assert response.status_code == 400
+    assert response.json['message'] == 'Principal not found'
+
+def test_invalid_request_body_regrade(client, h_principal):
+    """
+    failure case: If an invalid request body is provided, it should raise an error
+    """
+    response = client.post(
+        '/principal/assignments/grade',
+        json={
+            'teacher_id': 1,
+            'grade': 'A'
+        },
+        headers=h_principal
+    )
+
+    assert response.status_code == 400
+    assert response.json['message'] ==  {'data': {'state': 'GRADED'}, 'message': "{'id': ['Missing data for required field.']}"}
+
+def test_principal_model():
+    
+    principal = Principal()
+    assert principal.__repr__() == '<Principal None>'
