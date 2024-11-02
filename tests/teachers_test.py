@@ -54,7 +54,7 @@ def test_grade_assignment_bad_grade(client, h_teacher_1):
     assert response.status_code == 400
     data = response.json
 
-    assert data['error'] == 'ValidationError'
+    assert data['error'] == 'FyleError'
 
 
 def test_grade_assignment_bad_assignment(client, h_teacher_1):
@@ -152,4 +152,19 @@ def test_teacher_model(client):
     assert teacher.user_id == 3
     assert isinstance(teacher.created_at, datetime.datetime)
     assert isinstance(teacher.updated_at, datetime.datetime)
-    
+
+def test_grade_assignment_invalid_request_body(client, h_teacher_2):
+    response = client.post(
+        '/teacher/assignments/grade',
+        headers=h_teacher_2,
+        json={
+            "student_id": 1
+        }
+    )
+
+    assert response.status_code == 400
+    assert "Missing data for required field." in response.json["message"] 
+
+def test_teacher_model_repr(client):
+    teacher = Teacher.query.get(1)
+    assert teacher.__repr__() == '<Teacher 1>'
