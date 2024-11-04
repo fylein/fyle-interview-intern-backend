@@ -60,3 +60,29 @@ def test_regrade_assignment(client, h_principal):
 
     assert response.json['data']['state'] == AssignmentStateEnum.GRADED.value
     assert response.json['data']['grade'] == GradeEnum.B
+
+    def test_retrieve_teachers(client, h_principal):
+        res = client.get(
+            '/principal/teachers',
+            headers=h_principal
+        )
+
+        assert res.status_code == 200
+        teachers_data = res.json['data']
+        for teacher in teachers_data:
+            assert teacher['user_id'] in {3, 4}
+
+def test_teacher_only_grading_access(client, h_principal):
+    res = client.post(
+        '/teacher/assignments/grade',
+        headers=h_principal,
+        json={
+            "id": 1,
+            "grade": "A"
+        }
+    )
+
+    assert res.status_code == 403
+    error_response = res.json
+    assert error_response['error'] == 'FyleError'
+    assert error_response['message'] == 'requester should be a teacher'
