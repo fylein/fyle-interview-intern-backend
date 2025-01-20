@@ -1,14 +1,10 @@
 alembic==1.7.1
-attrs==21.2.0
 click==8.0.1
 coverage==5.5
 Flask==2.0.1
 Flask-Alembic==2.0.1
 Flask-Migrate==3.1.0
 Flask-SQLAlchemy==2.5.1
-gevent==21.8.0
-greenlet==1.1.1
-gunicorn==20.1.0
 importlib-resources==5.2.2
 iniconfig==1.1.1
 itsdangerous==2.0.1
