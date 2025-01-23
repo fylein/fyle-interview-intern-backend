@@ -25,8 +25,8 @@ You will hear back within 48 hours from us via email.
 
 ## Installation
 
-1. Fork this repository to your github account
-2. Clone the forked repository and proceed with steps mentioned below
+1. **Please ensure that you don't fork this repository. We want your submission to be private to avoid plagiarism**
+2. Clone the repo to your local and ensure you push your code into your own **private repository** on GitHub.
 
 ### Install requirements
 
@@ -56,3 +56,18 @@ pytest -vvv -s tests/
 # pytest --cov
 # open htmlcov/index.html
 ```
+
+
+## Submission
+
+For submitting the assignment, please follow these steps:
+
+* Ensure that you push your code into a private repository on GitHub.
+* Add `KirtiGautam`, `kartikeyrajvaidya`, `sumanth-fyle1` and `satyamyesj` as collaborators to your repository with Admin access.
+* For steps to add a collaborator to your repository, refer to [this link](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-access-to-your-personal-repositories/inviting-collaborators-to-a-personal-repository).
+
+**Once you are done with your task, please use [this form](https://forms.gle/7ZBydqaoWaJTDYCA8) to complete your submission.**
+
+Once you submit the assignment, you will hear back from us within 48 hours from us via email. 
+
+We look forward to seeing your solution!

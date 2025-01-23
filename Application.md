@@ -20,9 +20,8 @@ There are 5 resources:
 
 ## Challenge
 
-Please fork the repository into your account and continue the development in your fork.
+Your tasks:
 
-Your tasks
 - Add missing APIs mentioned here and get the automated tests to pass
 - Add tests for grading API
 - Please be aware that intentional bugs have been incorporated into the application, leading to test failures. Kindly address and rectify these issues as part of the assignment.
@@ -30,12 +29,8 @@ Your tasks
 - Get the test coverage to 94% or above
 - There are certain SQL tests present inside `tests/SQL/`. You have to write SQL in following files:
     - count_grade_A_assignments_by_teacher_with_max_grading.sql
-    - number_of_graded_assignments_for_each_student.sql
+    - count_assignments_in_each_grade.sql
 - Optionally, Dockerize your application by creating a Dockerfile and a docker-compose.yml file, providing clear documentation on building and running the application with Docker, to stand out in your submission
-
-***Once you are done with your task, please use [this form](https://forms.gle/TbpVhYojG84cyUD77) to complete your submission.***
-
-You will hear back within 48 hours from us via email. 
 
 
 ## Available APIs
@@ -187,38 +182,6 @@ response:
 }
 ```
 
-### POST /teacher/assignments/grade
-
-Grade an assignment
-```
-headers:
-X-Principal: {"user_id":3, "teacher_id":1}
-
-payload:
-{
-    "id":  1,
-    "grade": "A"
-}
-
-response:
-{
-    "data": {
-        "content": "ESSAY T1",
-        "created_at": "2021-09-17T03:14:01.580126",
-        "grade": "A",
-        "id": 1,
-        "state": "GRADED",
-        "student_id": 1,
-        "teacher_id": 1,
-        "updated_at": "2021-09-17T03:20:42.896947"
-    }
-}
-```
-
-## Missing APIs
-
-You'll need to implement these APIs
-
 ### GET /principal/assignments
 
 List all submitted and graded assignments
@@ -238,27 +201,6 @@ response:
             "student_id": 1,
             "teacher_id": 1,
             "updated_at": "2021-09-17T03:14:01.584644"
-        }
-    ]
-}
-```
-
-### GET /principal/teachers
-
-List all the teachers
-```
-headers:
-X-Principal: {"user_id":5, "principal_id":1}
-
-
-response:
-{
-    "data": [
-        {
-            "created_at": "2024-01-08T07:58:53.131970",
-            "id": 1,
-            "updated_at": "2024-01-08T07:58:53.131972",
-            "user_id": 3
         }
     ]
 }
@@ -291,3 +233,75 @@ response:
     }
 }
 ```
+
+## Missing APIs
+
+You'll need to implement these APIs
+
+
+### GET /principal/teachers
+
+List all the teachers
+```
+headers:
+X-Principal: {"user_id":5, "principal_id":1}
+
+
+response:
+{
+    "data": [
+        {
+            "created_at": "2024-01-08T07:58:53.131970",
+            "id": 1,
+            "updated_at": "2024-01-08T07:58:53.131972",
+            "user_id": 3
+        }
+    ]
+}
+```
+
+### POST /teacher/assignments/grade
+
+Grade an assignment
+```
+headers:
+X-Principal: {"user_id":3, "teacher_id":1}
+
+payload:
+{
+    "id":  1,
+    "grade": "A"
+}
+
+response:
+{
+    "data": {
+        "content": "ESSAY T1",
+        "created_at": "2021-09-17T03:14:01.580126",
+        "grade": "A",
+        "id": 1,
+        "state": "GRADED",
+        "student_id": 1,
+        "teacher_id": 1,
+        "updated_at": "2021-09-17T03:20:42.896947"
+    }
+}
+```
+
+## How to Submit
+
+For submitting the assignment, please follow these steps:
+
+* Ensure that you push your code into a private repository on GitHub.
+* Add `KirtiGautam`, `kartikeyrajvaidya`, `sumanth-fyle1` and `satyamyesj` as collaborators to your repository with Admin access.
+* For steps to add a collaborator to your repository, refer to [this link](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-access-to-your-personal-repositories/inviting-collaborators-to-a-personal-repository).
+
+**Once you are done with your task, please use [this form](https://forms.gle/7ZBydqaoWaJTDYCA8) to complete your submission.**
+
+Once you submit the assignment, you will hear back from us within 48 hours via email.
+
+We look forward to seeing your solution!
+
+---
+
+For any questions or clarifications, feel free to reach out at [kirti.gautam@fylehq.com](mailto:kirti.gautam@fylehq.com).
