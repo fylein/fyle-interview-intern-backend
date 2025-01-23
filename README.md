@@ -66,7 +66,7 @@ For submitting the assignment, please follow these steps:
 * Add `KirtiGautam`, `kartikeyrajvaidya`, `sumanth-fyle1` and `satyamyesj` as collaborators to your repository with Admin access.
 * For steps to add a collaborator to your repository, refer to [this link](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-access-to-your-personal-repositories/inviting-collaborators-to-a-personal-repository).
 
-**Once you are done with your task, please use [this form](https://forms.gle/TbpVhYojG84cyUD77) to complete your submission.**
+**Once you are done with your task, please use [this form](https://forms.gle/7ZBydqaoWaJTDYCA8) to complete your submission.**
 
 Once you submit the assignment, you will hear back from us within 48 hours from us via email. 
 
