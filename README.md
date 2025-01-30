@@ -28,26 +28,37 @@ You will hear back within 48 hours from us via email.
 1. **Please ensure that you don't fork this repository. We want your submission to be private to avoid plagiarism**
 2. Clone the repo to your local and ensure you push your code into your own **private repository** on GitHub.
 
-### Install requirements
+### Install requirements (Both windows & linux)
 
 ```
-virtualenv env --python=python3.8
-source env/bin/activate
+python -m venv env
+source env/bin/activate (for linux)
+"env/Scripts/activate.bat" (for windows, don't miss the quotes)
 pip install -r requirements.txt
 ```
-### Reset DB
-
-```
-export FLASK_APP=core/server.py
-rm core/store.sqlite3
-flask db upgrade -d core/migrations/
-```
+### Initialize/Reset DB
+- Linux
+	```
+	export FLASK_APP=core/server.py
+	rm core/store.sqlite3
+	flask db upgrade -d core/migrations/
+	```
+- Windows
+	- During initialization dont run del command, as it will return file not found error.
+	```
+	del instance/store.sqlite3
+	flask --app core/server.py db upgrade -d core/migrations/
+	```
 ### Start Server
-
-```
-bash run.sh
-```
-### Run Tests
+- Linux
+	```
+	bash run.sh
+	```
+- Windows
+	```
+	.\run.bat
+	```
+### Run Tests (Both windows & linux)
 
 ```
 pytest -vvv -s tests/
